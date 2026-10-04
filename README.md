@@ -91,7 +91,7 @@ The persistent source of truth is Room SQLite (`paisede_database`):
 
 ## 🧩 Data Structures & Algorithm Breakdown
 
-| Data Structure / Algorithm | Class Name | Real Role in PaiseDe | Time Complexity | Space Complexity |
+| Data Structure / Algorithm | Class Name | Real Role in Splitz | Time Complexity | Space Complexity |
 |---|---|---|---|---|
 | **HashMap** | `BalanceCalculator` | Aggregates credits and debits per user to establish net balances. | $O(E)$ | $O(V)$ |
 | **PriorityQueue (Two Heaps)** | `DebtSimplifier` | Greedy matching of greatest creditor with greatest debtor. | $O(N \log N)$ | $O(N)$ |
