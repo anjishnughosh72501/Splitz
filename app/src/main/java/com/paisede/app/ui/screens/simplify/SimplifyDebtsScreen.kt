@@ -56,7 +56,7 @@ import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.GraphVisualizer
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.AccentAmber
 import com.paisede.app.ui.theme.BrandTeal
@@ -79,7 +79,7 @@ fun SimplifyDebtsScreen(
 
     Scaffold(
         topBar = {
-            PaiseDeTopAppBar(
+            SplitzTopAppBar(
                 title = "Simplify Debts",
                 onNavigateBack = onNavigateBack
             )
@@ -106,7 +106,7 @@ fun SimplifyDebtsScreen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "DEBT REDUCTION PIPELINE",
+                        text = "OPTIMIZATION SUMMARY",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.LightGray,
                         fontWeight = FontWeight.Bold
@@ -120,7 +120,7 @@ fun SimplifyDebtsScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "BEFORE",
+                                text = "ORIGINAL",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = DebtRed,
                                 fontWeight = FontWeight.Bold
@@ -133,7 +133,7 @@ fun SimplifyDebtsScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "relationships",
+                                text = "debts",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.LightGray
                             )
@@ -141,14 +141,14 @@ fun SimplifyDebtsScreen(
 
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
+                            contentDescription = "Optimized into",
                             tint = BrandTeal,
                             modifier = Modifier.size(32.dp)
                         )
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "AFTER",
+                                text = "OPTIMIZED",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = CreditGreen,
                                 fontWeight = FontWeight.Bold
@@ -172,8 +172,9 @@ fun SimplifyDebtsScreen(
                     androidx.compose.material3.HorizontalDivider(color = Slate800)
                     Spacer(modifier = Modifier.height(10.dp))
 
+                    val reduction = if (state.beforeCount > state.afterCount) state.beforeCount - state.afterCount else 0
                     Text(
-                        text = "Active Algorithm: ${state.algorithmUsed}",
+                        text = if (reduction > 0) "Eliminated $reduction redundant transactions" else "All debts are in minimal form",
                         style = MaterialTheme.typography.bodySmall,
                         color = BrandTeal,
                         fontWeight = FontWeight.Medium
@@ -198,7 +199,7 @@ fun SimplifyDebtsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Settlement Analysis (≤8 members):",
+                                text = "Strategy:",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Slate800
@@ -208,7 +209,7 @@ fun SimplifyDebtsScreen(
                                 FilterChip(
                                     selected = state.selectedMode == "Greedy",
                                     onClick = { viewModel.selectAlgorithm("Greedy") },
-                                    label = { Text("Greedy (${state.greedyCount})") },
+                                    label = { Text("Standard (${state.greedyCount})") },
                                     colors = FilterChipDefaults.filterChipColors(
                                         selectedContainerColor = BrandTeal,
                                         selectedLabelColor = Color.White
@@ -218,7 +219,7 @@ fun SimplifyDebtsScreen(
                                 FilterChip(
                                     selected = state.selectedMode == "Exact",
                                     onClick = { viewModel.selectAlgorithm("Exact") },
-                                    label = { Text("Exact (${state.exactCount})") },
+                                    label = { Text("Exact Min (${state.exactCount})") },
                                     colors = FilterChipDefaults.filterChipColors(
                                         selectedContainerColor = Slate900,
                                         selectedLabelColor = Color.White
@@ -239,18 +240,20 @@ fun SimplifyDebtsScreen(
             ) {
                 TabRow(
                     selectedTabIndex = selectedViewTab,
-                    modifier = Modifier.width(180.dp),
+                    modifier = Modifier.width(220.dp),
                     containerColor = Slate100,
                     contentColor = BrandTeal
                 ) {
                     Tab(
                         selected = selectedViewTab == 0,
                         onClick = { selectedViewTab = 0 },
+                        icon = { Icon(imageVector = Icons.Default.ViewList, contentDescription = "List View", modifier = Modifier.size(18.dp)) },
                         text = { Text("List") }
                     )
                     Tab(
                         selected = selectedViewTab == 1,
                         onClick = { selectedViewTab = 1 },
+                        icon = { Icon(imageVector = Icons.Default.Hub, contentDescription = "Graph View", modifier = Modifier.size(18.dp)) },
                         text = { Text("Graph") }
                     )
                 }
@@ -297,7 +300,7 @@ fun SimplifyDebtsScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Simplified settlement network with minimal edges",
+                            text = "Visual settlement flow",
                             style = MaterialTheme.typography.bodySmall,
                             color = Slate600,
                             modifier = Modifier.align(Alignment.CenterHorizontally)

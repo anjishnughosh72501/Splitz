@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
@@ -58,8 +58,8 @@ fun DataStructureDebugScreen(
 
     Scaffold(
         topBar = {
-            PaiseDeTopAppBar(
-                title = "Data Structures & Viva Demo",
+            SplitzTopAppBar(
+                title = "Data Structure Inspector",
                 onNavigateBack = onNavigateBack,
                 actions = {
                     IconButton(onClick = { viewModel.refreshDebugData() }) {
@@ -106,7 +106,7 @@ fun DataStructureDebugScreen(
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in PaiseDe.",
+                            text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in Splitz.",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.LightGray
                         )

@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.IndigoPurple
@@ -59,7 +59,7 @@ fun AnalyticsScreen(
 
     Scaffold(
         topBar = {
-            PaiseDeTopAppBar(
+            SplitzTopAppBar(
                 title = "Spending Analytics",
                 onNavigateBack = onNavigateBack
             )

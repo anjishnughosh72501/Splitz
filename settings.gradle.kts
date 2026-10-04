@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PaiseDe"
+rootProject.name = "Splitz"
 include(":app")

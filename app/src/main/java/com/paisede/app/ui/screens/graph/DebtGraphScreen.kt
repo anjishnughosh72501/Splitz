@@ -44,7 +44,7 @@ import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.GraphVisualizer
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.theme.AccentAmber
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
@@ -67,8 +67,8 @@ fun DebtGraphScreen(
 
     Scaffold(
         topBar = {
-            PaiseDeTopAppBar(
-                title = "Debt Network Graph",
+            SplitzTopAppBar(
+                title = "Debt Network",
                 onNavigateBack = onNavigateBack
             )
         }
@@ -79,7 +79,7 @@ fun DebtGraphScreen(
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            // Tabs: Raw Debts vs Simplified Debts
+            // Tabs: All Debts vs Simplified Debts
             TabRow(
                 selectedTabIndex = if (state.isSimplifiedTab) 1 else 0,
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -88,12 +88,12 @@ fun DebtGraphScreen(
                 Tab(
                     selected = !state.isSimplifiedTab,
                     onClick = { viewModel.setTab(false) },
-                    text = { Text("Raw Network (${state.rawEdges.size} Edges)") }
+                    text = { Text("All Debts (${state.rawEdges.size})") }
                 )
                 Tab(
                     selected = state.isSimplifiedTab,
                     onClick = { viewModel.setTab(true) },
-                    text = { Text("Simplified (${state.simplifiedEdges.size} Edges)") }
+                    text = { Text("Simplified (${state.simplifiedEdges.size})") }
                 )
             }
 
@@ -112,7 +112,7 @@ fun DebtGraphScreen(
                     )
                 }
 
-                // DFS Cycle Detection Card (for Raw Debts)
+                // Circular Debt Resolution Card (for Raw Debts)
                 if (!state.isSimplifiedTab) {
                     item {
                         Card(
@@ -135,7 +135,7 @@ fun DebtGraphScreen(
                                 ) {
                                     Column {
                                         Text(
-                                            text = "DFS CYCLE DETECTION",
+                                            text = "CIRCULAR DEBTS",
                                             style = MaterialTheme.typography.labelMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = Slate800
@@ -143,9 +143,9 @@ fun DebtGraphScreen(
                                         Spacer(modifier = Modifier.height(2.dp))
                                         val statusDesc = if (state.detectedCycle != null) {
                                             val cycleNames = state.detectedCycle!!.map { memberMap[it]?.name ?: it }
-                                            "Cycle detected: " + cycleNames.joinToString(" → ")
+                                            "Circular loop: " + cycleNames.joinToString(" → ")
                                         } else {
-                                            "No directed cycles found (Acyclic DAG)"
+                                            "No circular debts found"
                                         }
                                         Text(
                                             text = statusDesc,
@@ -164,18 +164,18 @@ fun DebtGraphScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Sync,
-                                            contentDescription = null,
+                                            contentDescription = "Resolve Circular Debt",
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Cancel Cycle (Subtract Min Edge)")
+                                        Text("Resolve Circular Debt")
                                     }
                                 }
 
                                 if (state.cyclesCanceledAmount > 0L) {
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        text = "Total canceled via cycle cancellation: ${CurrencyUtils.formatPaise(state.cyclesCanceledAmount)}",
+                                        text = "Resolved in circular flows: ${CurrencyUtils.formatPaise(state.cyclesCanceledAmount)}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = CreditGreen,
                                         fontWeight = FontWeight.Bold
@@ -189,7 +189,7 @@ fun DebtGraphScreen(
                 // List of edges currently displayed
                 item {
                     Text(
-                        text = if (state.isSimplifiedTab) "SIMPLIFIED DEBT EDGES" else "RAW INDIVIDUAL DEBT EDGES",
+                        text = if (state.isSimplifiedTab) "SIMPLIFIED DEBTS" else "INDIVIDUAL DEBTS",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Slate600

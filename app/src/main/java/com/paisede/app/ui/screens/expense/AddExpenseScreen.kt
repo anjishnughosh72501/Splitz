@@ -56,7 +56,7 @@ import com.paisede.app.domain.model.Member
 import com.paisede.app.domain.model.SplitType
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.DebtRed
@@ -89,7 +89,7 @@ fun AddExpenseScreen(
 
     Scaffold(
         topBar = {
-            PaiseDeTopAppBar(
+            SplitzTopAppBar(
                 title = "Add Expense",
                 onNavigateBack = onNavigateBack
             )
@@ -107,11 +107,11 @@ fun AddExpenseScreen(
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Step 1: Amount
+                // Amount
                 item {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "1. AMOUNT",
+                        text = "Amount",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Slate600
@@ -126,9 +126,10 @@ fun AddExpenseScreen(
                                 viewModel.setAmount(paise)
                             }
                         },
-                        label = { Text("Enter amount in ₹ (e.g. 1200 or 1200.50)") },
+                        label = { Text("Amount (₹)") },
+                        placeholder = { Text("0.00") },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Default.CurrencyRupee, contentDescription = null)
+                            Icon(imageVector = Icons.Default.CurrencyRupee, contentDescription = "Rupee")
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         modifier = Modifier.fillMaxWidth(),
@@ -137,10 +138,10 @@ fun AddExpenseScreen(
                     )
                 }
 
-                // Step 2: Description
+                // Description
                 item {
                     Text(
-                        text = "2. DESCRIPTION",
+                        text = "Description",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Slate600
@@ -149,17 +150,18 @@ fun AddExpenseScreen(
                     OutlinedTextField(
                         value = state.description,
                         onValueChange = { viewModel.setDescription(it) },
-                        label = { Text("What was this for? (e.g. Dinner, Taxi)") },
+                        label = { Text("Description") },
+                        placeholder = { Text("e.g. Dinner, Groceries") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true
                     )
                 }
 
-                // Step 3: Who paid?
+                // Paid By
                 item {
                     Text(
-                        text = "3. WHO PAID?",
+                        text = "Paid By",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Slate600
@@ -191,10 +193,10 @@ fun AddExpenseScreen(
                     }
                 }
 
-                // Step 4: Category
+                // Category
                 item {
                     Text(
-                        text = "4. CATEGORY",
+                        text = "Category",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Slate600
@@ -218,10 +220,10 @@ fun AddExpenseScreen(
                     }
                 }
 
-                // Step 5: How should it be split?
+                // Split Method
                 item {
                     Text(
-                        text = "5. HOW SHOULD IT BE SPLIT?",
+                        text = "Split Method",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Slate600
@@ -252,7 +254,7 @@ fun AddExpenseScreen(
                         SplitType.EQUAL -> {
                             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 Text(
-                                    text = "Split equally among selected participants:",
+                                    text = "Split equally among participants:",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Slate600
                                 )
@@ -278,7 +280,7 @@ fun AddExpenseScreen(
                         SplitType.EXACT -> {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
-                                    text = "Specify exact amount (₹) for each member:",
+                                    text = "Specify amount for each member:",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Slate600
                                 )
@@ -309,7 +311,7 @@ fun AddExpenseScreen(
                         SplitType.PERCENTAGE -> {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
-                                    text = "Specify percentage (%) for each member (Total must = 100%):",
+                                    text = "Specify percentage share for each member:",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Slate600
                                 )
@@ -341,7 +343,7 @@ fun AddExpenseScreen(
                         SplitType.SHARES -> {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
-                                    text = "Specify integer shares (e.g. 1, 2, 3):",
+                                    text = "Specify shares for each member:",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Slate600
                                 )
@@ -375,10 +377,10 @@ fun AddExpenseScreen(
                     }
                 }
 
-                // Step 6: Review & Live preview
+                // Summary
                 item {
                     Text(
-                        text = "6. REVIEW",
+                        text = "Summary",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Slate600

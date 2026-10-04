@@ -63,7 +63,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun PaiseDeTheme(
+fun SplitzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
@@ -84,4 +84,12 @@ fun PaiseDeTheme(
         typography = Typography,
         content = content
     )
+}
+
+@Composable
+fun PaiseDeTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    SplitzTheme(darkTheme = darkTheme, content = content)
 }

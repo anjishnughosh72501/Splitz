@@ -39,7 +39,7 @@ import com.paisede.app.domain.model.Member
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
@@ -59,7 +59,7 @@ fun BalancesScreen(
 
     Scaffold(
         topBar = {
-            PaiseDeTopAppBar(
+            SplitzTopAppBar(
                 title = "Group Balances",
                 onNavigateBack = onNavigateBack
             )

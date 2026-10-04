@@ -22,7 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Savings
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -64,7 +65,8 @@ import com.paisede.app.ui.viewmodel.HomeViewModel
 fun HomeScreen(
     viewModel: HomeViewModel,
     onCreateGroupClick: () -> Unit,
-    onGroupClick: (String) -> Unit
+    onGroupClick: (String) -> Unit,
+    onSettingsClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -104,35 +106,49 @@ fun HomeScreen(
             ) {
                 Column {
                     Text(
-                        text = "PaiseDe",
+                        text = "Splitz",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         color = Slate900
                     )
                     Text(
-                        text = "Expense Splitter & Debt Simplifier",
+                        text = "Split expenses easily",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Slate600
                     )
                 }
 
-                OutlinedButton(
-                    onClick = {
-                        viewModel.loadSampleData { groupId ->
-                            onGroupClick(groupId)
-                        }
-                    },
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = BrandTeal),
-                    shape = RoundedCornerShape(20.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedButton(
+                        onClick = {
+                            viewModel.loadSampleData { groupId ->
+                                onGroupClick(groupId)
+                            }
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = BrandTeal),
+                        shape = RoundedCornerShape(20.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = "Load Demo Data",
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(text = "Demo Data", style = MaterialTheme.typography.labelMedium)
+                    }
+
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Demo Data", style = MaterialTheme.typography.labelMedium)
+
+                    IconButton(
+                        onClick = onSettingsClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings & Help",
+                            tint = Slate800
+                        )
+                    }
                 }
             }
 
@@ -224,8 +240,8 @@ fun GroupCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Savings,
-                        contentDescription = null,
+                        imageVector = Icons.Default.Group,
+                        contentDescription = "Group",
                         tint = BrandTeal,
                         modifier = Modifier.size(22.dp)
                     )

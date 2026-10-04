@@ -39,7 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.paisede.app.domain.repository.GroupRepository
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.DebtRed
@@ -61,7 +61,7 @@ fun CreateGroupScreen(
 
     Scaffold(
         topBar = {
-            PaiseDeTopAppBar(
+            SplitzTopAppBar(
                 title = "Create New Group",
                 onNavigateBack = onNavigateBack
             )

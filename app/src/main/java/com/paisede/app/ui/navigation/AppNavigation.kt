@@ -20,6 +20,7 @@ import com.paisede.app.ui.screens.graph.DebtGraphScreen
 import com.paisede.app.ui.screens.group.CreateGroupScreen
 import com.paisede.app.ui.screens.group.GroupDashboardScreen
 import com.paisede.app.ui.screens.home.HomeScreen
+import com.paisede.app.ui.screens.settings.SettingsScreen
 import com.paisede.app.ui.screens.settle.SettleUpScreen
 import com.paisede.app.ui.screens.settle.SettlementHistoryScreen
 import com.paisede.app.ui.screens.simplify.SimplifyDebtsScreen
@@ -51,6 +52,9 @@ fun AppNavigation(
                 onCreateGroupClick = { navController.navigate(Screen.CreateGroup.route) },
                 onGroupClick = { groupId ->
                     navController.navigate(Screen.GroupDashboard.createRoute(groupId))
+                },
+                onSettingsClick = {
+                    navController.navigate(Screen.Settings.createRoute())
                 }
             )
         }
@@ -85,7 +89,8 @@ fun AppNavigation(
                 onExpensesClick = { navController.navigate(Screen.ExpenseHistory.createRoute(groupId)) },
                 onAnalyticsClick = { navController.navigate(Screen.Analytics.createRoute(groupId)) },
                 onGraphClick = { navController.navigate(Screen.DebtGraph.createRoute(groupId)) },
-                onDebugClick = { navController.navigate(Screen.DebugPanel.createRoute(groupId)) }
+                onDebugClick = { navController.navigate(Screen.DebugPanel.createRoute(groupId)) },
+                onSettingsClick = { navController.navigate(Screen.Settings.createRoute(groupId)) }
             )
         }
 
@@ -218,6 +223,27 @@ fun AppNavigation(
             DataStructureDebugScreen(
                 viewModel = debugVm,
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // SETTINGS & HELP
+        composable(
+            route = Screen.Settings.route,
+            arguments = listOf(
+                navArgument("groupId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId")
+            SettingsScreen(
+                groupId = groupId,
+                onNavigateBack = { navController.popBackStack() },
+                onInspectDataStructures = { gid ->
+                    navController.navigate(Screen.DebugPanel.createRoute(gid))
+                }
             )
         }
     }

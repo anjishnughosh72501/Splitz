@@ -92,7 +92,7 @@ def main():
     emulator_bin = find_sdk_tool(f"emulator{exe_ext}")
     
     print("=" * 60)
-    print(" PaiseDe: Android Emulator & App Launcher")
+    print(" Splitz: Android Emulator & App Launcher")
     print("=" * 60)
     print(f"Project directory: {project_dir}")
     print(f"Using ADB:         {adb_bin}")
@@ -141,7 +141,7 @@ def main():
     run_cmd([adb_bin, "shell", "am", "start", "-n", component, "-a", "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER"])
     
     print("\n" + "=" * 60)
-    print(" PaiseDe is now running on the Android emulator!")
+    print(" Splitz is now running on the Android emulator!")
     print("=" * 60)
 
 if __name__ == "__main__":

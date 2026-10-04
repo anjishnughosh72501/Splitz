@@ -24,13 +24,17 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Handshake
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Hub
+import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -57,7 +61,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.PaiseDeTopAppBar
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.theme.AccentAmber
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
@@ -82,7 +86,8 @@ fun GroupDashboardScreen(
     onExpensesClick: () -> Unit,
     onAnalyticsClick: () -> Unit,
     onGraphClick: () -> Unit,
-    onDebugClick: () -> Unit
+    onDebugClick: () -> Unit,
+    onSettingsClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -97,7 +102,7 @@ fun GroupDashboardScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            PaiseDeTopAppBar(
+            SplitzTopAppBar(
                 title = state.group?.name ?: "Group Dashboard",
                 onNavigateBack = onNavigateBack,
                 actions = {
@@ -120,6 +125,15 @@ fun GroupDashboardScreen(
                             imageVector = Icons.AutoMirrored.Filled.Redo,
                             contentDescription = "Redo",
                             tint = if (state.canRedo) BrandTeal else Slate200
+                        )
+                    }
+                    IconButton(
+                        onClick = onSettingsClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings & Help",
+                            tint = Slate800
                         )
                     }
                 }
@@ -271,7 +285,7 @@ fun GroupDashboardScreen(
                                     color = Color.White
                                 )
                                 Text(
-                                    text = "Reduce transactions using 2 Heaps",
+                                    text = "Minimize group payments",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.White.copy(alpha = 0.85f)
                                 )
@@ -280,7 +294,7 @@ fun GroupDashboardScreen(
 
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
+                            contentDescription = "Simplify Debts",
                             tint = Color.White
                         )
                     }
@@ -291,8 +305,8 @@ fun GroupDashboardScreen(
             item {
                 ActionTile(
                     title = "Balances",
-                    subtitle = "Per-person net",
-                    icon = Icons.Default.AccountBalance,
+                    subtitle = "Net balance per member",
+                    icon = Icons.Default.AccountBalanceWallet,
                     iconBg = CreditGreen.copy(alpha = 0.15f),
                     iconTint = CreditGreen,
                     onClick = onBalancesClick
@@ -313,7 +327,7 @@ fun GroupDashboardScreen(
             item {
                 ActionTile(
                     title = "Expenses",
-                    subtitle = "Ledger history",
+                    subtitle = "All expenses",
                     icon = Icons.Default.ReceiptLong,
                     iconBg = Slate200,
                     iconTint = Slate800,
@@ -324,8 +338,8 @@ fun GroupDashboardScreen(
             item {
                 ActionTile(
                     title = "Analytics",
-                    subtitle = "Spending insights",
-                    icon = Icons.Default.Analytics,
+                    subtitle = "Spending breakdown",
+                    icon = Icons.Default.PieChart,
                     iconBg = IndigoPurple.copy(alpha = 0.15f),
                     iconTint = IndigoPurple,
                     onClick = onAnalyticsClick
@@ -335,7 +349,7 @@ fun GroupDashboardScreen(
             item {
                 ActionTile(
                     title = "Debt Graph",
-                    subtitle = "Visual network & DFS",
+                    subtitle = "Payment network",
                     icon = Icons.Default.Hub,
                     iconBg = BrandTeal.copy(alpha = 0.15f),
                     iconTint = BrandTeal,
@@ -345,12 +359,12 @@ fun GroupDashboardScreen(
 
             item {
                 ActionTile(
-                    title = "Debug / Viva",
-                    subtitle = "Inspect DS & Heaps",
-                    icon = Icons.Default.BugReport,
-                    iconBg = DebtRed.copy(alpha = 0.15f),
-                    iconTint = DebtRed,
-                    onClick = onDebugClick
+                    title = "Settings & Help",
+                    subtitle = "Guides & DS inspect",
+                    icon = Icons.Default.HelpOutline,
+                    iconBg = Slate200,
+                    iconTint = Slate800,
+                    onClick = onSettingsClick
                 )
             }
 

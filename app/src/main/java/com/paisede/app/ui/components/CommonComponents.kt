@@ -45,7 +45,7 @@ import com.paisede.app.ui.theme.Slate600
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaiseDeTopAppBar(
+fun SplitzTopAppBar(
     title: String,
     onNavigateBack: (() -> Unit)? = null,
     actions: @Composable () -> Unit = {}
@@ -63,7 +63,7 @@ fun PaiseDeTopAppBar(
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = "Navigate back"
                     )
                 }
             }
@@ -74,6 +74,15 @@ fun PaiseDeTopAppBar(
             titleContentColor = MaterialTheme.colorScheme.onBackground
         )
     )
+}
+
+@Composable
+fun PaiseDeTopAppBar(
+    title: String,
+    onNavigateBack: (() -> Unit)? = null,
+    actions: @Composable () -> Unit = {}
+) {
+    SplitzTopAppBar(title = title, onNavigateBack = onNavigateBack, actions = actions)
 }
 
 @Composable

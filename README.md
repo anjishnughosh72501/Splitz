@@ -1,8 +1,8 @@
-# PaiseDe (पैसे दे) - Expense Splitter & Debt Simplifier
+# Splitz - Expense Splitter & Debt Simplifier
 
 > **"Given a group of people and their shared expenses, calculate each person's net balance and reduce the resulting debts to as few payments as possible."**
 
-**PaiseDe** is a native Android application built in Kotlin and Jetpack Compose. It serves as both a practical offline expense-sharing tool (similar to Splitwise) and a rich engineering showcase for foundational data structures and algorithms (Graph theory, Two-Heap greedy reduction, DFS cycle detection, NP-hard Exact Partitioning via Backtracking/Bitmask DP, and LIFO Stacks).
+**Splitz** is a native Android application built in Kotlin and Jetpack Compose. It serves as both a clean, modern offline expense-sharing tool (similar to Splitwise) and a rich engineering showcase for foundational data structures and algorithms (Graph theory, Two-Heap greedy reduction, DFS cycle detection, NP-hard Exact Partitioning via Backtracking/Bitmask DP, and LIFO Stacks).
 
 ---
 
@@ -47,7 +47,7 @@
 
 ## 🏛️ Architecture & Clean Separation
 
-PaiseDe follows the **Repository Pattern** and **Unidirectional Data Flow (UDF)**:
+Splitz follows the **Repository Pattern** and **Unidirectional Data Flow (UDF)**:
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -107,7 +107,7 @@ The persistent source of truth is Room SQLite (`paisede_database`):
 
 **Rule**: Never use `Float`, `Double`, or `BigDecimal` for money math. Floating-point numbers introduce IEEE-754 precision issues (e.g. $0.1 + 0.2 = 0.30000000000000004$).
 
-- In PaiseDe, **all internal values are stored in `Long` paise**:
+- In Splitz, **all internal values are stored in `Long` paise**:
   - ₹1 = 100 paise
   - ₹100 = 10,000 paise
   - ₹1,200 = 120,000 paise
@@ -169,7 +169,7 @@ This section contains direct answers to questions typically asked in engineering
 
 ## 🧪 Testing
 
-PaiseDe contains comprehensive JUnit unit tests covering:
+Splitz contains comprehensive JUnit unit tests covering:
 - `ExpenseSplitterTest`: Equal split with remainder paise distribution, exact sum validation, percentage basis points, shares, zero values.
 - `BalanceCalculatorTest`: Single/multiple expenses, multiple payers, settlement integration, zero-sum invariant verification.
 - `DebtGraphTest`: Edge additions, accumulations, DFS cycle detection, and cycle cancellation.

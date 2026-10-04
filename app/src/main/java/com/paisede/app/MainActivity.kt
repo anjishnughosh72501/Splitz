@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.paisede.app.ui.navigation.AppNavigation
-import com.paisede.app.ui.theme.PaiseDeTheme
+import com.paisede.app.ui.theme.SplitzTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         val app = application as PaiseDeApplication
 
         setContent {
-            PaiseDeTheme {
+            SplitzTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

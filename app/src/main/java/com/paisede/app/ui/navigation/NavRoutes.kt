@@ -33,4 +33,7 @@ sealed class Screen(val route: String) {
     object DebugPanel : Screen("group/{groupId}/debug") {
         fun createRoute(groupId: String) = "group/$groupId/debug"
     }
+    object Settings : Screen("settings?groupId={groupId}") {
+        fun createRoute(groupId: String? = null) = if (groupId != null) "settings?groupId=$groupId" else "settings"
+    }
 }
