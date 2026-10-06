@@ -39,8 +39,12 @@ class PaiseDeApplication : Application() {
     val undoRedoManager = UndoRedoManager()
     val analyticsCalculator = AnalyticsCalculator()
 
+    lateinit var themePreferences: com.paisede.app.data.preferences.ThemePreferences
+        private set
+
     override fun onCreate() {
         super.onCreate()
+        themePreferences = com.paisede.app.data.preferences.ThemePreferences(this)
         database = AppDatabase.getDatabase(this)
         groupRepository = GroupRepositoryImpl(database)
         expenseRepository = ExpenseRepositoryImpl(database, undoRedoManager)

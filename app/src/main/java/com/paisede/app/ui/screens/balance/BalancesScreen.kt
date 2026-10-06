@@ -84,7 +84,7 @@ fun BalancesScreen(
                     Text(
                         text = "Total Spending",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     MoneyText(
@@ -99,7 +99,7 @@ fun BalancesScreen(
                     Text(
                         text = "Unsettled Debts",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     MoneyText(
@@ -144,7 +144,7 @@ fun BalanceCard(item: MemberBalanceItem) {
     val statusColor = when {
         bal > 0 -> CreditGreen
         bal < 0 -> DebtRed
-        else -> Slate600
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Card(
@@ -152,7 +152,7 @@ fun BalanceCard(item: MemberBalanceItem) {
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(
             modifier = Modifier
@@ -169,7 +169,7 @@ fun BalanceCard(item: MemberBalanceItem) {
                         text = item.member.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate900
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(

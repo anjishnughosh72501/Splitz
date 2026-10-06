@@ -49,11 +49,7 @@ import com.paisede.app.ui.theme.AccentAmber
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate100
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
+
 import com.paisede.app.ui.viewmodel.DebtGraphViewModel
 import com.paisede.app.util.CurrencyUtils
 
@@ -119,12 +115,12 @@ fun DebtGraphScreen(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (state.detectedCycle != null) AccentAmber.copy(alpha = 0.1f)
-                                else Slate100
+                                containerColor = if (state.detectedCycle != null) AccentAmber.copy(alpha = 0.12f)
+                                else MaterialTheme.colorScheme.surfaceVariant
                             ),
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                if (state.detectedCycle != null) AccentAmber else Slate200
+                                if (state.detectedCycle != null) AccentAmber else MaterialTheme.colorScheme.outlineVariant
                             )
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
@@ -138,7 +134,7 @@ fun DebtGraphScreen(
                                             text = "CIRCULAR DEBTS",
                                             style = MaterialTheme.typography.labelMedium,
                                             fontWeight = FontWeight.Bold,
-                                            color = Slate800
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         val statusDesc = if (state.detectedCycle != null) {
@@ -150,7 +146,7 @@ fun DebtGraphScreen(
                                         Text(
                                             text = statusDesc,
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = Slate600
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                 }
@@ -192,7 +188,7 @@ fun DebtGraphScreen(
                         text = if (state.isSimplifiedTab) "SIMPLIFIED DEBTS" else "INDIVIDUAL DEBTS",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -205,7 +201,7 @@ fun DebtGraphScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Row(
                             modifier = Modifier
@@ -219,13 +215,13 @@ fun DebtGraphScreen(
                                     text = fromName,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Slate900
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
-                                    tint = Slate600,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -233,7 +229,7 @@ fun DebtGraphScreen(
                                     text = toName,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Slate900
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
 

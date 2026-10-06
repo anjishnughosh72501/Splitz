@@ -43,10 +43,7 @@ import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.IndigoPurple
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
+
 import com.paisede.app.ui.viewmodel.DebugViewModel
 
 @Composable
@@ -86,7 +83,7 @@ fun DataStructureDebugScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Slate900)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Column(modifier = Modifier.padding(18.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -101,14 +98,14 @@ fun DataStructureDebugScreen(
                                 text = "LIVE DATA STRUCTURE MONITOR",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in Splitz.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.LightGray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -155,7 +152,7 @@ fun DataStructureDebugScreen(
                     complexity = "Insert: O(log N) | Poll Max: O(log N)"
                 ) {
                     if (state.creditorQueue.isEmpty()) {
-                        Text(text = "Empty (no creditors)", style = MaterialTheme.typography.bodySmall, color = Slate600)
+                        Text(text = "Empty (no creditors)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
                         state.creditorQueue.forEachIndexed { idx, bal ->
                             val name = state.members[bal.userId]?.name ?: bal.userId
@@ -190,7 +187,7 @@ fun DataStructureDebugScreen(
                     complexity = "Insert: O(log N) | Poll Max: O(log N)"
                 ) {
                     if (state.debtorQueue.isEmpty()) {
-                        Text(text = "Empty (no debtors)", style = MaterialTheme.typography.bodySmall, color = Slate600)
+                        Text(text = "Empty (no debtors)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
                         state.debtorQueue.forEachIndexed { idx, bal ->
                             val name = state.members[bal.userId]?.name ?: bal.userId
@@ -309,7 +306,7 @@ fun DebugSectionCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier
@@ -325,7 +322,7 @@ fun DebugSectionCard(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Slate900,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -338,7 +335,7 @@ fun DebugSectionCard(
                 fontSize = 11.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            androidx.compose.material3.HorizontalDivider(color = Slate200)
+            androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(modifier = Modifier.height(10.dp))
             content()
         }

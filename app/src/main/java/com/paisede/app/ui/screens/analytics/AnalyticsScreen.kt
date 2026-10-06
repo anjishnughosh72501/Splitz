@@ -42,11 +42,7 @@ import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.IndigoPurple
-import com.paisede.app.ui.theme.Slate100
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
+
 import com.paisede.app.ui.viewmodel.AnalyticsViewModel
 
 @Composable
@@ -89,14 +85,14 @@ fun AnalyticsScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(18.dp),
-                            colors = CardDefaults.cardColors(containerColor = Slate900),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
                             Column(modifier = Modifier.padding(20.dp)) {
                                 Text(
                                     text = "TOTAL SPENT",
                                     style = MaterialTheme.typography.labelMedium,
-                                    color = Color.LightGray,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
@@ -108,7 +104,7 @@ fun AnalyticsScreen(
                                 )
 
                                 Spacer(modifier = Modifier.height(18.dp))
-                                androidx.compose.material3.HorizontalDivider(color = Slate800)
+                                androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                                 Spacer(modifier = Modifier.height(14.dp))
 
                                 Row(
@@ -119,7 +115,7 @@ fun AnalyticsScreen(
                                         Text(
                                             text = "AVERAGE EXPENSE",
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = Color.LightGray
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         MoneyText(
@@ -134,14 +130,14 @@ fun AnalyticsScreen(
                                         Text(
                                             text = "EXPENSES COUNT",
                                             style = MaterialTheme.typography.labelSmall,
-                                            color = Color.LightGray
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         Text(
                                             text = "${an.expenseCount}",
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color.White
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                     }
                                 }
@@ -155,7 +151,7 @@ fun AnalyticsScreen(
                             text = "SPENDING BY CATEGORY",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Slate600
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -164,7 +160,7 @@ fun AnalyticsScreen(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -188,7 +184,7 @@ fun AnalyticsScreen(
                                                     text = cat.replaceFirstChar { it.uppercase() },
                                                     style = MaterialTheme.typography.titleMedium,
                                                     fontWeight = FontWeight.SemiBold,
-                                                    color = Slate900
+                                                    color = MaterialTheme.colorScheme.onSurface
                                                 )
                                                 MoneyText(
                                                     amountPaise = amount,
@@ -205,7 +201,7 @@ fun AnalyticsScreen(
                                                     .height(8.dp)
                                                     .clip(RoundedCornerShape(4.dp)),
                                                 color = BrandTeal,
-                                                trackColor = Slate100
+                                                trackColor = MaterialTheme.colorScheme.surfaceVariant
                                             )
                                         }
                                     }
@@ -219,7 +215,7 @@ fun AnalyticsScreen(
                             text = "SPENDING BY PERSON (CONSUMED)",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Slate600
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -228,7 +224,7 @@ fun AnalyticsScreen(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -256,7 +252,7 @@ fun AnalyticsScreen(
                                                         text = name,
                                                         style = MaterialTheme.typography.titleMedium,
                                                         fontWeight = FontWeight.SemiBold,
-                                                        color = Slate900
+                                                        color = MaterialTheme.colorScheme.onSurface
                                                     )
                                                 }
                                                 MoneyText(
@@ -274,7 +270,7 @@ fun AnalyticsScreen(
                                                     .height(8.dp)
                                                     .clip(RoundedCornerShape(4.dp)),
                                                 color = IndigoPurple,
-                                                trackColor = Slate100
+                                                trackColor = MaterialTheme.colorScheme.surfaceVariant
                                             )
                                         }
                                     }

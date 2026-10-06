@@ -107,7 +107,7 @@ fun ExpenseHistoryScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Undo,
                             contentDescription = "Undo",
-                            tint = if (state.canUndo) BrandTeal else Slate200
+                            tint = if (state.canUndo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                         )
                     }
                     IconButton(
@@ -117,7 +117,7 @@ fun ExpenseHistoryScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Redo,
                             contentDescription = "Redo",
-                            tint = if (state.canRedo) BrandTeal else Slate200
+                            tint = if (state.canRedo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                         )
                     }
                     IconButton(onClick = { viewModel.toggleSort() }) {
@@ -197,7 +197,7 @@ fun ExpenseHistoryScreen(
                                 text = dateHeader.uppercase(),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Slate600,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
                         }
@@ -232,7 +232,7 @@ fun ExpenseHistoryItem(
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier
@@ -249,13 +249,13 @@ fun ExpenseHistoryItem(
                         text = expense.description,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate900
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Paid by $payerName • Split among ${splits.size}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -270,7 +270,7 @@ fun ExpenseHistoryItem(
                     Icon(
                         imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                         contentDescription = null,
-                        tint = Slate600,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -282,12 +282,12 @@ fun ExpenseHistoryItem(
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                 ) {
-                    androidx.compose.material3.HorizontalDivider(color = Slate100)
+                    androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "Split Breakdown (${expense.splitType.name}):",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Slate600,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -302,13 +302,13 @@ fun ExpenseHistoryItem(
                             Text(
                                 text = memberName,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Slate800
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = CurrencyUtils.formatPaise(split.amountPaise),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Slate900
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

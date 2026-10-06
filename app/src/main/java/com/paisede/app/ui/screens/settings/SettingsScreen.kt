@@ -64,12 +64,73 @@ import com.paisede.app.ui.theme.Slate600
 import com.paisede.app.ui.theme.Slate800
 import com.paisede.app.ui.theme.Slate900
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.collectAsState
+import com.paisede.app.data.preferences.AppThemeMode
+import com.paisede.app.data.preferences.ThemePreferences
+
 @Composable
 fun SettingsScreen(
     groupId: String? = null,
+    themePreferences: ThemePreferences? = null,
     onNavigateBack: () -> Unit,
     onInspectDataStructures: ((String) -> Unit)? = null
 ) {
+    val currentThemeMode by (themePreferences?.themeMode ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppThemeMode.SYSTEM) }).collectAsState()
+    var showThemeDialog by remember { mutableStateOf(false) }
+
+    if (showThemeDialog) {
+        AlertDialog(
+            onDismissRequest = { showThemeDialog = false },
+            title = {
+                Text(
+                    text = "Choose Appearance",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    AppThemeMode.entries.forEach { mode ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    themePreferences?.setThemeMode(mode)
+                                    showThemeDialog = false
+                                }
+                                .padding(vertical = 10.dp, horizontal = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (currentThemeMode == mode),
+                                onClick = {
+                                    themePreferences?.setThemeMode(mode)
+                                    showThemeDialog = false
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = mode.displayName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showThemeDialog = false }) {
+                    Text("Close", color = BrandTeal)
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             SplitzTopAppBar(
@@ -91,7 +152,10 @@ fun SettingsScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = Slate900)
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surface else Slate900
+                    ),
+                    border = if (isSystemInDarkTheme()) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null
                 ) {
                     Row(
                         modifier = Modifier
@@ -137,7 +201,7 @@ fun SettingsScreen(
                     text = "Preferences",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Slate600,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = 4.dp, top = 4.dp)
                 )
             }
@@ -147,7 +211,7 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         SettingRow(
@@ -156,19 +220,20 @@ fun SettingsScreen(
                             title = "Currency",
                             value = "Indian Rupee (₹ INR)"
                         )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Slate100)
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
                         SettingRow(
                             icon = Icons.Default.Shield,
                             iconColor = CreditGreen,
                             title = "Math Engine",
                             value = "Integer Paise (0 Rounding Error)"
                         )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Slate100)
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
                         SettingRow(
                             icon = Icons.Default.Palette,
                             iconColor = IndigoPurple,
                             title = "Appearance",
-                            value = "System Default"
+                            value = currentThemeMode.displayName,
+                            onClick = { showThemeDialog = true }
                         )
                     }
                 }
@@ -181,7 +246,7 @@ fun SettingsScreen(
                         text = "Advanced Tools",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 4.dp, top = 4.dp)
                     )
                 }
@@ -193,7 +258,7 @@ fun SettingsScreen(
                             .clickable { onInspectDataStructures(groupId) },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Row(
                             modifier = Modifier
@@ -223,19 +288,19 @@ fun SettingsScreen(
                                         text = "Data Structure Inspector",
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = Slate900
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
                                         text = "Inspect live heaps, HashMaps, and stacks",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Slate600
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
-                                tint = Slate600
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -261,7 +326,7 @@ fun SettingsScreen(
                         text = "How Splitz Works",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate800
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -321,7 +386,7 @@ fun SettingsScreen(
             item {
                 HelpAccordionCard(
                     icon = Icons.AutoMirrored.Filled.Undo,
-                    iconTint = Slate800,
+                    iconTint = BrandTeal,
                     title = "Undo & Redo",
                     summary = "Reverse or replay any expense changes effortlessly.",
                     details = "All ledger mutations are tracked on a Last-In First-Out (LIFO) stack. Tapping Undo reverts the last operation, and Redo restores it, keeping your group state completely safe."
@@ -340,10 +405,21 @@ private fun SettingRow(
     icon: ImageVector,
     iconColor: Color,
     title: String,
-    value: String
+    value: String,
+    onClick: (() -> Unit)? = null
 ) {
+    val rowModifier = if (onClick != null) {
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(vertical = 4.dp)
+    } else {
+        Modifier.fillMaxWidth()
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = rowModifier,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -367,14 +443,25 @@ private fun SettingRow(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = Slate900
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Slate600
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (onClick != null) {
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
     }
 }
 
@@ -395,7 +482,7 @@ private fun HelpAccordionCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier
@@ -431,32 +518,32 @@ private fun HelpAccordionCard(
                             text = title,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Slate900
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = summary,
                             style = MaterialTheme.typography.bodySmall,
-                            color = Slate600
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = if (expanded) "Collapse" else "Expand",
-                    tint = Slate600
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             AnimatedVisibility(visible = expanded) {
                 Column {
                     Spacer(modifier = Modifier.height(12.dp))
-                    HorizontalDivider(color = Slate100)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = details,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Slate800,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.25f
                     )
                 }

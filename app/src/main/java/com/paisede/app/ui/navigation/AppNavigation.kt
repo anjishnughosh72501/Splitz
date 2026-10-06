@@ -240,6 +240,7 @@ fun AppNavigation(
             val groupId = backStackEntry.arguments?.getString("groupId")
             SettingsScreen(
                 groupId = groupId,
+                themePreferences = app.themePreferences,
                 onNavigateBack = { navController.popBackStack() },
                 onInspectDataStructures = { gid ->
                     navController.navigate(Screen.DebugPanel.createRoute(gid))

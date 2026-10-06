@@ -53,13 +53,14 @@ import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate100
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.paisede.app.ui.viewmodel.GroupCardData
 import com.paisede.app.ui.viewmodel.HomeViewModel
+
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 @Composable
 fun HomeScreen(
@@ -70,12 +71,51 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var groupToDelete by remember { mutableStateOf<GroupCardData?>(null) }
 
     LaunchedEffect(state.userMessage) {
         state.userMessage?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.clearMessage()
         }
+    }
+
+    // Confirmation Dialog for Group Deletion
+    if (groupToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { groupToDelete = null },
+            title = {
+                Text(
+                    text = "Delete Group?",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you sure you want to delete \"${groupToDelete?.group?.name}\"? All members, expenses, balances, and settlement records in this group will be permanently removed.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val toDelete = groupToDelete
+                        groupToDelete = null
+                        toDelete?.let { viewModel.deleteGroup(it.group.id) }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed)
+                ) {
+                    Text("Delete", color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { groupToDelete = null }) {
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -109,12 +149,12 @@ fun HomeScreen(
                         text = "Splitz",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Slate900
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         text = "Split expenses easily",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -146,7 +186,7 @@ fun HomeScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings & Help",
-                            tint = Slate800
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -172,7 +212,7 @@ fun HomeScreen(
                             text = "Your Groups",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
-                            color = Slate800,
+                            color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(bottom = 4.dp)
                         )
                     }
@@ -180,7 +220,8 @@ fun HomeScreen(
                     items(state.groups, key = { it.group.id }) { cardData ->
                         GroupCard(
                             data = cardData,
-                            onClick = { onGroupClick(cardData.group.id) }
+                            onClick = { onGroupClick(cardData.group.id) },
+                            onDeleteClick = { groupToDelete = cardData }
                         )
                     }
 
@@ -196,7 +237,8 @@ fun HomeScreen(
 @Composable
 fun GroupCard(
     data: GroupCardData,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -205,7 +247,7 @@ fun GroupCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier
@@ -222,34 +264,50 @@ fun GroupCard(
                         text = data.group.name,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Slate900
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "${data.memberCount} members",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clip(CircleShape)
-                        .background(BrandTeal.copy(alpha = 0.1f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Group,
-                        contentDescription = "Group",
-                        tint = BrandTeal,
-                        modifier = Modifier.size(22.dp)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = onDeleteClick,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteOutline,
+                            contentDescription = "Delete Group",
+                            tint = DebtRed.copy(alpha = 0.8f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(CircleShape)
+                            .background(BrandTeal.copy(alpha = 0.12f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Group,
+                            contentDescription = "Group",
+                            tint = BrandTeal,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            androidx.compose.material3.HorizontalDivider(color = Slate100)
+            androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
@@ -261,7 +319,7 @@ fun GroupCard(
                     Text(
                         text = "Total Spending",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     MoneyText(
                         amountPaise = data.totalSpendingPaise,
@@ -280,7 +338,7 @@ fun GroupCard(
                     Text(
                         text = statusText,
                         style = MaterialTheme.typography.labelMedium,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     MoneyText(
                         amountPaise = data.userNetBalancePaise,

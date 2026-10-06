@@ -105,6 +105,17 @@ class HomeViewModel(
         }
     }
 
+    fun deleteGroup(groupId: String) {
+        viewModelScope.launch {
+            try {
+                groupRepository.deleteGroup(groupId)
+                _uiState.update { it.copy(userMessage = "Group deleted successfully") }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(userMessage = "Failed to delete group: ${e.message}") }
+            }
+        }
+    }
+
     fun clearMessage() {
         _uiState.update { it.copy(userMessage = null) }
     }
@@ -180,6 +191,17 @@ class GroupViewModel(
             val success = expenseRepository.redoExpense(groupId)
             val msg = if (success) "Expense restored" else "Nothing to redo"
             _uiState.update { it.copy(message = msg) }
+        }
+    }
+
+    fun deleteGroup(onDeleted: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                groupRepository.deleteGroup(groupId)
+                onDeleted()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(message = "Failed to delete group: ${e.message}") }
+            }
         }
     }
 

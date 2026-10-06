@@ -67,13 +67,15 @@ import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.IndigoPurple
-import com.paisede.app.ui.theme.Slate100
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate700
 import com.paisede.app.ui.theme.Slate800
 import com.paisede.app.ui.theme.Slate900
 import com.paisede.app.ui.viewmodel.GroupViewModel
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 @Composable
 fun GroupDashboardScreen(
@@ -91,12 +93,51 @@ fun GroupDashboardScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.message) {
         state.message?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.clearMessage()
         }
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = {
+                Text(
+                    text = "Delete Group?",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you sure you want to delete \"${state.group?.name ?: "this group"}\"? All expenses, balances, and member records will be permanently removed.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        viewModel.deleteGroup {
+                            onNavigateBack()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed)
+                ) {
+                    Text("Delete", color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -114,7 +155,7 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Undo,
                             contentDescription = "Undo",
-                            tint = if (state.canUndo) BrandTeal else Slate200
+                            tint = if (state.canUndo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                         )
                     }
                     IconButton(
@@ -124,7 +165,16 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Redo,
                             contentDescription = "Redo",
-                            tint = if (state.canRedo) BrandTeal else Slate200
+                            tint = if (state.canRedo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                        )
+                    }
+                    IconButton(
+                        onClick = { showDeleteDialog = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteOutline,
+                            contentDescription = "Delete Group",
+                            tint = DebtRed.copy(alpha = 0.85f)
                         )
                     }
                     IconButton(
@@ -133,7 +183,7 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings & Help",
-                            tint = Slate800
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -164,7 +214,10 @@ fun GroupDashboardScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Slate900),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surface else Slate900
+                    ),
+                    border = if (isSystemInDarkTheme()) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null,
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Column(
@@ -195,7 +248,7 @@ fun GroupDashboardScreen(
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(Slate800)
+                                    .background(if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surfaceVariant else Slate800)
                                     .padding(horizontal = 12.dp, vertical = 6.dp)
                             ) {
                                 Text(
@@ -208,7 +261,7 @@ fun GroupDashboardScreen(
                         }
 
                         Spacer(modifier = Modifier.height(18.dp))
-                        androidx.compose.material3.HorizontalDivider(color = Slate800)
+                        androidx.compose.material3.HorizontalDivider(color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outlineVariant else Slate800)
                         Spacer(modifier = Modifier.height(14.dp))
 
                         Row(
@@ -329,8 +382,8 @@ fun GroupDashboardScreen(
                     title = "Expenses",
                     subtitle = "All expenses",
                     icon = Icons.Default.ReceiptLong,
-                    iconBg = Slate200,
-                    iconTint = Slate800,
+                    iconBg = MaterialTheme.colorScheme.surfaceVariant,
+                    iconTint = MaterialTheme.colorScheme.onSurfaceVariant,
                     onClick = onExpensesClick
                 )
             }
@@ -362,8 +415,8 @@ fun GroupDashboardScreen(
                     title = "Settings & Help",
                     subtitle = "Guides & DS inspect",
                     icon = Icons.Default.HelpOutline,
-                    iconBg = Slate200,
-                    iconTint = Slate800,
+                    iconBg = MaterialTheme.colorScheme.surfaceVariant,
+                    iconTint = MaterialTheme.colorScheme.onSurfaceVariant,
                     onClick = onSettingsClick
                 )
             }
@@ -391,7 +444,7 @@ fun ActionTile(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier
@@ -419,7 +472,7 @@ fun ActionTile(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Slate900
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(2.dp))
@@ -427,7 +480,7 @@ fun ActionTile(
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
-                color = Slate600
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

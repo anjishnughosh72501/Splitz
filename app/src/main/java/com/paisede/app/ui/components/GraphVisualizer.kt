@@ -18,14 +18,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.paisede.app.domain.algorithm.DebtEdge
 import com.paisede.app.domain.model.Member
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate700
-import com.paisede.app.ui.theme.Slate900
+
 import com.paisede.app.util.CurrencyUtils
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -49,7 +48,7 @@ fun GraphVisualizer(
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 2.dp,
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         if (members.isEmpty()) {
             EmptyStateView(
@@ -58,6 +57,12 @@ fun GraphVisualizer(
             )
             return@Surface
         }
+
+        val onSurfaceColor = MaterialTheme.colorScheme.onSurface.toArgb()
+        val surfaceColor = MaterialTheme.colorScheme.surface
+        val outlineColor = MaterialTheme.colorScheme.outlineVariant
+        val badgeBgColor = MaterialTheme.colorScheme.surfaceVariant.toArgb()
+        val badgeTextColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
 
         Canvas(modifier = Modifier.fillMaxSize().padding(24.dp)) {
             val width = size.width
@@ -89,7 +94,9 @@ fun GraphVisualizer(
                     end = end,
                     nodeRadius = nodeRadius,
                     amountPaise = edge.amountPaise,
-                    edgeColor = edgeColor
+                    edgeColor = edgeColor,
+                    badgeBgColor = badgeBgColor,
+                    badgeTextColor = badgeTextColor
                 )
             }
 
@@ -99,12 +106,12 @@ fun GraphVisualizer(
 
                 // Node background circle
                 drawCircle(
-                    color = Slate900,
+                    color = outlineColor,
                     radius = nodeRadius,
                     center = pos
                 )
                 drawCircle(
-                    color = Color.White,
+                    color = surfaceColor,
                     radius = nodeRadius - 2.dp.toPx(),
                     center = pos
                 )
@@ -112,7 +119,7 @@ fun GraphVisualizer(
                 // Member Name / Initial text
                 val initial = member.name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
                 val textPaint = android.graphics.Paint().apply {
-                    color = android.graphics.Color.DKGRAY
+                    color = onSurfaceColor
                     textSize = 14.dp.toPx()
                     textAlign = android.graphics.Paint.Align.CENTER
                     isFakeBoldText = true
@@ -128,7 +135,7 @@ fun GraphVisualizer(
 
                 // Sub-caption with member's first name
                 val namePaint = android.graphics.Paint().apply {
-                    color = android.graphics.Color.BLACK
+                    color = onSurfaceColor
                     textSize = 11.dp.toPx()
                     textAlign = android.graphics.Paint.Align.CENTER
                     isAntiAlias = true
@@ -151,7 +158,9 @@ private fun DrawScope.drawDirectedCurvedEdge(
     end: Offset,
     nodeRadius: Float,
     amountPaise: Long,
-    edgeColor: Color
+    edgeColor: Color,
+    badgeBgColor: Int,
+    badgeTextColor: Int
 ) {
     val dx = end.x - start.x
     val dy = end.y - start.y
@@ -205,7 +214,7 @@ private fun DrawScope.drawDirectedCurvedEdge(
     // Amount label at curve apex
     val labelText = CurrencyUtils.formatPaise(amountPaise)
     val textPaint = android.graphics.Paint().apply {
-        color = android.graphics.Color.WHITE
+        color = badgeTextColor
         textSize = 10.dp.toPx()
         textAlign = android.graphics.Paint.Align.CENTER
         isFakeBoldText = true
@@ -213,7 +222,7 @@ private fun DrawScope.drawDirectedCurvedEdge(
     }
 
     val bgPaint = android.graphics.Paint().apply {
-        color = android.graphics.Color.rgb(15, 23, 42) // Slate900
+        color = badgeBgColor
         isAntiAlias = true
     }
 

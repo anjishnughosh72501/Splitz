@@ -39,9 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.paisede.app.ui.theme.BrandTeal
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate400
-import com.paisede.app.ui.theme.Slate600
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,7 +129,7 @@ fun EmptyStateView(
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = Slate600,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
 
@@ -189,7 +187,7 @@ fun SectionHeader(
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
-            color = Slate600,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold
         )
 

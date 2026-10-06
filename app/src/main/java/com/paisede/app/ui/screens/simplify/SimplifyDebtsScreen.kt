@@ -1,6 +1,7 @@
 package com.paisede.app.ui.screens.simplify
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -97,7 +98,10 @@ fun SimplifyDebtsScreen(
                     .fillMaxWidth()
                     .padding(20.dp),
                 shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = Slate900),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surface else Slate900
+                ),
+                border = if (isSystemInDarkTheme()) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null,
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
@@ -169,7 +173,7 @@ fun SimplifyDebtsScreen(
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
-                    androidx.compose.material3.HorizontalDivider(color = Slate800)
+                    androidx.compose.material3.HorizontalDivider(color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outlineVariant else Slate800)
                     Spacer(modifier = Modifier.height(10.dp))
 
                     val reduction = if (state.beforeCount > state.afterCount) state.beforeCount - state.afterCount else 0
@@ -190,7 +194,7 @@ fun SimplifyDebtsScreen(
                         .padding(horizontal = 20.dp, vertical = 2.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
                         Row(
@@ -202,7 +206,7 @@ fun SimplifyDebtsScreen(
                                 text = "Strategy:",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Slate800
+                                color = MaterialTheme.colorScheme.onSurface
                             )
 
                             Row {
@@ -221,8 +225,8 @@ fun SimplifyDebtsScreen(
                                     onClick = { viewModel.selectAlgorithm("Exact") },
                                     label = { Text("Exact Min (${state.exactCount})") },
                                     colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = Slate900,
-                                        selectedLabelColor = Color.White
+                                        selectedContainerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.primaryContainer else Slate900,
+                                        selectedLabelColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
                                     )
                                 )
                             }
@@ -241,7 +245,7 @@ fun SimplifyDebtsScreen(
                 TabRow(
                     selectedTabIndex = selectedViewTab,
                     modifier = Modifier.width(220.dp),
-                    containerColor = Slate100,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     contentColor = BrandTeal
                 ) {
                     Tab(
@@ -302,7 +306,7 @@ fun SimplifyDebtsScreen(
                         Text(
                             text = "Visual settlement flow",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Slate600,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }
@@ -325,7 +329,7 @@ fun SimplifiedTransactionCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(
             modifier = Modifier
@@ -345,12 +349,12 @@ fun SimplifiedTransactionCard(
                         text = debtorName,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate900
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "pays",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -370,12 +374,12 @@ fun SimplifiedTransactionCard(
                         text = creditorName,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate900
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "receives",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

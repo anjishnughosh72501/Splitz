@@ -9,7 +9,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate600
 import com.paisede.app.util.CurrencyUtils
 
 @Composable
@@ -26,7 +25,7 @@ fun MoneyText(
         MoneyColorMode.AUTO -> when {
             amountPaise > 0L -> CreditGreen
             amountPaise < 0L -> DebtRed
-            else -> Slate600
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
         }
         MoneyColorMode.CREDIT -> CreditGreen
         MoneyColorMode.DEBT -> DebtRed

@@ -43,7 +43,7 @@ import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate600
+
 import kotlinx.coroutines.launch
 
 @Composable
@@ -84,7 +84,7 @@ fun CreateGroupScreen(
                         text = "Group Details",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -106,7 +106,7 @@ fun CreateGroupScreen(
                         text = "Add Members",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
@@ -146,7 +146,7 @@ fun CreateGroupScreen(
                     Text(
                         text = "Members (${members.size})",
                         style = MaterialTheme.typography.labelLarge,
-                        color = Slate600,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }

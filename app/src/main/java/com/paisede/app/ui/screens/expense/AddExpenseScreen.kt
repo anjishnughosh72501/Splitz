@@ -1,6 +1,7 @@
 package com.paisede.app.ui.screens.expense
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -114,7 +115,7 @@ fun AddExpenseScreen(
                         text = "Amount",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     OutlinedTextField(
@@ -144,7 +145,7 @@ fun AddExpenseScreen(
                         text = "Description",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     OutlinedTextField(
@@ -164,7 +165,7 @@ fun AddExpenseScreen(
                         text = "Paid By",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     LazyRow(
@@ -181,7 +182,7 @@ fun AddExpenseScreen(
                                         name = member.name,
                                         size = 24,
                                         backgroundColor = if (isSelected) Color.White else BrandTeal.copy(alpha = 0.2f),
-                                        textColor = if (isSelected) BrandTeal else Slate800
+                                        textColor = if (isSelected) BrandTeal else MaterialTheme.colorScheme.onSurface
                                     )
                                 },
                                 colors = FilterChipDefaults.filterChipColors(
@@ -199,7 +200,7 @@ fun AddExpenseScreen(
                         text = "Category",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     LazyRow(
@@ -212,8 +213,8 @@ fun AddExpenseScreen(
                                 onClick = { viewModel.setCategory(cat.id) },
                                 label = { Text(cat.name) },
                                 colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Slate800,
-                                    selectedLabelColor = Color.White
+                                    selectedContainerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.primaryContainer else Slate800,
+                                    selectedLabelColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
                                 )
                             )
                         }
@@ -226,7 +227,7 @@ fun AddExpenseScreen(
                         text = "Split Method",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
 
@@ -256,7 +257,7 @@ fun AddExpenseScreen(
                                 Text(
                                     text = "Split equally among participants:",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Slate600
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 members.forEach { member ->
                                     val isChecked = state.participantIds.contains(member.id)
@@ -282,7 +283,7 @@ fun AddExpenseScreen(
                                 Text(
                                     text = "Specify amount for each member:",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Slate600
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 members.forEach { member ->
                                     var exactVal by remember { mutableStateOf("") }
@@ -313,7 +314,7 @@ fun AddExpenseScreen(
                                 Text(
                                     text = "Specify percentage share for each member:",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Slate600
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 members.forEach { member ->
                                     var percentVal by remember { mutableStateOf("") }
@@ -345,7 +346,7 @@ fun AddExpenseScreen(
                                 Text(
                                     text = "Specify shares for each member:",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Slate600
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 members.forEach { member ->
                                     var shareVal by remember { mutableStateOf("1") }
@@ -383,7 +384,7 @@ fun AddExpenseScreen(
                         text = "Summary",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Slate600
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(6.dp))
 
@@ -391,7 +392,7 @@ fun AddExpenseScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             val payerName = members.firstOrNull { it.id == state.payerId }?.name ?: "Unknown"
@@ -399,13 +400,13 @@ fun AddExpenseScreen(
                                 text = "$payerName paid ${CurrencyUtils.formatPaise(state.amountPaise)}",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Slate900
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = "Split among ${state.participantIds.size} participants",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Slate600
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
