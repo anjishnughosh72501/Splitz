@@ -80,6 +80,7 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun SplitzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    fontScale: Float = 1.0f,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
@@ -94,11 +95,21 @@ fun SplitzTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+    val currentDensity = androidx.compose.ui.platform.LocalDensity.current
+    val scaledDensity = androidx.compose.ui.unit.Density(
+        density = currentDensity.density,
+        fontScale = currentDensity.fontScale * fontScale
     )
+
+    androidx.compose.runtime.CompositionLocalProvider(
+        androidx.compose.ui.platform.LocalDensity provides scaledDensity
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
 
 @Composable

@@ -12,12 +12,21 @@ enum class AppThemeMode(val displayName: String) {
     DARK("Dark Theme")
 }
 
+enum class AppFontSize(val displayName: String, val scale: Float) {
+    SMALL("Small", 0.85f),
+    MEDIUM("Medium", 1.0f),
+    LARGE("Large", 1.15f)
+}
+
 class ThemePreferences(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("splitz_theme_prefs", Context.MODE_PRIVATE)
 
     private val _themeMode = MutableStateFlow(loadThemeMode())
     val themeMode: StateFlow<AppThemeMode> = _themeMode.asStateFlow()
+
+    private val _fontSize = MutableStateFlow(loadFontSize())
+    val fontSize: StateFlow<AppFontSize> = _fontSize.asStateFlow()
 
     private fun loadThemeMode(): AppThemeMode {
         val saved = prefs.getString("theme_mode", AppThemeMode.SYSTEM.name)
@@ -31,5 +40,19 @@ class ThemePreferences(context: Context) {
     fun setThemeMode(mode: AppThemeMode) {
         prefs.edit().putString("theme_mode", mode.name).apply()
         _themeMode.value = mode
+    }
+
+    private fun loadFontSize(): AppFontSize {
+        val saved = prefs.getString("font_size", AppFontSize.MEDIUM.name)
+        return try {
+            AppFontSize.valueOf(saved ?: AppFontSize.MEDIUM.name)
+        } catch (e: Exception) {
+            AppFontSize.MEDIUM
+        }
+    }
+
+    fun setFontSize(size: AppFontSize) {
+        prefs.edit().putString("font_size", size.name).apply()
+        _fontSize.value = size
     }
 }

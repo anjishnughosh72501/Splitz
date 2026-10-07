@@ -54,6 +54,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.FormatSize
+import com.paisede.app.data.preferences.AppFontSize
 import com.paisede.app.data.preferences.AppThemeMode
 import com.paisede.app.data.preferences.ThemePreferences
 import com.paisede.app.ui.components.SplitzTopAppBar
@@ -73,7 +75,9 @@ fun SettingsScreen(
     onInspectDataStructures: ((String) -> Unit)? = null
 ) {
     val currentThemeMode by (themePreferences?.themeMode ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppThemeMode.SYSTEM) }).collectAsState()
+    val currentFontSize by (themePreferences?.fontSize ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppFontSize.MEDIUM) }).collectAsState()
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showFontSizeDialog by remember { mutableStateOf(false) }
 
     if (showThemeDialog) {
         AlertDialog(
@@ -124,6 +128,61 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
+                    Text("Close", color = SplitzColors.primary(), fontWeight = FontWeight.SemiBold)
+                }
+            }
+        )
+    }
+
+    if (showFontSizeDialog) {
+        AlertDialog(
+            onDismissRequest = { showFontSizeDialog = false },
+            shape = RoundedCornerShape(SplitzShapes.sheet),
+            containerColor = SplitzColors.surface(),
+            title = {
+                Text(
+                    text = "Choose Font Size",
+                    style = SplitzTypography.TitleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = SplitzColors.textPrimary()
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    AppFontSize.entries.forEach { size ->
+                        val isSelected = currentFontSize == size
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(SplitzShapes.SM))
+                                .clickable {
+                                    themePreferences?.setFontSize(size)
+                                    showFontSizeDialog = false
+                                }
+                                .padding(vertical = 10.dp, horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = isSelected,
+                                onClick = {
+                                    themePreferences?.setFontSize(size)
+                                    showFontSizeDialog = false
+                                },
+                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.primary())
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = size.displayName,
+                                style = SplitzTypography.BodyLarge,
+                                color = SplitzColors.textPrimary(),
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showFontSizeDialog = false }) {
                     Text("Close", color = SplitzColors.primary(), fontWeight = FontWeight.SemiBold)
                 }
             }
@@ -245,6 +304,14 @@ fun SettingsScreen(
                             title = "Appearance",
                             value = currentThemeMode.displayName,
                             onClick = { showThemeDialog = true }
+                        )
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
+                        SettingRow(
+                            icon = Icons.Default.FormatSize,
+                            iconColor = SplitzColors.primary(),
+                            title = "Font Size",
+                            value = currentFontSize.displayName,
+                            onClick = { showFontSizeDialog = true }
                         )
                     }
                 }

@@ -21,13 +21,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val themeMode by app.themePreferences.themeMode.collectAsState()
+            val fontSize by app.themePreferences.fontSize.collectAsState()
             val isDark = when (themeMode) {
                 AppThemeMode.SYSTEM -> isSystemInDarkTheme()
                 AppThemeMode.LIGHT -> false
                 AppThemeMode.DARK -> true
             }
 
-            SplitzTheme(darkTheme = isDark) {
+            SplitzTheme(
+                darkTheme = isDark,
+                fontScale = fontSize.scale
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
