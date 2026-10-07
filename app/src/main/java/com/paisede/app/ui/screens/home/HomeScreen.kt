@@ -44,12 +44,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
@@ -72,6 +75,7 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var groupToDelete by remember { mutableStateOf<GroupCardData?>(null) }
+    var groupForMembersDialog by remember { mutableStateOf<GroupCardData?>(null) }
 
     LaunchedEffect(state.userMessage) {
         state.userMessage?.let {
@@ -113,6 +117,86 @@ fun HomeScreen(
             dismissButton = {
                 TextButton(onClick = { groupToDelete = null }) {
                     Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        )
+    }
+
+    // Dialog to show Member Names when Member Icon is clicked
+    if (groupForMembersDialog != null) {
+        val groupData = groupForMembersDialog!!
+        AlertDialog(
+            onDismissRequest = { groupForMembersDialog = null },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Group,
+                    contentDescription = null,
+                    tint = BrandTeal,
+                    modifier = Modifier.size(28.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = groupData.group.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "Members (${groupData.members.size})",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (groupData.members.isEmpty()) {
+                        Text(
+                            text = "No members in this group",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 260.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(groupData.members) { member ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                            RoundedCornerShape(10.dp)
+                                        )
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    UserAvatar(name = member.name, size = 32)
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = member.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { groupForMembersDialog = null }) {
+                    Text("Close", color = BrandTeal, fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -221,7 +305,8 @@ fun HomeScreen(
                         GroupCard(
                             data = cardData,
                             onClick = { onGroupClick(cardData.group.id) },
-                            onDeleteClick = { groupToDelete = cardData }
+                            onDeleteClick = { groupToDelete = cardData },
+                            onMembersClick = { groupForMembersDialog = cardData }
                         )
                     }
 
@@ -238,7 +323,8 @@ fun HomeScreen(
 fun GroupCard(
     data: GroupCardData,
     onClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onMembersClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -270,7 +356,8 @@ fun GroupCard(
                     Text(
                         text = "${data.memberCount} members",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clickable { onMembersClick() }
                     )
                 }
 
@@ -293,12 +380,13 @@ fun GroupCard(
                         modifier = Modifier
                             .size(42.dp)
                             .clip(CircleShape)
-                            .background(BrandTeal.copy(alpha = 0.12f)),
+                            .background(BrandTeal.copy(alpha = 0.12f))
+                            .clickable { onMembersClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Group,
-                            contentDescription = "Group",
+                            contentDescription = "Show Members",
                             tint = BrandTeal,
                             modifier = Modifier.size(22.dp)
                         )

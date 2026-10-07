@@ -71,11 +71,17 @@ import com.paisede.app.ui.theme.Slate800
 import com.paisede.app.ui.theme.Slate900
 import com.paisede.app.ui.viewmodel.GroupViewModel
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextAlign
+import com.paisede.app.ui.components.UserAvatar
 
 @Composable
 fun GroupDashboardScreen(
@@ -94,6 +100,7 @@ fun GroupDashboardScreen(
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showMembersDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -140,6 +147,84 @@ fun GroupDashboardScreen(
         )
     }
 
+    if (showMembersDialog) {
+        AlertDialog(
+            onDismissRequest = { showMembersDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Group,
+                    contentDescription = null,
+                    tint = BrandTeal,
+                    modifier = Modifier.size(28.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = state.group?.name ?: "Group Members",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "Members (${state.members.size})",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (state.members.isEmpty()) {
+                        Text(
+                            text = "No members in this group",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 260.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(state.members) { member ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                            RoundedCornerShape(10.dp)
+                                        )
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    UserAvatar(name = member.name, size = 32)
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = member.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showMembersDialog = false }) {
+                    Text("Close", color = BrandTeal, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        )
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -166,6 +251,15 @@ fun GroupDashboardScreen(
                             imageVector = Icons.AutoMirrored.Filled.Redo,
                             contentDescription = "Redo",
                             tint = if (state.canRedo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                        )
+                    }
+                    IconButton(
+                        onClick = { showMembersDialog = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Group,
+                            contentDescription = "Show Members",
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     IconButton(
@@ -245,12 +339,21 @@ fun GroupDashboardScreen(
                                 )
                             }
 
-                            Box(
+                            Row(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(12.dp))
                                     .background(if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surfaceVariant else Slate800)
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                                    .clickable { showMembersDialog = true }
+                                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
+                                Icon(
+                                    imageVector = Icons.Default.Group,
+                                    contentDescription = "Show Members",
+                                    tint = BrandTeal,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = "${state.members.size} Members",
                                     style = MaterialTheme.typography.labelMedium,

@@ -45,7 +45,8 @@ data class GroupCardData(
     val group: Group,
     val memberCount: Int,
     val totalSpendingPaise: Long,
-    val userNetBalancePaise: Long
+    val userNetBalancePaise: Long,
+    val members: List<Member> = emptyList()
 )
 
 data class HomeUiState(
@@ -84,7 +85,8 @@ class HomeViewModel(
                         group = group,
                         memberCount = members.size,
                         totalSpendingPaise = totalSpending,
-                        userNetBalancePaise = userBal
+                        userNetBalancePaise = userBal,
+                        members = members
                     )
                 }
                 _uiState.update { it.copy(groups = cards, isLoading = false) }
