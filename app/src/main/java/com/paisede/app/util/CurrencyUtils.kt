@@ -1,46 +1,57 @@
 package com.paisede.app.util
 
+import com.paisede.app.data.preferences.AppCurrency
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.math.abs
 
 /**
- * Utility for handling Indian Rupee currency operations strictly using [Long] paise.
+ * Utility for handling multi-currency operations strictly using [Long] subunit/paise values.
  * Never uses Float, Double, or BigDecimal for monetary math.
  *
- * 1 Rupee = 100 Paise
- * ₹100 = 10,000 Paise
+ * 1 Major Unit = 100 Minor Units (Paise / Cents / Pence)
+ * E.g., ₹100 = 10,000 Paise; $100 = 10,000 Cents
  */
 object CurrencyUtils {
 
     const val PAISE_PER_RUPEE = 100L
+    const val SUBUNITS_PER_UNIT = 100L
 
     /**
-     * Converts rupees (as integer) to paise.
+     * Converts major units (as integer) to subunits (paise/cents).
      */
-    fun rupeesToPaise(rupees: Long): Long = rupees * PAISE_PER_RUPEE
+    fun rupeesToPaise(rupees: Long): Long = rupees * SUBUNITS_PER_UNIT
 
     /**
-     * Formats an amount in paise to Indian currency string.
+     * Formats an amount in subunits (paise/cents) to localized currency string.
+     * By default uses Indian Rupee format if no currency is passed (backward compatible).
      * Examples:
-     *  120000L -> "₹1,200"
-     *  10000000L -> "₹1,00,000"
-     *  125000000L -> "₹12,50,000"
-     *  3450L -> "₹34.50"
-     *  -45000L -> "-₹450"
+     *  120000L -> "₹1,200" / "$1,200"
+     *  10000000L -> "₹1,00,000" / "$100,000"
+     *  125000000L -> "₹12,50,000" / "$1,250,000"
+     *  3450L -> "₹34.50" / "$34.50"
+     *  -45000L -> "-₹450" / "-$450"
      */
     fun formatPaise(
         paise: Long,
         showSign: Boolean = false,
         includeSymbol: Boolean = true,
-        alwaysShowDecimals: Boolean = false
+        alwaysShowDecimals: Boolean = false,
+        currency: AppCurrency = AppCurrency.INR
     ): String {
         val isNegative = paise < 0
         val absPaise = abs(paise)
-        val rupees = absPaise / PAISE_PER_RUPEE
-        val remPaise = absPaise % PAISE_PER_RUPEE
+        val units = absPaise / SUBUNITS_PER_UNIT
+        val remSubunits = absPaise % SUBUNITS_PER_UNIT
 
-        val formattedRupees = formatIndianNumber(rupees)
-        val decimalPart = if (alwaysShowDecimals || remPaise != 0L) {
-            ".%02d".format(remPaise)
+        val formattedUnits = if (currency.isIndianNumbering) {
+            formatIndianNumber(units)
+        } else {
+            formatInternationalNumber(units)
+        }
+
+        val decimalPart = if (alwaysShowDecimals || remSubunits != 0L) {
+            ".%02d".format(remSubunits)
         } else {
             ""
         }
@@ -51,8 +62,8 @@ object CurrencyUtils {
             else -> ""
         }
 
-        val symbol = if (includeSymbol) "₹" else ""
-        return "$prefix$symbol$formattedRupees$decimalPart"
+        val symbol = if (includeSymbol) currency.symbol else ""
+        return "$prefix$symbol$formattedUnits$decimalPart"
     }
 
     /**
@@ -84,14 +95,32 @@ object CurrencyUtils {
     }
 
     /**
-     * Parses user currency string input to paise.
+     * Standard 3-digit comma grouping (US/International standard)
+     * E.g. 100000 -> 100,000
+     */
+    fun formatInternationalNumber(number: Long): String {
+        return NumberFormat.getIntegerInstance(Locale.US).format(number)
+    }
+
+    /**
+     * Parses user currency string input to subunits (paise).
      * Accepts inputs like:
-     * "1200", "1200.50", "₹1,200", "1,00,000"
+     * "1200", "1200.50", "₹1,200", "$1,200", "1,00,000"
      * Returns null if invalid or negative.
      */
-    fun parseCurrencyInput(input: String): Long? {
-        val sanitized = input.trim()
+    fun parseCurrencyInput(input: String, currency: AppCurrency? = null): Long? {
+        var sanitized = input.trim()
+        if (currency != null) {
+            sanitized = sanitized.replace(currency.symbol, "")
+        }
+        // Also strip common symbols defensively
+        sanitized = sanitized
             .replace("₹", "")
+            .replace("$", "")
+            .replace("€", "")
+            .replace("£", "")
+            .replace("¥", "")
+            .replace("د.إ", "")
             .replace(",", "")
             .trim()
 
@@ -100,12 +129,12 @@ object CurrencyUtils {
         val parts = sanitized.split('.')
         if (parts.size > 2) return null
 
-        val rupeesPart = parts[0]
-        if (!rupeesPart.all { it.isDigit() }) return null
-        val rupees = if (rupeesPart.isEmpty()) 0L else rupeesPart.toLongOrNull() ?: return null
-        if (rupees < 0) return null
+        val unitsPart = parts[0]
+        if (!unitsPart.all { it.isDigit() }) return null
+        val units = if (unitsPart.isEmpty()) 0L else unitsPart.toLongOrNull() ?: return null
+        if (units < 0) return null
 
-        val paise = if (parts.size == 2) {
+        val subunits = if (parts.size == 2) {
             val decimalStr = parts[1]
             if (!decimalStr.all { it.isDigit() }) return null
             when (decimalStr.length) {
@@ -118,6 +147,6 @@ object CurrencyUtils {
             0L
         }
 
-        return (rupees * PAISE_PER_RUPEE) + paise
+        return (units * SUBUNITS_PER_UNIT) + subunits
     }
 }

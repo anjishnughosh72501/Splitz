@@ -18,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,10 +31,13 @@ import androidx.compose.ui.unit.dp
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzSurface
 import com.paisede.app.ui.components.SplitzTopAppBar
+import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.SettlementViewModel
 
@@ -64,31 +65,30 @@ fun SettlementHistoryScreen(
             if (state.pastSettlements.isEmpty()) {
                 EmptyStateView(
                     title = "No Past Settlements",
-                    subtitle = "When payments are recorded via 'Settle Up', they will appear here.",
+                    subtitle = "When payments are recorded via 'Settle Up', they will appear in this timeline.",
                     icon = Icons.Default.History,
                     modifier = Modifier.weight(1f)
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(SplitzSpacing.lg),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(state.pastSettlements) { tx ->
                         val fromName = state.members[tx.fromUserId]?.name ?: "Member"
                         val toName = state.members[tx.toUserId]?.name ?: "Member"
 
-                        Card(
+                        SplitzSurface(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(SplitzShapes.MD),
-                            colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+                            shape = RoundedCornerShape(SplitzShapes.cardMedium),
+                            backgroundColor = SplitzColors.surface(),
+                            borderColor = SplitzColors.borderSubtle()
                         ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(16.dp),
+                                    .padding(SplitzSpacing.md),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {

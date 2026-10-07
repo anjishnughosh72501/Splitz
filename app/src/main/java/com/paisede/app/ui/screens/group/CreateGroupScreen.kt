@@ -2,6 +2,7 @@ package com.paisede.app.ui.screens.group
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,23 +43,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.paisede.app.domain.repository.GroupRepository
+import com.paisede.app.ui.components.SplitzPrimaryButton
+import com.paisede.app.ui.components.SplitzSurface
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
 import kotlinx.coroutines.launch
 
 @Composable
 fun CreateGroupScreen(
     groupRepository: GroupRepository,
+    userPreferences: com.paisede.app.data.preferences.UserPreferences? = null,
     onNavigateBack: () -> Unit,
     onGroupCreated: (String) -> Unit
 ) {
+    val userNameState = userPreferences?.userName?.collectAsState()?.value
+    val currentUserName = if (!userNameState.isNullOrBlank()) userNameState else "You"
+    val defaultUserMemberName = "Me ($currentUserName)"
+
     var groupName by remember { mutableStateOf("") }
     var currentMemberInput by remember { mutableStateOf("") }
-    val members = remember { mutableStateListOf("Ali", "Maya") }
+    val members = remember { mutableStateListOf(defaultUserMemberName, "Maya") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isSaving by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -75,21 +85,27 @@ fun CreateGroupScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .background(SplitzColors.background())
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = SplitzSpacing.lg)
         ) {
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
             ) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Group Details",
-                        style = SplitzTypography.LabelLarge,
+                        text = "CREATE A GROUP",
+                        style = SplitzTypography.LabelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
+                        color = SplitzColors.textMuted()
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Trips, roommates, friends, projects",
+                        style = SplitzTypography.BodyMedium,
+                        color = SplitzColors.textSecondary()
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
                     OutlinedTextField(
                         value = groupName,
                         onValueChange = {
@@ -171,34 +187,39 @@ fun CreateGroupScreen(
                 }
 
                 itemsIndexed(members) { index, name ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(SplitzShapes.SM))
-                            .background(SplitzColors.surface())
-                            .padding(horizontal = 14.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    SplitzSurface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(SplitzShapes.SM),
+                        backgroundColor = SplitzColors.surface(),
+                        borderColor = SplitzColors.borderSubtle()
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            UserAvatar(name = name, size = 36)
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = name,
-                                style = SplitzTypography.BodyLarge,
-                                fontWeight = FontWeight.Medium,
-                                color = SplitzColors.textPrimary()
-                            )
-                        }
-
-                        if (members.size > 2) {
-                            IconButton(onClick = { members.removeAt(index) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Remove",
-                                    tint = DebtRed,
-                                    modifier = Modifier.size(18.dp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                UserAvatar(name = name, size = 34)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = name,
+                                    style = SplitzTypography.BodyLarge,
+                                    fontWeight = FontWeight.Medium,
+                                    color = SplitzColors.textPrimary()
                                 )
+                            }
+
+                            if (members.size > 2) {
+                                IconButton(onClick = { members.removeAt(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Remove",
+                                        tint = DebtRed,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -217,36 +238,32 @@ fun CreateGroupScreen(
                 }
             }
 
-            Button(
-                onClick = {
-                    val name = groupName.trim()
-                    if (name.isEmpty()) {
-                        errorMessage = "Please enter a group name"
-                        return@Button
-                    }
-                    if (members.size < 2) {
-                        errorMessage = "At least 2 members are required"
-                        return@Button
-                    }
-                    isSaving = true
-                    coroutineScope.launch {
-                        val group = groupRepository.createGroup(name, members.toList())
-                        isSaving = false
-                        onGroupCreated(group.id)
-                    }
-                },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                shape = RoundedCornerShape(SplitzShapes.button),
-                colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary()),
-                enabled = !isSaving
+                    .padding(vertical = SplitzSpacing.md)
             ) {
-                Text(
-                    text = if (isSaving) "Creating..." else "Create Group",
-                    style = SplitzTypography.TitleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
+                SplitzPrimaryButton(
+                    text = if (isSaving) "Creating Group..." else "Create Group →",
+                    onClick = {
+                        val name = groupName.trim()
+                        if (name.isEmpty()) {
+                            errorMessage = "Please enter a group name"
+                            return@SplitzPrimaryButton
+                        }
+                        val finalMembers = members.toMutableList()
+                        if (!finalMembers.any { it.startsWith("Me (") || it == "Me ($currentUserName)" }) {
+                            finalMembers.add(0, defaultUserMemberName)
+                        }
+                        isSaving = true
+                        coroutineScope.launch {
+                            val group = groupRepository.createGroup(name, finalMembers.toList())
+                            isSaving = false
+                            onGroupCreated(group.id)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !isSaving
                 )
             }
         }

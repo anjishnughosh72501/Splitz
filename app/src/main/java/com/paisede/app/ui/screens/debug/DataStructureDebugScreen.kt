@@ -1,6 +1,7 @@
 package com.paisede.app.ui.screens.debug
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -37,12 +37,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzSurface
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.IndigoPurple
+import com.paisede.app.ui.theme.SplitzBorderWidth
 import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzGradients
 import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.DebugViewModel
 
@@ -75,55 +79,45 @@ fun DataStructureDebugScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .background(SplitzColors.background()),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            contentPadding = PaddingValues(SplitzSpacing.lg),
+            verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {
             // Intro Callout for Viva
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(SplitzShapes.cardHero),
-                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(SplitzShapes.cardHero))
+                        .background(SplitzGradients.Hero)
+                        .border(
+                            width = SplitzBorderWidth.thin,
+                            color = Color.White.copy(alpha = 0.12f),
+                            shape = RoundedCornerShape(SplitzShapes.cardHero)
+                        )
+                        .padding(18.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                                    colors = listOf(
-                                        Color(0xFF0F172A),
-                                        Color(0xFF1E293B),
-                                        Color(0xFF0D252E)
-                                    )
-                                )
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.BugReport,
+                                contentDescription = null,
+                                tint = SplitzColors.primaryBright(),
+                                modifier = Modifier.size(22.dp)
                             )
-                            .padding(18.dp)
-                    ) {
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.BugReport,
-                                    contentDescription = null,
-                                    tint = SplitzColors.primaryBright(),
-                                    modifier = Modifier.size(22.dp)
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = "LIVE DATA STRUCTURE MONITOR",
-                                    style = SplitzTypography.TitleSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(6.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in Splitz.",
-                                style = SplitzTypography.BodySmall,
-                                color = Color.White.copy(alpha = 0.7f)
+                                text = "LIVE DATA STRUCTURE MONITOR",
+                                style = SplitzTypography.TitleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
                             )
                         }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in Splitz.",
+                            style = SplitzTypography.BodySmall,
+                            color = Color.White.copy(alpha = 0.7f)
+                        )
                     }
                 }
             }
@@ -349,12 +343,11 @@ fun DebugSectionCard(
     complexity: String,
     content: @Composable () -> Unit
 ) {
-    Card(
+    SplitzSurface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(SplitzShapes.MD),
-        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+        backgroundColor = SplitzColors.surface(),
+        borderColor = SplitzColors.borderSubtle()
     ) {
         Column(
             modifier = Modifier
@@ -390,7 +383,7 @@ fun DebugSectionCard(
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            androidx.compose.material3.HorizontalDivider(color = SplitzColors.borderSubtle())
+            HorizontalDivider(color = SplitzColors.borderSubtle())
             Spacer(modifier = Modifier.height(10.dp))
             content()
         }

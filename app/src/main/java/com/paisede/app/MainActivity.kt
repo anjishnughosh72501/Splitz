@@ -22,6 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themeMode by app.themePreferences.themeMode.collectAsState()
             val fontSize by app.themePreferences.fontSize.collectAsState()
+            val currency by app.userPreferences.currency.collectAsState()
             val isDark = when (themeMode) {
                 AppThemeMode.SYSTEM -> isSystemInDarkTheme()
                 AppThemeMode.LIGHT -> false
@@ -30,7 +31,8 @@ class MainActivity : ComponentActivity() {
 
             SplitzTheme(
                 darkTheme = isDark,
-                fontScale = fontSize.scale
+                fontScale = fontSize.scale,
+                currency = currency
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

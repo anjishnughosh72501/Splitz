@@ -1,6 +1,10 @@
 package com.paisede.app.ui.screens.expense
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,24 +24,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CurrencyRupee
 import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,18 +52,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paisede.app.domain.model.Category
 import com.paisede.app.domain.model.Member
 import com.paisede.app.domain.model.SplitType
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzGlassCard
+import com.paisede.app.ui.components.SplitzPrimaryButton
+import com.paisede.app.ui.components.SplitzSegmentedControl
+import com.paisede.app.ui.components.SplitzSurface
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.BrandTeal
-import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
+import com.paisede.app.ui.theme.SplitzBorderWidth
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.ExpenseViewModel
 import com.paisede.app.util.CurrencyUtils
@@ -77,6 +81,7 @@ fun AddExpenseScreen(
     onExpenseAdded: () -> Unit
 ) {
     val state by viewModel.addState.collectAsState()
+    val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
     var amountInput by remember { mutableStateOf("") }
 
     // Auto-select all members if participants are empty
@@ -106,52 +111,56 @@ fun AddExpenseScreen(
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = SplitzSpacing.lg),
+                verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
             ) {
-                // Hero Amount Input Card
+                // Step 1: Hero Amount Entry
                 item {
                     Spacer(modifier = Modifier.height(4.dp))
-                    Card(
+                    SplitzSurface(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(SplitzShapes.cardLarge),
-                        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+                        shape = RoundedCornerShape(SplitzShapes.cardHero),
+                        backgroundColor = SplitzColors.surface(),
+                        borderColor = SplitzColors.borderSubtle()
                     ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(18.dp)
+                                .padding(SplitzSpacing.lg),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "AMOUNT",
+                                text = "ENTER AMOUNT",
                                 style = SplitzTypography.LabelSmall,
                                 fontWeight = FontWeight.SemiBold,
-                                color = SplitzColors.textMuted()
+                                color = SplitzColors.textMuted(),
+                                letterSpacing = 1.2.sp
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                             OutlinedTextField(
                                 value = amountInput,
                                 onValueChange = { input ->
                                     amountInput = input
-                                    val paise = CurrencyUtils.parseCurrencyInput(input)
+                                    val paise = CurrencyUtils.parseCurrencyInput(input, currentCurrency)
                                     if (paise != null) {
                                         viewModel.setAmount(paise)
                                     }
                                 },
                                 placeholder = {
                                     Text(
-                                        "0.00",
+                                        "0",
                                         style = SplitzTypography.MoneyDisplay,
-                                        color = SplitzColors.textMuted().copy(alpha = 0.5f)
+                                        color = SplitzColors.textMuted().copy(alpha = 0.4f)
                                     )
                                 },
                                 leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.CurrencyRupee,
-                                        contentDescription = "Rupee",
-                                        tint = SplitzColors.primary(),
-                                        modifier = Modifier.size(28.dp)
+                                    val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
+                                    Text(
+                                        text = currentCurrency.symbol,
+                                        style = SplitzTypography.MoneyDisplay,
+                                        color = SplitzColors.primary(),
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(start = 16.dp, end = 4.dp)
                                     )
                                 },
                                 textStyle = SplitzTypography.MoneyDisplay.copy(
@@ -163,7 +172,7 @@ fun AddExpenseScreen(
                                 shape = RoundedCornerShape(SplitzShapes.MD),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = SplitzColors.primary(),
-                                    unfocusedBorderColor = SplitzColors.borderSubtle(),
+                                    unfocusedBorderColor = Color.Transparent,
                                     focusedContainerColor = SplitzColors.surfaceElevated(),
                                     unfocusedContainerColor = SplitzColors.surfaceElevated()
                                 ),
@@ -173,7 +182,7 @@ fun AddExpenseScreen(
                     }
                 }
 
-                // Description
+                // Step 2: Description
                 item {
                     Text(
                         text = "Description",
@@ -187,12 +196,12 @@ fun AddExpenseScreen(
                         onValueChange = { viewModel.setDescription(it) },
                         placeholder = {
                             Text(
-                                "e.g. Dinner, Groceries, Flight tickets",
+                                "e.g. Goa Dinner, Groceries, Flight tickets",
                                 color = SplitzColors.textMuted()
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(SplitzShapes.MD),
+                        shape = RoundedCornerShape(SplitzShapes.SM),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = SplitzColors.primary(),
                             unfocusedBorderColor = SplitzColors.borderSubtle(),
@@ -203,7 +212,7 @@ fun AddExpenseScreen(
                     )
                 }
 
-                // Paid By
+                // Step 3: Paid By (Interactive Avatar Cards)
                 item {
                     Text(
                         text = "Paid By",
@@ -217,41 +226,45 @@ fun AddExpenseScreen(
                     ) {
                         items(members) { member ->
                             val isSelected = state.payerId == member.id
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { viewModel.setPayer(member.id) },
-                                label = {
-                                    Text(
-                                        member.name,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                    )
-                                },
-                                leadingIcon = {
+                            SplitzSurface(
+                                shape = RoundedCornerShape(SplitzShapes.Pill),
+                                backgroundColor = if (isSelected) SplitzColors.primary() else SplitzColors.surface(),
+                                borderColor = if (isSelected) SplitzColors.primary() else SplitzColors.borderSubtle(),
+                                onClick = { viewModel.setPayer(member.id) }
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     UserAvatar(
                                         name = member.name,
-                                        size = 24,
-                                        backgroundColor = if (isSelected) Color.White else SplitzColors.surfaceElevated(),
-                                        textColor = if (isSelected) SplitzColors.primary() else SplitzColors.textPrimary()
+                                        size = 26,
+                                        backgroundColor = if (isSelected) Color.White.copy(alpha = 0.2f) else null,
+                                        textColor = if (isSelected) Color.White else null
                                     )
-                                },
-                                shape = RoundedCornerShape(SplitzShapes.Pill),
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = SplitzColors.primary(),
-                                    selectedLabelColor = Color.White,
-                                    containerColor = SplitzColors.surface(),
-                                    labelColor = SplitzColors.textPrimary()
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    enabled = true,
-                                    selected = isSelected,
-                                    borderColor = if (isSelected) Color.Transparent else SplitzColors.borderSubtle()
-                                )
-                            )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = member.name,
+                                        style = SplitzTypography.LabelMedium,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                        color = if (isSelected) Color.White else SplitzColors.textPrimary()
+                                    )
+                                    if (isSelected) {
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
 
-                // Category
+                // Step 4: Category
                 item {
                     Text(
                         text = "Category",
@@ -291,7 +304,7 @@ fun AddExpenseScreen(
                     }
                 }
 
-                // Split Method
+                // Step 5: Split Method (Segmented Glass Control)
                 item {
                     Text(
                         text = "Split Method",
@@ -302,73 +315,58 @@ fun AddExpenseScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     val splitTypes = SplitType.values()
-                    val selectedTabIndex = splitTypes.indexOf(state.splitType)
+                    val splitTitles = listOf("Equal", "Exact", "% Percent", "Shares")
+                    val selectedIndex = splitTypes.indexOf(state.splitType)
 
-                    ScrollableTabRow(
-                        selectedTabIndex = selectedTabIndex,
-                        containerColor = SplitzColors.surface(),
-                        contentColor = SplitzColors.primary(),
-                        edgePadding = 8.dp,
-                        indicator = { tabPositions ->
-                            if (selectedTabIndex in tabPositions.indices) {
-                                TabRowDefaults.SecondaryIndicator(
-                                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                                    color = SplitzColors.primary()
-                                )
-                            }
+                    SplitzSegmentedControl(
+                        items = splitTitles,
+                        selectedIndex = selectedIndex,
+                        onItemSelected = { index ->
+                            viewModel.setSplitType(splitTypes[index])
                         }
-                    ) {
-                        splitTypes.forEachIndexed { index, type ->
-                            Tab(
-                                selected = selectedTabIndex == index,
-                                onClick = { viewModel.setSplitType(type) },
-                                text = {
-                                    Text(
-                                        type.name.lowercase().replaceFirstChar { it.uppercase() },
-                                        style = SplitzTypography.LabelLarge,
-                                        fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Medium,
-                                        color = if (selectedTabIndex == index) SplitzColors.primary() else SplitzColors.textSecondary()
-                                    )
-                                }
-                            )
-                        }
-                    }
+                    )
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    // Split Details input based on type
+                    // Split Details input based on selected type
                     when (state.splitType) {
                         SplitType.EQUAL -> {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
-                                    text = "Split equally among selected participants:",
+                                    text = "Select participants sharing this expense:",
                                     style = SplitzTypography.BodySmall,
                                     color = SplitzColors.textSecondary()
                                 )
                                 members.forEach { member ->
                                     val isChecked = state.participantIds.contains(member.id)
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clip(RoundedCornerShape(SplitzShapes.SM))
-                                            .background(SplitzColors.surface())
-                                            .clickable { viewModel.toggleParticipant(member.id) }
-                                            .padding(horizontal = 12.dp, vertical = 10.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                    SplitzSurface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(SplitzShapes.SM),
+                                        backgroundColor = if (isChecked) SplitzColors.surfaceElevated() else SplitzColors.surface(),
+                                        borderColor = if (isChecked) SplitzColors.primary().copy(alpha = 0.4f) else SplitzColors.borderSubtle(),
+                                        onClick = { viewModel.toggleParticipant(member.id) }
                                     ) {
-                                        Checkbox(
-                                            checked = isChecked,
-                                            onCheckedChange = { viewModel.toggleParticipant(member.id) },
-                                            colors = CheckboxDefaults.colors(checkedColor = SplitzColors.primary())
-                                        )
-                                        Spacer(modifier = Modifier.width(10.dp))
-                                        UserAvatar(name = member.name, size = 28)
-                                        Spacer(modifier = Modifier.width(10.dp))
-                                        Text(
-                                            text = member.name,
-                                            style = SplitzTypography.BodyLarge,
-                                            color = SplitzColors.textPrimary()
-                                        )
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Checkbox(
+                                                checked = isChecked,
+                                                onCheckedChange = { viewModel.toggleParticipant(member.id) },
+                                                colors = CheckboxDefaults.colors(checkedColor = SplitzColors.primary())
+                                            )
+                                            Spacer(modifier = Modifier.width(10.dp))
+                                            UserAvatar(name = member.name, size = 32, isSelected = isChecked)
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Text(
+                                                text = member.name,
+                                                style = SplitzTypography.BodyLarge,
+                                                fontWeight = if (isChecked) FontWeight.SemiBold else FontWeight.Normal,
+                                                color = SplitzColors.textPrimary()
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -382,40 +380,47 @@ fun AddExpenseScreen(
                                 )
                                 members.forEach { member ->
                                     var exactVal by remember { mutableStateOf("") }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clip(RoundedCornerShape(SplitzShapes.SM))
-                                            .background(SplitzColors.surface())
-                                            .padding(12.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    SplitzSurface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(SplitzShapes.SM),
+                                        backgroundColor = SplitzColors.surface(),
+                                        borderColor = SplitzColors.borderSubtle()
                                     ) {
                                         Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 14.dp, vertical = 10.dp),
                                             verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.weight(1f)
+                                            horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            UserAvatar(name = member.name, size = 28)
-                                            Spacer(modifier = Modifier.width(10.dp))
-                                            Text(
-                                                text = member.name,
-                                                style = SplitzTypography.BodyLarge,
-                                                color = SplitzColors.textPrimary()
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.weight(1f)
+                                            ) {
+                                                UserAvatar(name = member.name, size = 32)
+                                                Spacer(modifier = Modifier.width(12.dp))
+                                                Text(
+                                                    text = member.name,
+                                                    style = SplitzTypography.BodyLarge,
+                                                    color = SplitzColors.textPrimary()
+                                                )
+                                            }
+                                            OutlinedTextField(
+                                                value = exactVal,
+                                                onValueChange = { input ->
+                                                    exactVal = input
+                                                    val paise = CurrencyUtils.parseCurrencyInput(input, currentCurrency) ?: 0L
+                                                    viewModel.setExactAmount(member.id, paise)
+                                                },
+                                                label = {
+                                                    Text("${currentCurrency.symbol} Amount")
+                                                },
+                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                                modifier = Modifier.width(140.dp),
+                                                shape = RoundedCornerShape(SplitzShapes.SM),
+                                                singleLine = true
                                             )
                                         }
-                                        OutlinedTextField(
-                                            value = exactVal,
-                                            onValueChange = { input ->
-                                                exactVal = input
-                                                val paise = CurrencyUtils.parseCurrencyInput(input) ?: 0L
-                                                viewModel.setExactAmount(member.id, paise)
-                                            },
-                                            label = { Text("₹ Amount") },
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                            modifier = Modifier.width(140.dp),
-                                            shape = RoundedCornerShape(SplitzShapes.SM),
-                                            singleLine = true
-                                        )
                                     }
                                 }
                             }
@@ -429,41 +434,46 @@ fun AddExpenseScreen(
                                 )
                                 members.forEach { member ->
                                     var percentVal by remember { mutableStateOf("") }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clip(RoundedCornerShape(SplitzShapes.SM))
-                                            .background(SplitzColors.surface())
-                                            .padding(12.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    SplitzSurface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(SplitzShapes.SM),
+                                        backgroundColor = SplitzColors.surface(),
+                                        borderColor = SplitzColors.borderSubtle()
                                     ) {
                                         Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 14.dp, vertical = 10.dp),
                                             verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.weight(1f)
+                                            horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            UserAvatar(name = member.name, size = 28)
-                                            Spacer(modifier = Modifier.width(10.dp))
-                                            Text(
-                                                text = member.name,
-                                                style = SplitzTypography.BodyLarge,
-                                                color = SplitzColors.textPrimary()
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.weight(1f)
+                                            ) {
+                                                UserAvatar(name = member.name, size = 32)
+                                                Spacer(modifier = Modifier.width(12.dp))
+                                                Text(
+                                                    text = member.name,
+                                                    style = SplitzTypography.BodyLarge,
+                                                    color = SplitzColors.textPrimary()
+                                                )
+                                            }
+                                            OutlinedTextField(
+                                                value = percentVal,
+                                                onValueChange = { input ->
+                                                    percentVal = input
+                                                    val p = input.toDoubleOrNull() ?: 0.0
+                                                    val bp = (p * 100).toInt()
+                                                    viewModel.setPercentageBp(member.id, bp)
+                                                },
+                                                label = { Text("% Share") },
+                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                                modifier = Modifier.width(120.dp),
+                                                shape = RoundedCornerShape(SplitzShapes.SM),
+                                                singleLine = true
                                             )
                                         }
-                                        OutlinedTextField(
-                                            value = percentVal,
-                                            onValueChange = { input ->
-                                                percentVal = input
-                                                val p = input.toDoubleOrNull() ?: 0.0
-                                                val bp = (p * 100).toInt()
-                                                viewModel.setPercentageBp(member.id, bp)
-                                            },
-                                            label = { Text("% Share") },
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                            modifier = Modifier.width(120.dp),
-                                            shape = RoundedCornerShape(SplitzShapes.SM),
-                                            singleLine = true
-                                        )
                                     }
                                 }
                             }
@@ -480,40 +490,45 @@ fun AddExpenseScreen(
                                     LaunchedEffect(Unit) {
                                         viewModel.setShares(member.id, 1)
                                     }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clip(RoundedCornerShape(SplitzShapes.SM))
-                                            .background(SplitzColors.surface())
-                                            .padding(12.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    SplitzSurface(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(SplitzShapes.SM),
+                                        backgroundColor = SplitzColors.surface(),
+                                        borderColor = SplitzColors.borderSubtle()
                                     ) {
                                         Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 14.dp, vertical = 10.dp),
                                             verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.weight(1f)
+                                            horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
-                                            UserAvatar(name = member.name, size = 28)
-                                            Spacer(modifier = Modifier.width(10.dp))
-                                            Text(
-                                                text = member.name,
-                                                style = SplitzTypography.BodyLarge,
-                                                color = SplitzColors.textPrimary()
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.weight(1f)
+                                            ) {
+                                                UserAvatar(name = member.name, size = 32)
+                                                Spacer(modifier = Modifier.width(12.dp))
+                                                Text(
+                                                    text = member.name,
+                                                    style = SplitzTypography.BodyLarge,
+                                                    color = SplitzColors.textPrimary()
+                                                )
+                                            }
+                                            OutlinedTextField(
+                                                value = shareVal,
+                                                onValueChange = { input ->
+                                                    shareVal = input
+                                                    val s = input.toIntOrNull() ?: 0
+                                                    viewModel.setShares(member.id, s)
+                                                },
+                                                label = { Text("Shares") },
+                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                                modifier = Modifier.width(120.dp),
+                                                shape = RoundedCornerShape(SplitzShapes.SM),
+                                                singleLine = true
                                             )
                                         }
-                                        OutlinedTextField(
-                                            value = shareVal,
-                                            onValueChange = { input ->
-                                                shareVal = input
-                                                val s = input.toIntOrNull() ?: 0
-                                                viewModel.setShares(member.id, s)
-                                            },
-                                            label = { Text("Shares") },
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                            modifier = Modifier.width(120.dp),
-                                            shape = RoundedCornerShape(SplitzShapes.SM),
-                                            singleLine = true
-                                        )
                                     }
                                 }
                             }
@@ -521,7 +536,7 @@ fun AddExpenseScreen(
                     }
                 }
 
-                // Modern Summary Glass / Surface Card
+                // Step 6: Glass Summary Panel
                 item {
                     Text(
                         text = "Summary",
@@ -531,13 +546,11 @@ fun AddExpenseScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
 
-                    Card(
+                    SplitzGlassCard(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(SplitzShapes.MD),
-                        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+                        cornerRadius = SplitzShapes.MD
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Column {
                             val payerName = members.firstOrNull { it.id == state.payerId }?.name ?: "Unknown"
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -556,9 +569,9 @@ fun AddExpenseScreen(
                                     colorMode = MoneyColorMode.NEUTRAL
                                 )
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            androidx.compose.material3.HorizontalDivider(color = SplitzColors.borderSubtle())
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(SplitzSpacing.sm))
+                            HorizontalDivider(color = SplitzColors.borderSubtle().copy(alpha = 0.5f))
+                            Spacer(modifier = Modifier.height(SplitzSpacing.sm))
                             Text(
                                 text = "Split equally among ${state.participantIds.size} participant(s)",
                                 style = SplitzTypography.BodySmall,
@@ -600,26 +613,21 @@ fun AddExpenseScreen(
                 }
             }
 
-            // Save Button
-            Button(
-                onClick = {
-                    viewModel.saveExpense {
-                        onExpenseAdded()
-                    }
-                },
+            // Bottom CTA
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(SplitzShapes.button),
-                colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary()),
-                enabled = !state.isSaving
+                    .padding(SplitzSpacing.lg)
             ) {
-                Text(
+                SplitzPrimaryButton(
                     text = if (state.isSaving) "Saving Expense..." else "Add Expense",
-                    style = SplitzTypography.TitleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    onClick = {
+                        viewModel.saveExpense {
+                            onExpenseAdded()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isSaving
                 )
             }
         }

@@ -11,16 +11,18 @@ object SampleDataGenerator {
 
     suspend fun populateSampleData(
         groupRepo: GroupRepository,
-        expenseRepo: ExpenseRepository
+        expenseRepo: ExpenseRepository,
+        userName: String? = null
     ): String {
+        val userMemberName = if (!userName.isNullOrBlank()) "Me ($userName)" else "Me"
         // 1. Create Group "Goa Trip"
         val group = groupRepo.createGroup(
             name = "Goa Trip (Sample Data)",
-            memberNames = listOf("Ali", "Maya", "Rahul", "Sara")
+            memberNames = listOf(userMemberName, "Maya", "Rahul", "Sara")
         )
 
         val members = groupRepo.getMembersSync(group.id)
-        val ali = members.first { it.name == "Ali" }
+        val ali = members.first { it.name == userMemberName }
         val maya = members.first { it.name == "Maya" }
         val rahul = members.first { it.name == "Rahul" }
         val sara = members.first { it.name == "Sara" }

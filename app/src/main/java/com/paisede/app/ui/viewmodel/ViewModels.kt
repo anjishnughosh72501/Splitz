@@ -59,7 +59,8 @@ class HomeViewModel(
     private val groupRepository: GroupRepository,
     private val expenseRepository: ExpenseRepository,
     private val settlementRepository: SettlementRepository,
-    private val balanceCalculator: BalanceCalculator
+    private val balanceCalculator: BalanceCalculator,
+    private val userPreferences: com.paisede.app.data.preferences.UserPreferences? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
@@ -72,6 +73,7 @@ class HomeViewModel(
     fun loadGroups() {
         viewModelScope.launch {
             groupRepository.getAllGroups().collect { groups ->
+                val currentUserName = userPreferences?.userName?.value.orEmpty()
                 val cards = groups.map { group ->
                     val members = groupRepository.getMembersSync(group.id)
                     val expenses = expenseRepository.getActiveExpensesSync(group.id)
@@ -79,7 +81,10 @@ class HomeViewModel(
 
                     val balances = balanceCalculator.calculateNetBalances(members, expenses, settlements)
                     val totalSpending = expenses.sumOf { it.first.amountPaise }
-                    val userBal = members.firstOrNull()?.let { balances[it.id] } ?: 0L
+                    val userMember = members.firstOrNull { m ->
+                        m.name.startsWith("Me (") || (currentUserName.isNotBlank() && m.name == currentUserName)
+                    } ?: members.firstOrNull()
+                    val userBal = userMember?.let { balances[it.id] } ?: 0L
 
                     GroupCardData(
                         group = group,
@@ -98,7 +103,8 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                val groupId = SampleDataGenerator.populateSampleData(groupRepository, expenseRepository)
+                val currentUserName = userPreferences?.userName?.value
+                val groupId = SampleDataGenerator.populateSampleData(groupRepository, expenseRepository, currentUserName)
                 _uiState.update { it.copy(isLoading = false, userMessage = "Sample 'Goa Trip' loaded!") }
                 onSuccess(groupId)
             } catch (e: Exception) {
@@ -141,7 +147,8 @@ class GroupViewModel(
     private val groupRepository: GroupRepository,
     private val expenseRepository: ExpenseRepository,
     private val settlementRepository: SettlementRepository,
-    private val balanceCalculator: BalanceCalculator
+    private val balanceCalculator: BalanceCalculator,
+    private val userPreferences: com.paisede.app.data.preferences.UserPreferences? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupUiState(isLoading = true))
@@ -161,9 +168,13 @@ class GroupViewModel(
                 expenseRepository.canUndo(groupId),
                 expenseRepository.canRedo(groupId)
             ) { members, expenses, settlements, canUndo, canRedo ->
+                val currentUserName = userPreferences?.userName?.value.orEmpty()
                 val balances = balanceCalculator.calculateNetBalances(members, expenses, settlements)
                 val totalSpending = expenses.sumOf { it.first.amountPaise }
-                val userBal = members.firstOrNull()?.let { balances[it.id] } ?: 0L
+                val userMember = members.firstOrNull { m ->
+                    m.name.startsWith("Me (") || (currentUserName.isNotBlank() && m.name == currentUserName)
+                } ?: members.firstOrNull()
+                val userBal = userMember?.let { balances[it.id] } ?: 0L
 
                 GroupUiState(
                     group = group,
@@ -884,7 +895,8 @@ class ViewModelFactory(
                     app.groupRepository,
                     app.expenseRepository,
                     app.settlementRepository,
-                    app.balanceCalculator
+                    app.balanceCalculator,
+                    app.userPreferences
                 ) as T
             }
             modelClass.isAssignableFrom(GroupViewModel::class.java) -> {
@@ -893,7 +905,8 @@ class ViewModelFactory(
                     app.groupRepository,
                     app.expenseRepository,
                     app.settlementRepository,
-                    app.balanceCalculator
+                    app.balanceCalculator,
+                    app.userPreferences
                 ) as T
             }
             modelClass.isAssignableFrom(ExpenseViewModel::class.java) -> {

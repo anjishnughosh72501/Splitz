@@ -1,6 +1,7 @@
 package com.paisede.app.ui.navigation
 
 sealed class Screen(val route: String) {
+    object Startup : Screen("startup")
     object Home : Screen("home")
     object CreateGroup : Screen("group/new")
     object GroupDashboard : Screen("group/{groupId}") {

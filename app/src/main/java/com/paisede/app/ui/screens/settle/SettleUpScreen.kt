@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -39,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,12 +45,15 @@ import com.paisede.app.domain.model.SettlementTransaction
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzPrimaryButton
+import com.paisede.app.ui.components.SplitzSurface
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.SettlementViewModel
 import com.paisede.app.util.CurrencyUtils
@@ -78,7 +78,8 @@ fun SettleUpScreen(
     state.pendingSettlement?.let { tx ->
         val debtor = state.members[tx.fromUserId]?.name ?: "Member"
         val creditor = state.members[tx.toUserId]?.name ?: "Member"
-        val amountStr = CurrencyUtils.formatPaise(tx.amountPaise)
+        val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
+        val amountStr = CurrencyUtils.formatPaise(tx.amountPaise, currency = currentCurrency)
 
         AlertDialog(
             onDismissRequest = { viewModel.dismissPrompt() },
@@ -94,7 +95,7 @@ fun SettleUpScreen(
             },
             text = {
                 Text(
-                    text = "Record a payment of $amountStr from $debtor to $creditor? This will reduce both members' balances to settled.",
+                    text = "Record a payment of $amountStr from $debtor to $creditor? This will record the transaction and adjust outstanding balances.",
                     style = SplitzTypography.BodyMedium,
                     color = SplitzColors.textSecondary()
                 )
@@ -143,15 +144,15 @@ fun SettleUpScreen(
             if (state.recommendedPayments.isEmpty()) {
                 EmptyStateView(
                     title = "All Settled Up!",
-                    subtitle = "No one owes any money in this group. You're all square!",
+                    subtitle = "No one owes any money in this group. You're completely square!",
                     icon = Icons.Default.CheckCircle,
                     modifier = Modifier.weight(1f)
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    contentPadding = PaddingValues(SplitzSpacing.lg),
+                    verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
                 ) {
                     item {
                         Text(
@@ -162,7 +163,7 @@ fun SettleUpScreen(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Minimal set of direct payments to settle all group debts.",
+                            text = "Minimal set of direct transfers calculated to settle debts with the fewest transactions.",
                             style = SplitzTypography.BodySmall,
                             color = SplitzColors.textSecondary()
                         )
@@ -191,17 +192,16 @@ fun ModernSettleUpCard(
     val debtor = members[tx.fromUserId]?.name ?: "Member"
     val creditor = members[tx.toUserId]?.name ?: "Member"
 
-    Card(
+    SplitzSurface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SplitzShapes.MD),
-        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+        shape = RoundedCornerShape(SplitzShapes.cardMedium),
+        backgroundColor = SplitzColors.surface(),
+        borderColor = SplitzColors.borderSubtle()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(SplitzSpacing.md)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -247,21 +247,14 @@ fun ModernSettleUpCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(SplitzSpacing.md))
 
-            Button(
+            val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
+            SplitzPrimaryButton(
+                text = "Mark as Settled (${CurrencyUtils.formatPaise(tx.amountPaise, currency = currentCurrency)})",
                 onClick = onSettleClick,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(SplitzShapes.button),
-                colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary())
-            ) {
-                Text(
-                    text = "Mark as Settled (${CurrencyUtils.formatPaise(tx.amountPaise)})",
-                    style = SplitzTypography.LabelLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
-            }
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

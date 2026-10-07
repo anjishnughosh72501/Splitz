@@ -1,6 +1,8 @@
 package com.paisede.app.ui.screens.expense
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,10 +28,9 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -55,9 +56,12 @@ import com.paisede.app.domain.model.Member
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzSurface
 import com.paisede.app.ui.components.SplitzTopAppBar
+import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.ExpenseViewModel
 import com.paisede.app.util.CurrencyUtils
@@ -139,7 +143,7 @@ fun ExpenseHistoryScreen(
                 leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = SplitzColors.textMuted()) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.xs),
                 shape = RoundedCornerShape(SplitzShapes.SM),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = SplitzColors.primary(),
@@ -152,7 +156,7 @@ fun ExpenseHistoryScreen(
 
             // Category Filter Chips
             LazyRow(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = SplitzSpacing.lg, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
@@ -214,8 +218,8 @@ fun ExpenseHistoryScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    contentPadding = PaddingValues(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.sm),
+                    verticalArrangement = Arrangement.spacedBy(SplitzSpacing.sm)
                 ) {
                     groupedByDate.forEach { (dateHeader, exps) ->
                         item {
@@ -251,39 +255,43 @@ fun ExpenseHistoryItem(
     var expanded by remember { mutableStateOf(false) }
     val payerName = members[expense.payerId]?.name ?: "Unknown"
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(SplitzShapes.MD))
-            .clickable { expanded = !expanded },
-        shape = RoundedCornerShape(SplitzShapes.MD),
-        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+    SplitzSurface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(SplitzShapes.cardMedium),
+        backgroundColor = SplitzColors.surface(),
+        borderColor = SplitzColors.borderSubtle(),
+        onClick = { expanded = !expanded }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(SplitzSpacing.md)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = expense.description,
-                        style = SplitzTypography.TitleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
-                    )
-                    Spacer(modifier = Modifier.height(3.dp))
-                    Text(
-                        text = "Paid by $payerName • Split among ${splits.size}",
-                        style = SplitzTypography.BodySmall,
-                        color = SplitzColors.textSecondary()
-                    )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    UserAvatar(name = payerName, size = 38)
+                    Spacer(modifier = Modifier.width(SplitzSpacing.sm))
+                    Column {
+                        Text(
+                            text = expense.description,
+                            style = SplitzTypography.TitleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Paid by $payerName • ${splits.size} share",
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textSecondary()
+                        )
+                    }
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -310,7 +318,7 @@ fun ExpenseHistoryItem(
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                 ) {
-                    androidx.compose.material3.HorizontalDivider(color = SplitzColors.borderSubtle())
+                    HorizontalDivider(color = SplitzColors.borderSubtle().copy(alpha = 0.5f))
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "Split Breakdown (${expense.splitType.name}):",
@@ -325,15 +333,21 @@ fun ExpenseHistoryItem(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                UserAvatar(name = memberName, size = 22)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = memberName,
+                                    style = SplitzTypography.BodyMedium,
+                                    color = SplitzColors.textPrimary()
+                                )
+                            }
+                            val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
                             Text(
-                                text = memberName,
-                                style = SplitzTypography.BodyMedium,
-                                color = SplitzColors.textPrimary()
-                            )
-                            Text(
-                                text = CurrencyUtils.formatPaise(split.amountPaise),
+                                text = CurrencyUtils.formatPaise(split.amountPaise, currency = currentCurrency),
                                 style = SplitzTypography.BodyMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = SplitzColors.textPrimary()

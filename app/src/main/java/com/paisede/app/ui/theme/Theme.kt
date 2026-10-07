@@ -77,10 +77,13 @@ private val DarkColorScheme = darkColorScheme(
     inversePrimary = LightColors.Primary
 )
 
+val LocalAppCurrency = androidx.compose.runtime.staticCompositionLocalOf { com.paisede.app.data.preferences.AppCurrency.DEFAULT }
+
 @Composable
 fun SplitzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     fontScale: Float = 1.0f,
+    currency: com.paisede.app.data.preferences.AppCurrency = com.paisede.app.data.preferences.AppCurrency.DEFAULT,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
@@ -102,7 +105,8 @@ fun SplitzTheme(
     )
 
     androidx.compose.runtime.CompositionLocalProvider(
-        androidx.compose.ui.platform.LocalDensity provides scaledDensity
+        androidx.compose.ui.platform.LocalDensity provides scaledDensity,
+        LocalAppCurrency provides currency
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

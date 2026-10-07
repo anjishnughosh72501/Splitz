@@ -1,6 +1,9 @@
 package com.paisede.app.ui.screens.analytics
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +20,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,14 +37,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzSurface
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.IndigoPurple
+import com.paisede.app.ui.theme.SplitzBorderWidth
 import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzGradients
+import com.paisede.app.ui.theme.SplitzMotion
 import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.AnalyticsViewModel
 
@@ -67,93 +79,107 @@ fun AnalyticsScreen(
             if (an.expenseCount == 0) {
                 EmptyStateView(
                     title = "No Analytics Available",
-                    subtitle = "Add expenses to see spending analytics and breakdown.",
+                    subtitle = "Add expenses to see detailed category trends, breakdown, and insights.",
                     icon = Icons.Default.Analytics,
                     modifier = Modifier.weight(1f)
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    contentPadding = PaddingValues(SplitzSpacing.lg),
+                    verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
                 ) {
-                    // Top Metrics Overview Card
+                    // Hero Spending Overview Card
                     item {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(SplitzShapes.cardHero),
-                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(SplitzShapes.cardHero))
+                                .background(SplitzGradients.Hero)
+                                .border(
+                                    width = SplitzBorderWidth.thin,
+                                    color = Color.White.copy(alpha = 0.12f),
+                                    shape = RoundedCornerShape(SplitzShapes.cardHero)
+                                )
+                                .padding(22.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                                            colors = listOf(
-                                                Color(0xFF0F172A),
-                                                Color(0xFF1E293B),
-                                                Color(0xFF0D252E)
-                                            )
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column {
+                                        Text(
+                                            text = "TOTAL SPENDING",
+                                            style = SplitzTypography.LabelSmall,
+                                            color = Color.White.copy(alpha = 0.6f),
+                                            fontWeight = FontWeight.SemiBold,
+                                            letterSpacing = 1.2.sp
                                         )
-                                    )
-                                    .padding(20.dp)
-                            ) {
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    Text(
-                                        text = "TOTAL SPENT",
-                                        style = SplitzTypography.LabelSmall,
-                                        color = Color.White.copy(alpha = 0.6f),
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    MoneyText(
-                                        amountPaise = an.totalSpendingPaise,
-                                        style = SplitzTypography.MoneyDisplay,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        colorMode = MoneyColorMode.NEUTRAL,
-                                        animate = true
-                                    )
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        MoneyText(
+                                            amountPaise = an.totalSpendingPaise,
+                                            style = SplitzTypography.MoneyDisplay,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            colorMode = MoneyColorMode.NEUTRAL,
+                                            animate = true
+                                        )
+                                    }
 
-                                    Spacer(modifier = Modifier.height(18.dp))
-                                    androidx.compose.material3.HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
-                                    Spacer(modifier = Modifier.height(14.dp))
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    Box(
+                                        modifier = Modifier
+                                            .size(46.dp)
+                                            .clip(RoundedCornerShape(SplitzShapes.SM))
+                                            .background(Color.White.copy(alpha = 0.12f)),
+                                        contentAlignment = Alignment.Center
                                     ) {
-                                        Column {
-                                            Text(
-                                                text = "AVERAGE EXPENSE",
-                                                style = SplitzTypography.LabelSmall,
-                                                color = Color.White.copy(alpha = 0.6f)
-                                            )
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            MoneyText(
-                                                amountPaise = an.averageExpensePaise,
-                                                style = SplitzTypography.TitleMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                colorMode = MoneyColorMode.NEUTRAL,
-                                                animate = true
-                                            )
-                                        }
+                                        Icon(
+                                            imageVector = Icons.Default.TrendingUp,
+                                            contentDescription = null,
+                                            tint = SplitzColors.primaryBright(),
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    }
+                                }
 
-                                        Column(horizontalAlignment = Alignment.End) {
-                                            Text(
-                                                text = "EXPENSES COUNT",
-                                                style = SplitzTypography.LabelSmall,
-                                                color = Color.White.copy(alpha = 0.6f)
-                                            )
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(
-                                                text = "${an.expenseCount}",
-                                                style = SplitzTypography.TitleMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White
-                                            )
-                                        }
+                                Spacer(modifier = Modifier.height(18.dp))
+                                HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+                                Spacer(modifier = Modifier.height(14.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text(
+                                            text = "AVERAGE EXPENSE",
+                                            style = SplitzTypography.LabelSmall,
+                                            color = Color.White.copy(alpha = 0.6f)
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        MoneyText(
+                                            amountPaise = an.averageExpensePaise,
+                                            style = SplitzTypography.TitleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            colorMode = MoneyColorMode.NEUTRAL,
+                                            animate = true
+                                        )
+                                    }
+
+                                    Column(horizontalAlignment = Alignment.End) {
+                                        Text(
+                                            text = "TOTAL EXPENSES",
+                                            style = SplitzTypography.LabelSmall,
+                                            color = Color.White.copy(alpha = 0.6f)
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "${an.expenseCount} entries",
+                                            style = SplitzTypography.TitleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
                                     }
                                 }
                             }
@@ -171,23 +197,31 @@ fun AnalyticsScreen(
                     }
 
                     item {
-                        Card(
+                        SplitzSurface(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(SplitzShapes.MD),
-                            colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+                            shape = RoundedCornerShape(SplitzShapes.cardMedium),
+                            backgroundColor = SplitzColors.surface(),
+                            borderColor = SplitzColors.borderSubtle()
                         ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(16.dp),
+                                    .padding(SplitzSpacing.md),
                                 verticalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
                                 an.spendingByCategoryPaise.entries.sortedByDescending { it.value }
                                     .forEach { (cat, amount) ->
-                                        val progress = if (an.totalSpendingPaise > 0L) {
+                                        val targetProgress = if (an.totalSpendingPaise > 0L) {
                                             amount.toFloat() / an.totalSpendingPaise.toFloat()
                                         } else 0f
+
+                                        val animatedProgress by animateFloatAsState(
+                                            targetValue = targetProgress,
+                                            animationSpec = tween(SplitzMotion.Duration.Slow, easing = SplitzMotion.Easing.Decelerated),
+                                            label = "CategoryProgress"
+                                        )
+
+                                        val pct = (targetProgress * 100).toInt()
 
                                         Column {
                                             Row(
@@ -195,12 +229,20 @@ fun AnalyticsScreen(
                                                 horizontalArrangement = Arrangement.SpaceBetween,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                Text(
-                                                    text = cat.replaceFirstChar { it.uppercase() },
-                                                    style = SplitzTypography.TitleMedium,
-                                                    fontWeight = FontWeight.SemiBold,
-                                                    color = SplitzColors.textPrimary()
-                                                )
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Text(
+                                                        text = cat.replaceFirstChar { it.uppercase() },
+                                                        style = SplitzTypography.TitleMedium,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        color = SplitzColors.textPrimary()
+                                                    )
+                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                    Text(
+                                                        text = "($pct%)",
+                                                        style = SplitzTypography.BodySmall,
+                                                        color = SplitzColors.textMuted()
+                                                    )
+                                                }
                                                 MoneyText(
                                                     amountPaise = amount,
                                                     style = SplitzTypography.TitleMedium,
@@ -211,7 +253,7 @@ fun AnalyticsScreen(
                                             }
                                             Spacer(modifier = Modifier.height(6.dp))
                                             LinearProgressIndicator(
-                                                progress = { progress },
+                                                progress = { animatedProgress },
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(8.dp)
@@ -236,24 +278,32 @@ fun AnalyticsScreen(
                     }
 
                     item {
-                        Card(
+                        SplitzSurface(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(SplitzShapes.MD),
-                            colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
+                            shape = RoundedCornerShape(SplitzShapes.cardMedium),
+                            backgroundColor = SplitzColors.surface(),
+                            borderColor = SplitzColors.borderSubtle()
                         ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(16.dp),
+                                    .padding(SplitzSpacing.md),
                                 verticalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
                                 an.spendingByPersonPaise.entries.sortedByDescending { it.value }
                                     .forEach { (userId, amount) ->
                                         val name = state.members[userId]?.name ?: "Member"
-                                        val progress = if (an.totalSpendingPaise > 0L) {
+                                        val targetProgress = if (an.totalSpendingPaise > 0L) {
                                             amount.toFloat() / an.totalSpendingPaise.toFloat()
                                         } else 0f
+
+                                        val animatedProgress by animateFloatAsState(
+                                            targetValue = targetProgress,
+                                            animationSpec = tween(SplitzMotion.Duration.Slow, easing = SplitzMotion.Easing.Decelerated),
+                                            label = "PersonProgress"
+                                        )
+
+                                        val pct = (targetProgress * 100).toInt()
 
                                         Column {
                                             Row(
@@ -263,12 +313,18 @@ fun AnalyticsScreen(
                                             ) {
                                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                                     UserAvatar(name = name, size = 30)
-                                                    Spacer(modifier = Modifier.width(8.dp))
+                                                    Spacer(modifier = Modifier.width(10.dp))
                                                     Text(
                                                         text = name,
                                                         style = SplitzTypography.TitleMedium,
                                                         fontWeight = FontWeight.SemiBold,
                                                         color = SplitzColors.textPrimary()
+                                                    )
+                                                    Spacer(modifier = Modifier.width(6.dp))
+                                                    Text(
+                                                        text = "($pct%)",
+                                                        style = SplitzTypography.BodySmall,
+                                                        color = SplitzColors.textMuted()
                                                     )
                                                 }
                                                 MoneyText(
@@ -281,7 +337,7 @@ fun AnalyticsScreen(
                                             }
                                             Spacer(modifier = Modifier.height(6.dp))
                                             LinearProgressIndicator(
-                                                progress = { progress },
+                                                progress = { animatedProgress },
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(8.dp)

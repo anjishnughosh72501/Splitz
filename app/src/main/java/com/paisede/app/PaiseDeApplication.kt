@@ -42,9 +42,13 @@ class PaiseDeApplication : Application() {
     lateinit var themePreferences: com.paisede.app.data.preferences.ThemePreferences
         private set
 
+    lateinit var userPreferences: com.paisede.app.data.preferences.UserPreferences
+        private set
+
     override fun onCreate() {
         super.onCreate()
         themePreferences = com.paisede.app.data.preferences.ThemePreferences(this)
+        userPreferences = com.paisede.app.data.preferences.UserPreferences(this)
         database = AppDatabase.getDatabase(this)
         groupRepository = GroupRepositoryImpl(database)
         expenseRepository = ExpenseRepositoryImpl(database, undoRedoManager)

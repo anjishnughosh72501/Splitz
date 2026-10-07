@@ -63,6 +63,7 @@ fun GraphVisualizer(
         val outlineColor = MaterialTheme.colorScheme.outlineVariant
         val badgeBgColor = MaterialTheme.colorScheme.surfaceVariant.toArgb()
         val badgeTextColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
+        val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
 
         Canvas(modifier = Modifier.fillMaxSize().padding(24.dp)) {
             val width = size.width
@@ -96,7 +97,8 @@ fun GraphVisualizer(
                     amountPaise = edge.amountPaise,
                     edgeColor = edgeColor,
                     badgeBgColor = badgeBgColor,
-                    badgeTextColor = badgeTextColor
+                    badgeTextColor = badgeTextColor,
+                    currency = currentCurrency
                 )
             }
 
@@ -160,7 +162,8 @@ private fun DrawScope.drawDirectedCurvedEdge(
     amountPaise: Long,
     edgeColor: Color,
     badgeBgColor: Int,
-    badgeTextColor: Int
+    badgeTextColor: Int,
+    currency: com.paisede.app.data.preferences.AppCurrency = com.paisede.app.data.preferences.AppCurrency.DEFAULT
 ) {
     val dx = end.x - start.x
     val dy = end.y - start.y
@@ -212,7 +215,7 @@ private fun DrawScope.drawDirectedCurvedEdge(
     drawPath(path = arrowPath, color = edgeColor)
 
     // Amount label at curve apex
-    val labelText = CurrencyUtils.formatPaise(amountPaise)
+    val labelText = CurrencyUtils.formatPaise(amountPaise, currency = currency)
     val textPaint = android.graphics.Paint().apply {
         color = badgeTextColor
         textSize = 10.dp.toPx()

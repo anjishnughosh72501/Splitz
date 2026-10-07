@@ -37,19 +37,40 @@ import com.paisede.app.ui.viewmodel.SettlementViewModel
 import com.paisede.app.ui.viewmodel.SimplifyViewModel
 import com.paisede.app.ui.viewmodel.ViewModelFactory
 
+import com.paisede.app.ui.screens.startup.StartupScreen
+
 @Composable
 fun AppNavigation(
     app: PaiseDeApplication,
     navController: NavHostController = rememberNavController()
 ) {
+    val isStartupCompleted by app.userPreferences.isStartupCompleted.collectAsState()
+    val startDestination = if (isStartupCompleted) Screen.Home.route else Screen.Startup.route
+
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = startDestination,
         enterTransition = { SplitzEnterTransition.SlideFade },
         exitTransition = { SplitzExitTransition.SlideFade },
         popEnterTransition = { SplitzEnterTransition.SlideFadeReverse },
         popExitTransition = { SplitzExitTransition.SlideFadeReverse }
     ) {
+        // STARTUP SCREEN
+        composable(
+            route = Screen.Startup.route,
+            enterTransition = { SplitzEnterTransition.FadeScale },
+            exitTransition = { SplitzExitTransition.FadeScale }
+        ) {
+            StartupScreen(
+                userPreferences = app.userPreferences,
+                onComplete = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Startup.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         // HOME
         composable(
             route = Screen.Home.route,
@@ -59,6 +80,7 @@ fun AppNavigation(
             val homeVm: HomeViewModel = viewModel(factory = ViewModelFactory(app))
             HomeScreen(
                 viewModel = homeVm,
+                userPreferences = app.userPreferences,
                 onCreateGroupClick = { navController.navigate(Screen.CreateGroup.route) },
                 onGroupClick = { groupId ->
                     navController.navigate(Screen.GroupDashboard.createRoute(groupId))
@@ -77,6 +99,7 @@ fun AppNavigation(
         ) {
             CreateGroupScreen(
                 groupRepository = app.groupRepository,
+                userPreferences = app.userPreferences,
                 onNavigateBack = { navController.popBackStack() },
                 onGroupCreated = { groupId ->
                     navController.popBackStack()
@@ -97,6 +120,7 @@ fun AppNavigation(
 
             GroupDashboardScreen(
                 viewModel = groupVm,
+                userPreferences = app.userPreferences,
                 onNavigateBack = { navController.popBackStack() },
                 onAddExpenseClick = { navController.navigate(Screen.AddExpense.createRoute(groupId)) },
                 onBalancesClick = { navController.navigate(Screen.Balances.createRoute(groupId)) },
@@ -159,6 +183,7 @@ fun AppNavigation(
 
             BalancesScreen(
                 viewModel = balanceVm,
+                userPreferences = app.userPreferences,
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -277,6 +302,7 @@ fun AppNavigation(
             SettingsScreen(
                 groupId = groupId,
                 themePreferences = app.themePreferences,
+                userPreferences = app.userPreferences,
                 onNavigateBack = { navController.popBackStack() },
                 onInspectDataStructures = { gid ->
                     navController.navigate(Screen.DebugPanel.createRoute(gid))
