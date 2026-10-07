@@ -1,7 +1,6 @@
 package com.paisede.app.ui.screens.simplify
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,24 +15,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.ViewList
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -59,15 +51,11 @@ import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.AccentAmber
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate100
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.SimplifyViewModel
 
 @Composable
@@ -90,113 +78,122 @@ fun SimplifyDebtsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(SplitzColors.background())
         ) {
             // Transformation Metric Card: Before vs After
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surface else Slate900
-                ),
-                border = if (isSystemInDarkTheme()) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null,
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    .padding(16.dp),
+                shape = RoundedCornerShape(SplitzShapes.cardHero),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(
+                            brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                                colors = listOf(
+                                    Color(0xFF0F172A),
+                                    Color(0xFF1E293B),
+                                    Color(0xFF0D252E)
+                                )
+                            )
+                        )
                         .padding(20.dp)
                 ) {
-                    Text(
-                        text = "OPTIMIZATION SUMMARY",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.LightGray,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "ORIGINAL",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = DebtRed,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "${state.beforeCount}",
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "debts",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.LightGray
-                            )
-                        }
-
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Optimized into",
-                            tint = BrandTeal,
-                            modifier = Modifier.size(32.dp)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "OPTIMIZATION SUMMARY",
+                            style = SplitzTypography.LabelSmall,
+                            color = Color.White.copy(alpha = 0.6f),
+                            fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "OPTIMIZED",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = CreditGreen,
-                                fontWeight = FontWeight.Bold
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "ORIGINAL",
+                                    style = SplitzTypography.LabelSmall,
+                                    color = DebtRed,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "${state.beforeCount}",
+                                    style = SplitzTypography.DisplayMedium,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "debts",
+                                    style = SplitzTypography.BodySmall,
+                                    color = Color.White.copy(alpha = 0.6f)
+                                )
+                            }
+
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = "Optimized into",
+                                tint = SplitzColors.primaryBright(),
+                                modifier = Modifier.size(32.dp)
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "${state.afterCount}",
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "payments",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.LightGray
-                            )
+
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "OPTIMIZED",
+                                    style = SplitzTypography.LabelSmall,
+                                    color = CreditGreen,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "${state.afterCount}",
+                                    style = SplitzTypography.DisplayMedium,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "payments",
+                                    style = SplitzTypography.BodySmall,
+                                    color = Color.White.copy(alpha = 0.6f)
+                                )
+                            }
                         }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        androidx.compose.material3.HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        val reduction = if (state.beforeCount > state.afterCount) state.beforeCount - state.afterCount else 0
+                        Text(
+                            text = if (reduction > 0) "Eliminated $reduction redundant transaction(s)" else "All debts are in minimal form",
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.primaryBright(),
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-                    androidx.compose.material3.HorizontalDivider(color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outlineVariant else Slate800)
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    val reduction = if (state.beforeCount > state.afterCount) state.beforeCount - state.afterCount else 0
-                    Text(
-                        text = if (reduction > 0) "Eliminated $reduction redundant transactions" else "All debts are in minimal form",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = BrandTeal,
-                        fontWeight = FontWeight.Medium
-                    )
                 }
             }
 
-            // Exact Solver Comparison Box (Section 30)
+            // Exact Solver Comparison Box
             if (state.isExactAvailable && state.exactCount != null) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 2.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                        .padding(horizontal = 16.dp, vertical = 2.dp),
+                    shape = RoundedCornerShape(SplitzShapes.SM),
+                    colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -204,29 +201,37 @@ fun SimplifyDebtsScreen(
                         ) {
                             Text(
                                 text = "Strategy:",
-                                style = MaterialTheme.typography.labelMedium,
+                                style = SplitzTypography.LabelMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = SplitzColors.textPrimary()
                             )
 
                             Row {
+                                val isGreedy = state.selectedMode == "Greedy"
                                 FilterChip(
-                                    selected = state.selectedMode == "Greedy",
+                                    selected = isGreedy,
                                     onClick = { viewModel.selectAlgorithm("Greedy") },
                                     label = { Text("Standard (${state.greedyCount})") },
+                                    shape = RoundedCornerShape(SplitzShapes.Pill),
                                     colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = BrandTeal,
-                                        selectedLabelColor = Color.White
+                                        selectedContainerColor = SplitzColors.primary(),
+                                        selectedLabelColor = Color.White,
+                                        containerColor = SplitzColors.surfaceElevated(),
+                                        labelColor = SplitzColors.textSecondary()
                                     )
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
+                                val isExact = state.selectedMode == "Exact"
                                 FilterChip(
-                                    selected = state.selectedMode == "Exact",
+                                    selected = isExact,
                                     onClick = { viewModel.selectAlgorithm("Exact") },
                                     label = { Text("Exact Min (${state.exactCount})") },
+                                    shape = RoundedCornerShape(SplitzShapes.Pill),
                                     colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.primaryContainer else Slate900,
-                                        selectedLabelColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color.White
+                                        selectedContainerColor = SplitzColors.primary(),
+                                        selectedLabelColor = Color.White,
+                                        containerColor = SplitzColors.surfaceElevated(),
+                                        labelColor = SplitzColors.textSecondary()
                                     )
                                 )
                             }
@@ -239,26 +244,28 @@ fun SimplifyDebtsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 TabRow(
                     selectedTabIndex = selectedViewTab,
-                    modifier = Modifier.width(220.dp),
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = BrandTeal
+                    modifier = Modifier
+                        .width(200.dp)
+                        .clip(RoundedCornerShape(SplitzShapes.Pill)),
+                    containerColor = SplitzColors.surfaceElevated(),
+                    contentColor = SplitzColors.primary()
                 ) {
                     Tab(
                         selected = selectedViewTab == 0,
                         onClick = { selectedViewTab = 0 },
                         icon = { Icon(imageVector = Icons.Default.ViewList, contentDescription = "List View", modifier = Modifier.size(18.dp)) },
-                        text = { Text("List") }
+                        text = { Text("List", style = SplitzTypography.LabelSmall) }
                     )
                     Tab(
                         selected = selectedViewTab == 1,
                         onClick = { selectedViewTab = 1 },
                         icon = { Icon(imageVector = Icons.Default.Hub, contentDescription = "Graph View", modifier = Modifier.size(18.dp)) },
-                        text = { Text("Graph") }
+                        text = { Text("Graph", style = SplitzTypography.LabelSmall) }
                     )
                 }
             }
@@ -276,8 +283,8 @@ fun SimplifyDebtsScreen(
                     // List View
                     LazyColumn(
                         modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(state.transactions) { tx ->
                             SimplifiedTransactionCard(
@@ -295,7 +302,7 @@ fun SimplifyDebtsScreen(
                     Column(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(20.dp)
+                            .padding(16.dp)
                     ) {
                         GraphVisualizer(
                             members = membersList,
@@ -305,8 +312,8 @@ fun SimplifyDebtsScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "Visual settlement flow",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textSecondary(),
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }
@@ -326,15 +333,15 @@ fun SimplifiedTransactionCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shape = RoundedCornerShape(SplitzShapes.MD),
+        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -342,53 +349,54 @@ fun SimplifiedTransactionCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                UserAvatar(name = debtorName, size = 42, backgroundColor = DebtRed.copy(alpha = 0.15f), textColor = DebtRed)
-                Spacer(modifier = Modifier.width(10.dp))
+                UserAvatar(name = debtorName, size = 38, backgroundColor = DebtRed.copy(alpha = 0.15f), textColor = DebtRed)
+                Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
                         text = debtorName,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = SplitzColors.textPrimary()
                     )
                     Text(
                         text = "pays",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = SplitzTypography.LabelSmall,
+                        color = SplitzColors.textMuted()
                     )
                 }
 
-                Spacer(modifier = Modifier.width(14.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
-                    tint = BrandTeal,
-                    modifier = Modifier.size(20.dp)
+                    tint = SplitzColors.primary(),
+                    modifier = Modifier.size(18.dp)
                 )
-                Spacer(modifier = Modifier.width(14.dp))
-
-                UserAvatar(name = creditorName, size = 42, backgroundColor = CreditGreen.copy(alpha = 0.15f), textColor = CreditGreen)
                 Spacer(modifier = Modifier.width(10.dp))
+
+                UserAvatar(name = creditorName, size = 38, backgroundColor = CreditGreen.copy(alpha = 0.15f), textColor = CreditGreen)
+                Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
                         text = creditorName,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = SplitzColors.textPrimary()
                     )
                     Text(
                         text = "receives",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = SplitzTypography.LabelSmall,
+                        color = SplitzColors.textMuted()
                     )
                 }
             }
 
             MoneyText(
                 amountPaise = tx.amountPaise,
-                style = MaterialTheme.typography.titleLarge,
+                style = SplitzTypography.TitleLarge,
                 fontWeight = FontWeight.Bold,
-                colorMode = MoneyColorMode.NEUTRAL
+                colorMode = MoneyColorMode.NEUTRAL,
+                animate = true
             )
         }
     }

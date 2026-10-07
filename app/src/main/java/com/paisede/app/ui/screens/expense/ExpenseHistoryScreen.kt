@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
@@ -34,8 +32,8 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,13 +56,9 @@ import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
-import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.BrandTeal
-import com.paisede.app.ui.theme.Slate100
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.ExpenseViewModel
 import com.paisede.app.util.CurrencyUtils
 import com.paisede.app.util.DateUtils
@@ -107,7 +101,7 @@ fun ExpenseHistoryScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Undo,
                             contentDescription = "Undo",
-                            tint = if (state.canUndo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            tint = if (state.canUndo) SplitzColors.primary() else SplitzColors.textMuted()
                         )
                     }
                     IconButton(
@@ -117,14 +111,14 @@ fun ExpenseHistoryScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Redo,
                             contentDescription = "Redo",
-                            tint = if (state.canRedo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            tint = if (state.canRedo) SplitzColors.primary() else SplitzColors.textMuted()
                         )
                     }
                     IconButton(onClick = { viewModel.toggleSort() }) {
                         Icon(
                             imageVector = Icons.Default.Sort,
                             contentDescription = "Sort",
-                            tint = BrandTeal
+                            tint = SplitzColors.primary()
                         )
                     }
                 }
@@ -135,42 +129,74 @@ fun ExpenseHistoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(SplitzColors.background())
         ) {
             // Search Bar
             OutlinedTextField(
                 value = state.searchQuery,
                 onValueChange = { viewModel.updateSearchQuery(it) },
-                placeholder = { Text("Search by description...") },
-                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null) },
+                placeholder = { Text("Search by description...", color = SplitzColors.textMuted()) },
+                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = SplitzColors.textMuted()) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(SplitzShapes.SM),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = SplitzColors.primary(),
+                    unfocusedBorderColor = SplitzColors.borderSubtle(),
+                    focusedContainerColor = SplitzColors.surface(),
+                    unfocusedContainerColor = SplitzColors.surface()
+                ),
                 singleLine = true
             )
 
             // Category Filter Chips
             LazyRow(
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
+                    val isAllSelected = state.selectedCategory == null
                     FilterChip(
-                        selected = state.selectedCategory == null,
+                        selected = isAllSelected,
                         onClick = { viewModel.filterByCategory(null) },
-                        label = { Text("All Categories") }
+                        label = { Text("All Categories") },
+                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = SplitzColors.primary(),
+                            selectedLabelColor = Color.White,
+                            containerColor = SplitzColors.surface(),
+                            labelColor = SplitzColors.textSecondary()
+                        ),
+                        border = FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = isAllSelected,
+                            borderColor = if (isAllSelected) Color.Transparent else SplitzColors.borderSubtle()
+                        )
                     )
                 }
                 items(Category.DEFAULT_CATEGORIES) { cat ->
+                    val isSelected = state.selectedCategory == cat.id
                     FilterChip(
-                        selected = state.selectedCategory == cat.id,
+                        selected = isSelected,
                         onClick = {
                             viewModel.filterByCategory(
                                 if (state.selectedCategory == cat.id) null else cat.id
                             )
                         },
-                        label = { Text(cat.name) }
+                        label = { Text(cat.name) },
+                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = SplitzColors.primary(),
+                            selectedLabelColor = Color.White,
+                            containerColor = SplitzColors.surface(),
+                            labelColor = SplitzColors.textSecondary()
+                        ),
+                        border = FilterChipDefaults.filterChipBorder(
+                            enabled = true,
+                            selected = isSelected,
+                            borderColor = if (isSelected) Color.Transparent else SplitzColors.borderSubtle()
+                        )
                     )
                 }
             }
@@ -188,16 +214,16 @@ fun ExpenseHistoryScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     groupedByDate.forEach { (dateHeader, exps) ->
                         item {
                             Text(
                                 text = dateHeader.uppercase(),
-                                style = MaterialTheme.typography.labelMedium,
+                                style = SplitzTypography.LabelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = SplitzColors.textMuted(),
                                 modifier = Modifier.padding(vertical = 4.dp)
                             )
                         }
@@ -228,11 +254,12 @@ fun ExpenseHistoryItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(SplitzShapes.MD))
             .clickable { expanded = !expanded },
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shape = RoundedCornerShape(SplitzShapes.MD),
+        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
     ) {
         Column(
             modifier = Modifier
@@ -247,30 +274,31 @@ fun ExpenseHistoryItem(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = expense.description,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = SplitzColors.textPrimary()
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = "Paid by $payerName • Split among ${splits.size}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = SplitzTypography.BodySmall,
+                        color = SplitzColors.textSecondary()
                     )
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MoneyText(
                         amountPaise = expense.amountPaise,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = SplitzTypography.TitleLarge,
                         fontWeight = FontWeight.Bold,
-                        colorMode = MoneyColorMode.NEUTRAL
+                        colorMode = MoneyColorMode.NEUTRAL,
+                        animate = true
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Icon(
                         imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = SplitzColors.textMuted(),
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -282,12 +310,12 @@ fun ExpenseHistoryItem(
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                 ) {
-                    androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    androidx.compose.material3.HorizontalDivider(color = SplitzColors.borderSubtle())
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "Split Breakdown (${expense.splitType.name}):",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = SplitzTypography.LabelMedium,
+                        color = SplitzColors.textSecondary(),
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(6.dp))
@@ -301,14 +329,14 @@ fun ExpenseHistoryItem(
                         ) {
                             Text(
                                 text = memberName,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface
+                                style = SplitzTypography.BodyMedium,
+                                color = SplitzColors.textPrimary()
                             )
                             Text(
                                 text = CurrencyUtils.formatPaise(split.amountPaise),
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = SplitzTypography.BodyMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = SplitzColors.textPrimary()
                             )
                         }
                     }

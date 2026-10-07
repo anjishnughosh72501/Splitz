@@ -17,4 +17,5 @@ app/build/
 __pycache__/
 *.pyc
 *.apk
+!Splitz.apk
 

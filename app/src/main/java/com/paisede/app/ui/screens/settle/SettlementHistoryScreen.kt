@@ -16,13 +16,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,21 +28,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
-import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.SettlementViewModel
 
 @Composable
@@ -66,7 +59,7 @@ fun SettlementHistoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(SplitzColors.background())
         ) {
             if (state.pastSettlements.isEmpty()) {
                 EmptyStateView(
@@ -78,8 +71,8 @@ fun SettlementHistoryScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(state.pastSettlements) { tx ->
                         val fromName = state.members[tx.fromUserId]?.name ?: "Member"
@@ -87,9 +80,10 @@ fun SettlementHistoryScreen(
 
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(14.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            shape = RoundedCornerShape(SplitzShapes.MD),
+                            colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                         ) {
                             Row(
                                 modifier = Modifier
@@ -109,23 +103,26 @@ fun SettlementHistoryScreen(
                                     Column {
                                         Text(
                                             text = "$fromName paid $toName",
-                                            style = MaterialTheme.typography.titleMedium,
+                                            style = SplitzTypography.TitleMedium,
                                             fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onSurface
+                                            color = SplitzColors.textPrimary()
                                         )
+                                        Spacer(modifier = Modifier.height(2.dp))
                                         Text(
                                             text = "Completed Settlement",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = CreditGreen
+                                            style = SplitzTypography.BodySmall,
+                                            color = CreditGreen,
+                                            fontWeight = FontWeight.Medium
                                         )
                                     }
                                 }
 
                                 MoneyText(
                                     amountPaise = tx.amountPaise,
-                                    style = MaterialTheme.typography.titleLarge,
+                                    style = SplitzTypography.TitleLarge,
                                     fontWeight = FontWeight.Bold,
-                                    colorMode = MoneyColorMode.NEUTRAL
+                                    colorMode = MoneyColorMode.NEUTRAL,
+                                    animate = true
                                 )
                             }
                         }

@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
@@ -112,18 +113,21 @@ fun GroupDashboardScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
+            shape = RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.sheet),
+            containerColor = com.paisede.app.ui.theme.SplitzColors.surface(),
             title = {
                 Text(
                     text = "Delete Group?",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    style = com.paisede.app.ui.theme.SplitzTypography.TitleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = com.paisede.app.ui.theme.SplitzColors.textPrimary()
                 )
             },
             text = {
                 Text(
                     text = "Are you sure you want to delete \"${state.group?.name ?: "this group"}\"? All expenses, balances, and member records will be permanently removed.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style = com.paisede.app.ui.theme.SplitzTypography.BodyMedium,
+                    color = com.paisede.app.ui.theme.SplitzColors.textSecondary()
                 )
             },
             confirmButton = {
@@ -134,14 +138,15 @@ fun GroupDashboardScreen(
                             onNavigateBack()
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed)
+                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed),
+                    shape = RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.button)
                 ) {
-                    Text("Delete", color = Color.White)
+                    Text("Delete", color = Color.White, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Cancel", color = com.paisede.app.ui.theme.SplitzColors.textSecondary())
                 }
             }
         )
@@ -175,41 +180,39 @@ fun GroupDashboardScreen(
                 ) {
                     Text(
                         text = "Members (${state.members.size})",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = com.paisede.app.ui.theme.SplitzTypography.LabelLarge,
+                        color = com.paisede.app.ui.theme.SplitzColors.textSecondary(),
                         fontWeight = FontWeight.SemiBold
                     )
                     if (state.members.isEmpty()) {
                         Text(
                             text = "No members in this group",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            style = com.paisede.app.ui.theme.SplitzTypography.BodyMedium,
+                            color = com.paisede.app.ui.theme.SplitzColors.textMuted()
                         )
                     } else {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 260.dp),
+                                .heightIn(max = 280.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(state.members) { member ->
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(
-                                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                                            RoundedCornerShape(10.dp)
-                                        )
-                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                        .clip(RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.SM))
+                                        .background(com.paisede.app.ui.theme.SplitzColors.surfaceElevated())
+                                        .padding(horizontal = 14.dp, vertical = 10.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    UserAvatar(name = member.name, size = 32)
+                                    UserAvatar(name = member.name, size = 36)
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
                                         text = member.name,
-                                        style = MaterialTheme.typography.bodyLarge,
+                                        style = com.paisede.app.ui.theme.SplitzTypography.BodyLarge,
                                         fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        color = com.paisede.app.ui.theme.SplitzColors.textPrimary()
                                     )
                                 }
                             }
@@ -219,7 +222,12 @@ fun GroupDashboardScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showMembersDialog = false }) {
-                    Text("Close", color = BrandTeal, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "Close",
+                        color = com.paisede.app.ui.theme.SplitzColors.primary(),
+                        fontWeight = FontWeight.SemiBold,
+                        style = com.paisede.app.ui.theme.SplitzTypography.LabelLarge
+                    )
                 }
             }
         )
@@ -232,7 +240,6 @@ fun GroupDashboardScreen(
                 title = state.group?.name ?: "Group Dashboard",
                 onNavigateBack = onNavigateBack,
                 actions = {
-                    // Undo & Redo top bar actions
                     IconButton(
                         onClick = { viewModel.undo() },
                         enabled = state.canUndo
@@ -240,7 +247,7 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Undo,
                             contentDescription = "Undo",
-                            tint = if (state.canUndo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            tint = if (state.canUndo) com.paisede.app.ui.theme.SplitzColors.primary() else com.paisede.app.ui.theme.SplitzColors.textMuted()
                         )
                     }
                     IconButton(
@@ -250,7 +257,7 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Redo,
                             contentDescription = "Redo",
-                            tint = if (state.canRedo) BrandTeal else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            tint = if (state.canRedo) com.paisede.app.ui.theme.SplitzColors.primary() else com.paisede.app.ui.theme.SplitzColors.textMuted()
                         )
                     }
                     IconButton(
@@ -259,7 +266,7 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.Default.Group,
                             contentDescription = "Show Members",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = com.paisede.app.ui.theme.SplitzColors.textPrimary()
                         )
                     }
                     IconButton(
@@ -268,7 +275,7 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.Default.DeleteOutline,
                             contentDescription = "Delete Group",
-                            tint = DebtRed.copy(alpha = 0.85f)
+                            tint = com.paisede.app.ui.theme.SplitzColors.negative()
                         )
                     }
                     IconButton(
@@ -277,7 +284,7 @@ fun GroupDashboardScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings & Help",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = com.paisede.app.ui.theme.SplitzColors.textPrimary()
                         )
                     }
                 }
@@ -286,8 +293,9 @@ fun GroupDashboardScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddExpenseClick,
-                containerColor = BrandTeal,
-                contentColor = Color.White
+                containerColor = com.paisede.app.ui.theme.SplitzColors.primary(),
+                contentColor = Color.White,
+                shape = RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.fab)
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Expense")
             }
@@ -298,102 +306,126 @@ fun GroupDashboardScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(20.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+                .background(com.paisede.app.ui.theme.SplitzColors.background()),
+            contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Summary Hero Card
             item(span = { GridItemSpan(2) }) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surface else Slate900
-                    ),
-                    border = if (isSystemInDarkTheme()) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null,
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    shape = RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.cardHero),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, com.paisede.app.ui.theme.SplitzColors.borderSubtle()),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
-                    Column(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp)
+                            .background(
+                                brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                                    colors = listOf(
+                                        Color(0xFF0F172A),
+                                        Color(0xFF1E293B),
+                                        Color(0xFF0D252E)
+                                    )
+                                )
+                            )
+                            .padding(22.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text(
-                                    text = "TOTAL SPENDING",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = Color.LightGray
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                MoneyText(
-                                    amountPaise = state.totalSpendingPaise,
-                                    style = MaterialTheme.typography.headlineLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    colorMode = MoneyColorMode.NEUTRAL
-                                )
-                            }
-
+                        Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surfaceVariant else Slate800)
-                                    .clickable { showMembersDialog = true }
-                                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Group,
-                                    contentDescription = "Show Members",
-                                    tint = BrandTeal,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "${state.members.size} Members",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                        }
+                                Column {
+                                    Text(
+                                        text = "TOTAL SPENDING",
+                                        style = com.paisede.app.ui.theme.SplitzTypography.LabelMedium,
+                                        color = Color.White.copy(alpha = 0.6f),
+                                        fontWeight = FontWeight.SemiBold,
+                                        letterSpacing = 1.2.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    MoneyText(
+                                        amountPaise = state.totalSpendingPaise,
+                                        style = com.paisede.app.ui.theme.SplitzTypography.MoneyDisplay,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        colorMode = MoneyColorMode.NEUTRAL,
+                                        animate = true
+                                    )
+                                }
 
-                        Spacer(modifier = Modifier.height(18.dp))
-                        androidx.compose.material3.HorizontalDivider(color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outlineVariant else Slate800)
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Your Status:",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.LightGray
-                            )
-                            val userStatus = when {
-                                state.userNetBalancePaise > 0 -> "You're owed"
-                                state.userNetBalancePaise < 0 -> "You owe"
-                                else -> "Settled Up"
+                                Row(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.SM))
+                                        .background(Color.White.copy(alpha = 0.12f))
+                                        .clickable { showMembersDialog = true }
+                                        .padding(horizontal = 12.dp, vertical = 7.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Group,
+                                        contentDescription = "Show Members",
+                                        tint = BrandTeal,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "${state.members.size} Members",
+                                        style = com.paisede.app.ui.theme.SplitzTypography.LabelMedium,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
                             }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                            Spacer(modifier = Modifier.height(18.dp))
+                            androidx.compose.material3.HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
-                                    text = "$userStatus ",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White
+                                    text = "Your Net Balance",
+                                    style = com.paisede.app.ui.theme.SplitzTypography.BodyMedium,
+                                    color = Color.White.copy(alpha = 0.7f)
                                 )
-                                MoneyText(
-                                    amountPaise = state.userNetBalancePaise,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    showSign = true
-                                )
+                                val (statusText, statusBg, statusColor) = when {
+                                    state.userNetBalancePaise > 0 -> Triple("You are owed", CreditGreen.copy(alpha = 0.2f), CreditGreen)
+                                    state.userNetBalancePaise < 0 -> Triple("You owe", DebtRed.copy(alpha = 0.2f), DebtRed)
+                                    else -> Triple("Settled up", Color.White.copy(alpha = 0.12f), Color.White)
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.Pill))
+                                            .background(statusBg)
+                                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    ) {
+                                        Text(
+                                            text = statusText,
+                                            style = com.paisede.app.ui.theme.SplitzTypography.LabelSmall,
+                                            color = statusColor,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                    MoneyText(
+                                        amountPaise = state.userNetBalancePaise,
+                                        style = com.paisede.app.ui.theme.SplitzTypography.TitleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        showSign = true,
+                                        animate = true
+                                    )
+                                }
                             }
                         }
                     }
@@ -405,121 +437,132 @@ fun GroupDashboardScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clip(RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.MD))
                         .clickable { onSimplifyClick() },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = BrandTeal),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                    shape = RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.MD),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, com.paisede.app.ui.theme.SplitzColors.primary().copy(alpha = 0.4f)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Row(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(18.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .background(brush = com.paisede.app.ui.theme.SplitzGradients.Primary)
+                            .padding(18.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.AutoAwesome,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(46.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.White.copy(alpha = 0.22f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.AutoAwesome,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(14.dp))
+                                Column {
+                                    Text(
+                                        text = "Simplify Debts",
+                                        style = com.paisede.app.ui.theme.SplitzTypography.TitleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    Text(
+                                        text = "Minimize group transactions with one tap",
+                                        style = com.paisede.app.ui.theme.SplitzTypography.BodySmall,
+                                        color = Color.White.copy(alpha = 0.85f)
+                                    )
+                                }
                             }
-                            Spacer(modifier = Modifier.width(14.dp))
-                            Column {
-                                Text(
-                                    text = "Simplify Debts",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                                Text(
-                                    text = "Minimize group payments",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White.copy(alpha = 0.85f)
-                                )
-                            }
-                        }
 
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Simplify Debts",
-                            tint = Color.White
-                        )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = "Simplify Debts",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 }
             }
 
             // Action Grid Cards
             item {
-                ActionTile(
+                ModernActionTile(
                     title = "Balances",
-                    subtitle = "Net balance per member",
+                    subtitle = "Net by member",
                     icon = Icons.Default.AccountBalanceWallet,
-                    iconBg = CreditGreen.copy(alpha = 0.15f),
                     iconTint = CreditGreen,
+                    iconBg = CreditGreen.copy(alpha = 0.15f),
                     onClick = onBalancesClick
                 )
             }
 
             item {
-                ActionTile(
+                ModernActionTile(
                     title = "Settle Up",
                     subtitle = "Record payments",
                     icon = Icons.Default.Handshake,
-                    iconBg = AccentAmber.copy(alpha = 0.15f),
                     iconTint = AccentAmber,
+                    iconBg = AccentAmber.copy(alpha = 0.15f),
                     onClick = onSettleUpClick
                 )
             }
 
             item {
-                ActionTile(
+                ModernActionTile(
                     title = "Expenses",
-                    subtitle = "All expenses",
+                    subtitle = "All activity",
                     icon = Icons.Default.ReceiptLong,
-                    iconBg = MaterialTheme.colorScheme.surfaceVariant,
-                    iconTint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    iconTint = BrandTeal,
+                    iconBg = BrandTeal.copy(alpha = 0.15f),
                     onClick = onExpensesClick
                 )
             }
 
             item {
-                ActionTile(
+                ModernActionTile(
                     title = "Analytics",
-                    subtitle = "Spending breakdown",
+                    subtitle = "Spending insights",
                     icon = Icons.Default.PieChart,
-                    iconBg = IndigoPurple.copy(alpha = 0.15f),
                     iconTint = IndigoPurple,
+                    iconBg = IndigoPurple.copy(alpha = 0.15f),
                     onClick = onAnalyticsClick
                 )
             }
 
             item {
-                ActionTile(
+                ModernActionTile(
                     title = "Debt Graph",
                     subtitle = "Payment network",
                     icon = Icons.Default.Hub,
-                    iconBg = BrandTeal.copy(alpha = 0.15f),
                     iconTint = BrandTeal,
+                    iconBg = BrandTeal.copy(alpha = 0.15f),
                     onClick = onGraphClick
                 )
             }
 
             item {
-                ActionTile(
+                ModernActionTile(
                     title = "Settings & Help",
-                    subtitle = "Guides & DS inspect",
+                    subtitle = "Inspect & guides",
                     icon = Icons.Default.HelpOutline,
-                    iconBg = MaterialTheme.colorScheme.surfaceVariant,
-                    iconTint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    iconTint = com.paisede.app.ui.theme.SplitzColors.textSecondary(),
+                    iconBg = com.paisede.app.ui.theme.SplitzColors.surfaceElevated(),
                     onClick = onSettingsClick
                 )
             }
@@ -532,7 +575,7 @@ fun GroupDashboardScreen(
 }
 
 @Composable
-fun ActionTile(
+fun ModernActionTile(
     title: String,
     subtitle: String,
     icon: ImageVector,
@@ -543,11 +586,12 @@ fun ActionTile(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.MD))
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shape = RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.MD),
+        colors = CardDefaults.cardColors(containerColor = com.paisede.app.ui.theme.SplitzColors.surface()),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, com.paisede.app.ui.theme.SplitzColors.borderSubtle())
     ) {
         Column(
             modifier = Modifier
@@ -556,8 +600,8 @@ fun ActionTile(
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(com.paisede.app.ui.theme.SplitzShapes.SM))
                     .background(iconBg),
                 contentAlignment = Alignment.Center
             ) {
@@ -565,7 +609,7 @@ fun ActionTile(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(22.dp)
                 )
             }
 
@@ -573,17 +617,17 @@ fun ActionTile(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = com.paisede.app.ui.theme.SplitzTypography.TitleMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = com.paisede.app.ui.theme.SplitzColors.textPrimary()
             )
 
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(3.dp))
 
             Text(
                 text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = com.paisede.app.ui.theme.SplitzTypography.BodySmall,
+                color = com.paisede.app.ui.theme.SplitzColors.textSecondary()
             )
         }
     }

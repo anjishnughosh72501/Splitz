@@ -18,38 +18,36 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.GraphVisualizer
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.theme.AccentAmber
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
-
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.DebtGraphViewModel
 import com.paisede.app.util.CurrencyUtils
 
@@ -73,30 +71,53 @@ fun DebtGraphScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(SplitzColors.background())
         ) {
             // Tabs: All Debts vs Simplified Debts
+            val selectedTabIndex = if (state.isSimplifiedTab) 1 else 0
             TabRow(
-                selectedTabIndex = if (state.isSimplifiedTab) 1 else 0,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = BrandTeal
+                selectedTabIndex = selectedTabIndex,
+                containerColor = SplitzColors.surface(),
+                contentColor = SplitzColors.primary(),
+                indicator = { tabPositions ->
+                    if (selectedTabIndex in tabPositions.indices) {
+                        TabRowDefaults.SecondaryIndicator(
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            color = SplitzColors.primary()
+                        )
+                    }
+                }
             ) {
                 Tab(
                     selected = !state.isSimplifiedTab,
                     onClick = { viewModel.setTab(false) },
-                    text = { Text("All Debts (${state.rawEdges.size})") }
+                    text = {
+                        Text(
+                            "All Debts (${state.rawEdges.size})",
+                            style = SplitzTypography.LabelLarge,
+                            fontWeight = if (!state.isSimplifiedTab) FontWeight.Bold else FontWeight.Medium,
+                            color = if (!state.isSimplifiedTab) SplitzColors.primary() else SplitzColors.textSecondary()
+                        )
+                    }
                 )
                 Tab(
                     selected = state.isSimplifiedTab,
                     onClick = { viewModel.setTab(true) },
-                    text = { Text("Simplified (${state.simplifiedEdges.size})") }
+                    text = {
+                        Text(
+                            "Simplified (${state.simplifiedEdges.size})",
+                            style = SplitzTypography.LabelLarge,
+                            fontWeight = if (state.isSimplifiedTab) FontWeight.Bold else FontWeight.Medium,
+                            color = if (state.isSimplifiedTab) SplitzColors.primary() else SplitzColors.textSecondary()
+                        )
+                    }
                 )
             }
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 // Interactive Canvas Graph Visualizer
                 item {
@@ -113,14 +134,14 @@ fun DebtGraphScreen(
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(SplitzShapes.MD),
                             colors = CardDefaults.cardColors(
                                 containerColor = if (state.detectedCycle != null) AccentAmber.copy(alpha = 0.12f)
-                                else MaterialTheme.colorScheme.surfaceVariant
+                                else SplitzColors.surface()
                             ),
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                if (state.detectedCycle != null) AccentAmber else MaterialTheme.colorScheme.outlineVariant
+                                if (state.detectedCycle != null) AccentAmber.copy(alpha = 0.5f) else SplitzColors.borderSubtle()
                             )
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
@@ -132,9 +153,9 @@ fun DebtGraphScreen(
                                     Column {
                                         Text(
                                             text = "CIRCULAR DEBTS",
-                                            style = MaterialTheme.typography.labelMedium,
+                                            style = SplitzTypography.LabelSmall,
                                             fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onSurface
+                                            color = SplitzColors.textPrimary()
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         val statusDesc = if (state.detectedCycle != null) {
@@ -145,8 +166,8 @@ fun DebtGraphScreen(
                                         }
                                         Text(
                                             text = statusDesc,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            style = SplitzTypography.BodyMedium,
+                                            color = SplitzColors.textSecondary()
                                         )
                                     }
                                 }
@@ -155,16 +176,17 @@ fun DebtGraphScreen(
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Button(
                                         onClick = { viewModel.cancelCycles() },
-                                        shape = RoundedCornerShape(10.dp),
-                                        colors = ButtonDefaults.buttonColors(containerColor = BrandTeal)
+                                        shape = RoundedCornerShape(SplitzShapes.button),
+                                        colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary())
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Sync,
                                             contentDescription = "Resolve Circular Debt",
-                                            modifier = Modifier.size(16.dp)
+                                            modifier = Modifier.size(16.dp),
+                                            tint = Color.White
                                         )
                                         Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Resolve Circular Debt")
+                                        Text("Resolve Circular Debt", color = Color.White, fontWeight = FontWeight.SemiBold)
                                     }
                                 }
 
@@ -172,7 +194,7 @@ fun DebtGraphScreen(
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
                                         text = "Resolved in circular flows: ${CurrencyUtils.formatPaise(state.cyclesCanceledAmount)}",
-                                        style = MaterialTheme.typography.bodySmall,
+                                        style = SplitzTypography.BodySmall,
                                         color = CreditGreen,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -186,9 +208,9 @@ fun DebtGraphScreen(
                 item {
                     Text(
                         text = if (state.isSimplifiedTab) "SIMPLIFIED DEBTS" else "INDIVIDUAL DEBTS",
-                        style = MaterialTheme.typography.labelMedium,
+                        style = SplitzTypography.LabelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = SplitzColors.textMuted()
                     )
                 }
 
@@ -199,9 +221,9 @@ fun DebtGraphScreen(
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                        shape = RoundedCornerShape(SplitzShapes.SM),
+                        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                     ) {
                         Row(
                             modifier = Modifier
@@ -213,31 +235,32 @@ fun DebtGraphScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = fromName,
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    style = SplitzTypography.BodyLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = SplitzColors.textPrimary()
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    tint = SplitzColors.textMuted(),
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = toName,
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    style = SplitzTypography.BodyLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = SplitzColors.textPrimary()
                                 )
                             }
 
                             MoneyText(
                                 amountPaise = edge.amountPaise,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = SplitzTypography.TitleMedium,
                                 fontWeight = FontWeight.Bold,
-                                colorMode = MoneyColorMode.NEUTRAL
+                                colorMode = MoneyColorMode.NEUTRAL,
+                                animate = true
                             )
                         }
                     }

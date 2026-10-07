@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
@@ -23,7 +22,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -39,11 +38,12 @@ import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.IndigoPurple
-
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.DebugViewModel
 
 @Composable
@@ -63,7 +63,7 @@ fun DataStructureDebugScreen(
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = "Refresh DS state",
-                            tint = BrandTeal
+                            tint = SplitzColors.primary()
                         )
                     }
                 }
@@ -74,39 +74,56 @@ fun DataStructureDebugScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .background(SplitzColors.background()),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             // Intro Callout for Viva
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    shape = RoundedCornerShape(SplitzShapes.cardHero),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
-                    Column(modifier = Modifier.padding(18.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.BugReport,
-                                contentDescription = null,
-                                tint = BrandTeal,
-                                modifier = Modifier.size(24.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                                    colors = listOf(
+                                        Color(0xFF0F172A),
+                                        Color(0xFF1E293B),
+                                        Color(0xFF0D252E)
+                                    )
+                                )
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            .padding(18.dp)
+                    ) {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.BugReport,
+                                    contentDescription = null,
+                                    tint = SplitzColors.primaryBright(),
+                                    modifier = Modifier.size(22.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "LIVE DATA STRUCTURE MONITOR",
+                                    style = SplitzTypography.TitleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = "LIVE DATA STRUCTURE MONITOR",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in Splitz.",
+                                style = SplitzTypography.BodySmall,
+                                color = Color.White.copy(alpha = 0.7f)
                             )
                         }
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in Splitz.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                        )
                     }
                 }
             }
@@ -125,20 +142,26 @@ fun DataStructureDebugScreen(
                                 .padding(vertical = 4.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                            Text(
+                                text = name,
+                                style = SplitzTypography.BodyMedium,
+                                fontWeight = FontWeight.Medium,
+                                color = SplitzColors.textPrimary()
+                            )
                             MoneyText(
                                 amountPaise = balance,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = SplitzTypography.BodyMedium,
                                 fontWeight = FontWeight.Bold,
-                                showSign = true
+                                showSign = true,
+                                animate = true
                             )
                         }
                     }
                     val sum = state.netBalances.values.sum()
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = "Sum Invariant: $sum paise (Zero-sum verified ✓)",
-                        style = MaterialTheme.typography.labelSmall,
+                        style = SplitzTypography.LabelSmall,
                         color = CreditGreen,
                         fontWeight = FontWeight.Bold
                     )
@@ -152,7 +175,11 @@ fun DataStructureDebugScreen(
                     complexity = "Insert: O(log N) | Poll Max: O(log N)"
                 ) {
                     if (state.creditorQueue.isEmpty()) {
-                        Text(text = "Empty (no creditors)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = "Empty (no creditors)",
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textMuted()
+                        )
                     } else {
                         state.creditorQueue.forEachIndexed { idx, bal ->
                             val name = state.members[bal.userId]?.name ?: bal.userId
@@ -164,15 +191,17 @@ fun DataStructureDebugScreen(
                             ) {
                                 Text(
                                     text = "#${idx + 1} $name",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
+                                    style = SplitzTypography.BodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = SplitzColors.textPrimary()
                                 )
                                 MoneyText(
                                     amountPaise = bal.amountPaise,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    style = SplitzTypography.BodyMedium,
                                     fontWeight = FontWeight.Bold,
                                     colorMode = MoneyColorMode.CREDIT,
-                                    showSign = true
+                                    showSign = true,
+                                    animate = true
                                 )
                             }
                         }
@@ -187,7 +216,11 @@ fun DataStructureDebugScreen(
                     complexity = "Insert: O(log N) | Poll Max: O(log N)"
                 ) {
                     if (state.debtorQueue.isEmpty()) {
-                        Text(text = "Empty (no debtors)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = "Empty (no debtors)",
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textMuted()
+                        )
                     } else {
                         state.debtorQueue.forEachIndexed { idx, bal ->
                             val name = state.members[bal.userId]?.name ?: bal.userId
@@ -199,15 +232,17 @@ fun DataStructureDebugScreen(
                             ) {
                                 Text(
                                     text = "#${idx + 1} $name",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
+                                    style = SplitzTypography.BodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = SplitzColors.textPrimary()
                                 )
                                 MoneyText(
                                     amountPaise = bal.amountPaise,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    style = SplitzTypography.BodyMedium,
                                     fontWeight = FontWeight.Bold,
                                     colorMode = MoneyColorMode.DEBT,
-                                    showSign = true
+                                    showSign = true,
+                                    animate = true
                                 )
                             }
                         }
@@ -223,8 +258,9 @@ fun DataStructureDebugScreen(
                 ) {
                     Text(
                         text = "Total Raw Edges: ${state.graphEdges.size}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
+                        style = SplitzTypography.BodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = SplitzColors.textPrimary()
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     val cycleInfo = if (state.detectedCycles != null) {
@@ -235,7 +271,7 @@ fun DataStructureDebugScreen(
                     }
                     Text(
                         text = cycleInfo,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = SplitzTypography.BodySmall,
                         color = if (state.detectedCycles != null) DebtRed else CreditGreen,
                         fontWeight = FontWeight.Medium
                     )
@@ -252,12 +288,16 @@ fun DataStructureDebugScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "Greedy 2-Heap Result:", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = "Greedy 2-Heap Result:",
+                            style = SplitzTypography.BodyMedium,
+                            color = SplitzColors.textPrimary()
+                        )
                         Text(
                             text = "${state.greedyTxCount} transactions",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = SplitzTypography.BodyMedium,
                             fontWeight = FontWeight.Bold,
-                            color = BrandTeal
+                            color = SplitzColors.primary()
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
@@ -265,10 +305,14 @@ fun DataStructureDebugScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "Exact Minimum (≤8 members):", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = "Exact Minimum (≤8 members):",
+                            style = SplitzTypography.BodyMedium,
+                            color = SplitzColors.textPrimary()
+                        )
                         Text(
                             text = if (state.exactTxCount != null) "${state.exactTxCount} transactions" else "N/A (>8 members)",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = SplitzTypography.BodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = IndigoPurple
                         )
@@ -284,11 +328,14 @@ fun DataStructureDebugScreen(
                 ) {
                     Text(
                         text = "Undo Stack Size: ${state.undoStack.size}",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = SplitzTypography.BodyMedium,
+                        color = SplitzColors.textPrimary()
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Redo Stack Size: ${state.redoStack.size}",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = SplitzTypography.BodyMedium,
+                        color = SplitzColors.textPrimary()
                     )
                 }
             }
@@ -304,9 +351,10 @@ fun DebugSectionCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shape = RoundedCornerShape(SplitzShapes.MD),
+        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
     ) {
         Column(
             modifier = Modifier
@@ -320,22 +368,29 @@ fun DebugSectionCard(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = SplitzTypography.TitleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = SplitzColors.textPrimary(),
                     modifier = Modifier.weight(1f)
                 )
             }
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = complexity,
-                style = MaterialTheme.typography.labelSmall,
-                color = BrandTeal,
-                fontFamily = FontFamily.Monospace,
-                fontSize = 11.sp
-            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(SplitzShapes.XS))
+                    .background(SplitzColors.surfaceElevated())
+                    .padding(horizontal = 8.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = complexity,
+                    style = SplitzTypography.LabelSmall,
+                    color = SplitzColors.primary(),
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 11.sp
+                )
+            }
             Spacer(modifier = Modifier.height(10.dp))
-            androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            androidx.compose.material3.HorizontalDivider(color = SplitzColors.borderSubtle())
             Spacer(modifier = Modifier.height(10.dp))
             content()
         }

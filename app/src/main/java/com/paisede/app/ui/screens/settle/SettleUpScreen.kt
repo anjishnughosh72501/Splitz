@@ -27,8 +27,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -41,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,12 +50,11 @@ import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate900
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.SettlementViewModel
 import com.paisede.app.util.CurrencyUtils
 
@@ -84,21 +82,35 @@ fun SettleUpScreen(
 
         AlertDialog(
             onDismissRequest = { viewModel.dismissPrompt() },
-            title = { Text("Confirm Settlement") },
+            shape = RoundedCornerShape(SplitzShapes.sheet),
+            containerColor = SplitzColors.surface(),
+            title = {
+                Text(
+                    text = "Confirm Settlement",
+                    style = SplitzTypography.TitleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = SplitzColors.textPrimary()
+                )
+            },
             text = {
-                Text("Record a payment of $amountStr from $debtor to $creditor? This will reduce both members' balances to settled.")
+                Text(
+                    text = "Record a payment of $amountStr from $debtor to $creditor? This will reduce both members' balances to settled.",
+                    style = SplitzTypography.BodyMedium,
+                    color = SplitzColors.textSecondary()
+                )
             },
             confirmButton = {
                 Button(
                     onClick = { viewModel.confirmSettlement() },
-                    colors = ButtonDefaults.buttonColors(containerColor = BrandTeal)
+                    colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary()),
+                    shape = RoundedCornerShape(SplitzShapes.button)
                 ) {
-                    Text("Confirm Payment")
+                    Text("Confirm Payment", color = Color.White, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.dismissPrompt() }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Cancel", color = SplitzColors.textSecondary())
                 }
             }
         )
@@ -115,7 +127,7 @@ fun SettleUpScreen(
                         Icon(
                             imageVector = Icons.Default.History,
                             contentDescription = "Settlement History",
-                            tint = BrandTeal
+                            tint = SplitzColors.primary()
                         )
                     }
                 }
@@ -126,7 +138,7 @@ fun SettleUpScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(SplitzColors.background())
         ) {
             if (state.recommendedPayments.isEmpty()) {
                 EmptyStateView(
@@ -138,27 +150,27 @@ fun SettleUpScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(20.dp),
+                    contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     item {
                         Text(
                             text = "RECOMMENDED SETTLEMENTS",
-                            style = MaterialTheme.typography.labelMedium,
+                            style = SplitzTypography.LabelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = SplitzColors.textMuted()
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Minimal set of direct payments to settle all group debts.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textSecondary()
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                     }
 
                     items(state.recommendedPayments) { tx ->
-                        SettleUpCard(
+                        ModernSettleUpCard(
                             tx = tx,
                             members = state.members,
                             onSettleClick = { viewModel.promptSettlement(tx) }
@@ -171,7 +183,7 @@ fun SettleUpScreen(
 }
 
 @Composable
-fun SettleUpCard(
+fun ModernSettleUpCard(
     tx: SettlementTransaction,
     members: Map<String, Member>,
     onSettleClick: () -> Unit
@@ -181,53 +193,57 @@ fun SettleUpCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shape = RoundedCornerShape(SplitzShapes.MD),
+        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp)
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    UserAvatar(name = debtor, size = 38, backgroundColor = DebtRed.copy(alpha = 0.15f), textColor = DebtRed)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    UserAvatar(name = debtor, size = 36, backgroundColor = DebtRed.copy(alpha = 0.15f), textColor = DebtRed)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = debtor,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = SplitzColors.textPrimary()
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = SplitzColors.textMuted(),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    UserAvatar(name = creditor, size = 38, backgroundColor = CreditGreen.copy(alpha = 0.15f), textColor = CreditGreen)
+                    UserAvatar(name = creditor, size = 36, backgroundColor = CreditGreen.copy(alpha = 0.15f), textColor = CreditGreen)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = creditor,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = SplitzColors.textPrimary()
                     )
                 }
 
                 MoneyText(
                     amountPaise = tx.amountPaise,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = SplitzTypography.TitleLarge,
                     fontWeight = FontWeight.Bold,
-                    colorMode = MoneyColorMode.NEUTRAL
+                    colorMode = MoneyColorMode.NEUTRAL,
+                    animate = true
                 )
             }
 
@@ -236,12 +252,13 @@ fun SettleUpCard(
             Button(
                 onClick = onSettleClick,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BrandTeal)
+                shape = RoundedCornerShape(SplitzShapes.button),
+                colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary())
             ) {
                 Text(
                     text = "Mark as Settled (${CurrencyUtils.formatPaise(tx.amountPaise)})",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = SplitzTypography.LabelLarge,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color.White
                 )
             }

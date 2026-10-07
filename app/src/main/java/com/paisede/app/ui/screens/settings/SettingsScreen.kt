@@ -29,18 +29,20 @@ import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Hub
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,25 +54,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.paisede.app.data.preferences.AppThemeMode
+import com.paisede.app.data.preferences.ThemePreferences
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.theme.AccentAmber
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.CreditGreen
 import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.IndigoPurple
-import com.paisede.app.ui.theme.Slate100
-import com.paisede.app.ui.theme.Slate200
-import com.paisede.app.ui.theme.Slate600
-import com.paisede.app.ui.theme.Slate800
-import com.paisede.app.ui.theme.Slate900
-
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.collectAsState
-import com.paisede.app.data.preferences.AppThemeMode
-import com.paisede.app.data.preferences.ThemePreferences
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 
 @Composable
 fun SettingsScreen(
@@ -85,39 +78,45 @@ fun SettingsScreen(
     if (showThemeDialog) {
         AlertDialog(
             onDismissRequest = { showThemeDialog = false },
+            shape = RoundedCornerShape(SplitzShapes.sheet),
+            containerColor = SplitzColors.surface(),
             title = {
                 Text(
                     text = "Choose Appearance",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    style = SplitzTypography.TitleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = SplitzColors.textPrimary()
                 )
             },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     AppThemeMode.entries.forEach { mode ->
+                        val isSelected = currentThemeMode == mode
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(SplitzShapes.SM))
                                 .clickable {
                                     themePreferences?.setThemeMode(mode)
                                     showThemeDialog = false
                                 }
-                                .padding(vertical = 10.dp, horizontal = 6.dp),
+                                .padding(vertical = 10.dp, horizontal = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = (currentThemeMode == mode),
+                                selected = isSelected,
                                 onClick = {
                                     themePreferences?.setThemeMode(mode)
                                     showThemeDialog = false
-                                }
+                                },
+                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.primary())
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = mode.displayName,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface
+                                style = SplitzTypography.BodyLarge,
+                                color = SplitzColors.textPrimary(),
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                             )
                         }
                     }
@@ -125,7 +124,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text("Close", color = BrandTeal)
+                    Text("Close", color = SplitzColors.primary(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -143,53 +142,65 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(20.dp),
+                .background(SplitzColors.background()),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // App Branding Banner
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surface else Slate900
-                    ),
-                    border = if (isSystemInDarkTheme()) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null
+                    shape = RoundedCornerShape(SplitzShapes.cardHero),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
-                    Row(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .background(
+                                brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                                    colors = listOf(
+                                        Color(0xFF0F172A),
+                                        Color(0xFF1E293B),
+                                        Color(0xFF0D252E)
+                                    )
+                                )
+                            )
+                            .padding(20.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .background(BrandTeal),
-                            contentAlignment = Alignment.Center
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = "S",
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Text(
-                                text = "Splitz",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                text = "Version 1.0.0 • Clean & Offline",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.LightGray
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .clip(CircleShape)
+                                    .background(SplitzColors.primary()),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "S",
+                                    style = SplitzTypography.HeadlineLarge,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.White
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    text = "Splitz",
+                                    style = SplitzTypography.TitleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "Version 2.0 • Modern Fintech & Offline First",
+                                    style = SplitzTypography.BodySmall,
+                                    color = Color.White.copy(alpha = 0.65f)
+                                )
+                            }
                         }
                     }
                 }
@@ -198,10 +209,10 @@ fun SettingsScreen(
             // General Preferences
             item {
                 Text(
-                    text = "Preferences",
-                    style = MaterialTheme.typography.titleSmall,
+                    text = "PREFERENCES",
+                    style = SplitzTypography.LabelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = SplitzColors.textMuted(),
                     modifier = Modifier.padding(start = 4.dp, top = 4.dp)
                 )
             }
@@ -209,25 +220,25 @@ fun SettingsScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    shape = RoundedCornerShape(SplitzShapes.MD),
+                    colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         SettingRow(
                             icon = Icons.Default.CurrencyRupee,
-                            iconColor = BrandTeal,
+                            iconColor = SplitzColors.primary(),
                             title = "Currency",
                             value = "Indian Rupee (₹ INR)"
                         )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
                         SettingRow(
                             icon = Icons.Default.Shield,
                             iconColor = CreditGreen,
                             title = "Math Engine",
                             value = "Integer Paise (0 Rounding Error)"
                         )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
                         SettingRow(
                             icon = Icons.Default.Palette,
                             iconColor = IndigoPurple,
@@ -243,10 +254,10 @@ fun SettingsScreen(
             if (groupId != null && onInspectDataStructures != null) {
                 item {
                     Text(
-                        text = "Advanced Tools",
-                        style = MaterialTheme.typography.titleSmall,
+                        text = "ADVANCED TOOLS",
+                        style = SplitzTypography.LabelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = SplitzColors.textMuted(),
                         modifier = Modifier.padding(start = 4.dp, top = 4.dp)
                     )
                 }
@@ -255,10 +266,11 @@ fun SettingsScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clip(RoundedCornerShape(SplitzShapes.MD))
                             .clickable { onInspectDataStructures(groupId) },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                        shape = RoundedCornerShape(SplitzShapes.MD),
+                        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                     ) {
                         Row(
                             modifier = Modifier
@@ -286,21 +298,21 @@ fun SettingsScreen(
                                 Column {
                                     Text(
                                         text = "Data Structure Inspector",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        style = SplitzTypography.TitleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = SplitzColors.textPrimary()
                                     )
                                     Text(
                                         text = "Inspect live heaps, HashMaps, and stacks",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        style = SplitzTypography.BodySmall,
+                                        color = SplitzColors.textSecondary()
                                     )
                                 }
                             }
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = SplitzColors.textMuted()
                             )
                         }
                     }
@@ -318,15 +330,15 @@ fun SettingsScreen(
                     Icon(
                         imageVector = Icons.Default.HelpOutline,
                         contentDescription = "Help Guide",
-                        tint = BrandTeal,
+                        tint = SplitzColors.primary(),
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "How Splitz Works",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = SplitzColors.textPrimary()
                     )
                 }
             }
@@ -335,7 +347,7 @@ fun SettingsScreen(
             item {
                 HelpAccordionCard(
                     icon = Icons.Default.AutoAwesome,
-                    iconTint = BrandTeal,
+                    iconTint = SplitzColors.primary(),
                     title = "Smart Debt Simplification",
                     summary = "Minimizes payments so friends settle with the fewest transactions.",
                     details = "Without simplification, if person A owes B, B owes C, and C owes A, multiple back-and-forth transfers occur.\n\n" +
@@ -386,7 +398,7 @@ fun SettingsScreen(
             item {
                 HelpAccordionCard(
                     icon = Icons.AutoMirrored.Filled.Undo,
-                    iconTint = BrandTeal,
+                    iconTint = SplitzColors.primary(),
                     title = "Undo & Redo",
                     summary = "Reverse or replay any expense changes effortlessly.",
                     details = "All ledger mutations are tracked on a Last-In First-Out (LIFO) stack. Tapping Undo reverts the last operation, and Redo restores it, keeping your group state completely safe."
@@ -411,7 +423,7 @@ private fun SettingRow(
     val rowModifier = if (onClick != null) {
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(SplitzShapes.SM))
             .clickable { onClick() }
             .padding(vertical = 4.dp)
     } else {
@@ -441,23 +453,23 @@ private fun SettingRow(
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyMedium,
+                style = SplitzTypography.BodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = SplitzColors.textPrimary()
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = SplitzTypography.BodyMedium,
+                color = SplitzColors.textSecondary()
             )
             if (onClick != null) {
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    tint = SplitzColors.textMuted(),
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -478,11 +490,12 @@ private fun HelpAccordionCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(SplitzShapes.MD))
             .clickable { expanded = !expanded },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        shape = RoundedCornerShape(SplitzShapes.MD),
+        colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
     ) {
         Column(
             modifier = Modifier
@@ -516,35 +529,35 @@ private fun HelpAccordionCard(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = title,
-                            style = MaterialTheme.typography.titleMedium,
+                            style = SplitzTypography.TitleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = SplitzColors.textPrimary()
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = summary,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textSecondary()
                         )
                     }
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = if (expanded) "Collapse" else "Expand",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = SplitzColors.textMuted()
                 )
             }
 
             AnimatedVisibility(visible = expanded) {
                 Column {
                     Spacer(modifier = Modifier.height(12.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    HorizontalDivider(color = SplitzColors.borderSubtle())
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = details,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.25f
+                        style = SplitzTypography.BodyMedium,
+                        color = SplitzColors.textSecondary(),
+                        lineHeight = SplitzTypography.BodyMedium.lineHeight * 1.25f
                     )
                 }
             }

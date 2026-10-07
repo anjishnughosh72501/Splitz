@@ -14,16 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,9 +36,10 @@ import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.IndigoPurple
-
+import com.paisede.app.ui.theme.SplitzColors
+import com.paisede.app.ui.theme.SplitzShapes
+import com.paisede.app.ui.theme.SplitzTypography
 import com.paisede.app.ui.viewmodel.AnalyticsViewModel
 
 @Composable
@@ -65,7 +62,7 @@ fun AnalyticsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(SplitzColors.background())
         ) {
             if (an.expenseCount == 0) {
                 EmptyStateView(
@@ -77,68 +74,86 @@ fun AnalyticsScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(20.dp),
+                    contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     // Top Metrics Overview Card
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(18.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            shape = RoundedCornerShape(SplitzShapes.cardHero),
+                            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                         ) {
-                            Column(modifier = Modifier.padding(20.dp)) {
-                                Text(
-                                    text = "TOTAL SPENT",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                MoneyText(
-                                    amountPaise = an.totalSpendingPaise,
-                                    style = MaterialTheme.typography.headlineLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    colorMode = MoneyColorMode.NEUTRAL
-                                )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                                            colors = listOf(
+                                                Color(0xFF0F172A),
+                                                Color(0xFF1E293B),
+                                                Color(0xFF0D252E)
+                                            )
+                                        )
+                                    )
+                                    .padding(20.dp)
+                            ) {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    Text(
+                                        text = "TOTAL SPENT",
+                                        style = SplitzTypography.LabelSmall,
+                                        color = Color.White.copy(alpha = 0.6f),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    MoneyText(
+                                        amountPaise = an.totalSpendingPaise,
+                                        style = SplitzTypography.MoneyDisplay,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        colorMode = MoneyColorMode.NEUTRAL,
+                                        animate = true
+                                    )
 
-                                Spacer(modifier = Modifier.height(18.dp))
-                                androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                                Spacer(modifier = Modifier.height(14.dp))
+                                    Spacer(modifier = Modifier.height(18.dp))
+                                    androidx.compose.material3.HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+                                    Spacer(modifier = Modifier.height(14.dp))
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Column {
-                                        Text(
-                                            text = "AVERAGE EXPENSE",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        MoneyText(
-                                            amountPaise = an.averageExpensePaise,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
-                                            colorMode = MoneyColorMode.NEUTRAL
-                                        )
-                                    }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Column {
+                                            Text(
+                                                text = "AVERAGE EXPENSE",
+                                                style = SplitzTypography.LabelSmall,
+                                                color = Color.White.copy(alpha = 0.6f)
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            MoneyText(
+                                                amountPaise = an.averageExpensePaise,
+                                                style = SplitzTypography.TitleMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                colorMode = MoneyColorMode.NEUTRAL,
+                                                animate = true
+                                            )
+                                        }
 
-                                    Column(horizontalAlignment = Alignment.End) {
-                                        Text(
-                                            text = "EXPENSES COUNT",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = "${an.expenseCount}",
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
+                                        Column(horizontalAlignment = Alignment.End) {
+                                            Text(
+                                                text = "EXPENSES COUNT",
+                                                style = SplitzTypography.LabelSmall,
+                                                color = Color.White.copy(alpha = 0.6f)
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = "${an.expenseCount}",
+                                                style = SplitzTypography.TitleMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -149,23 +164,23 @@ fun AnalyticsScreen(
                     item {
                         Text(
                             text = "SPENDING BY CATEGORY",
-                            style = MaterialTheme.typography.labelMedium,
+                            style = SplitzTypography.LabelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = SplitzColors.textMuted()
                         )
                     }
 
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            shape = RoundedCornerShape(SplitzShapes.MD),
+                            colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                         ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(18.dp),
+                                    .padding(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
                                 an.spendingByCategoryPaise.entries.sortedByDescending { it.value }
@@ -182,15 +197,16 @@ fun AnalyticsScreen(
                                             ) {
                                                 Text(
                                                     text = cat.replaceFirstChar { it.uppercase() },
-                                                    style = MaterialTheme.typography.titleMedium,
+                                                    style = SplitzTypography.TitleMedium,
                                                     fontWeight = FontWeight.SemiBold,
-                                                    color = MaterialTheme.colorScheme.onSurface
+                                                    color = SplitzColors.textPrimary()
                                                 )
                                                 MoneyText(
                                                     amountPaise = amount,
-                                                    style = MaterialTheme.typography.titleMedium,
+                                                    style = SplitzTypography.TitleMedium,
                                                     fontWeight = FontWeight.Bold,
-                                                    colorMode = MoneyColorMode.NEUTRAL
+                                                    colorMode = MoneyColorMode.NEUTRAL,
+                                                    animate = true
                                                 )
                                             }
                                             Spacer(modifier = Modifier.height(6.dp))
@@ -199,9 +215,9 @@ fun AnalyticsScreen(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(8.dp)
-                                                    .clip(RoundedCornerShape(4.dp)),
-                                                color = BrandTeal,
-                                                trackColor = MaterialTheme.colorScheme.surfaceVariant
+                                                    .clip(RoundedCornerShape(SplitzShapes.Pill)),
+                                                color = SplitzColors.primary(),
+                                                trackColor = SplitzColors.surfaceElevated()
                                             )
                                         }
                                     }
@@ -213,23 +229,23 @@ fun AnalyticsScreen(
                     item {
                         Text(
                             text = "SPENDING BY PERSON (CONSUMED)",
-                            style = MaterialTheme.typography.labelMedium,
+                            style = SplitzTypography.LabelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = SplitzColors.textMuted()
                         )
                     }
 
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                            shape = RoundedCornerShape(SplitzShapes.MD),
+                            colors = CardDefaults.cardColors(containerColor = SplitzColors.surface()),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                         ) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(18.dp),
+                                    .padding(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
                                 an.spendingByPersonPaise.entries.sortedByDescending { it.value }
@@ -250,16 +266,17 @@ fun AnalyticsScreen(
                                                     Spacer(modifier = Modifier.width(8.dp))
                                                     Text(
                                                         text = name,
-                                                        style = MaterialTheme.typography.titleMedium,
+                                                        style = SplitzTypography.TitleMedium,
                                                         fontWeight = FontWeight.SemiBold,
-                                                        color = MaterialTheme.colorScheme.onSurface
+                                                        color = SplitzColors.textPrimary()
                                                     )
                                                 }
                                                 MoneyText(
                                                     amountPaise = amount,
-                                                    style = MaterialTheme.typography.titleMedium,
+                                                    style = SplitzTypography.TitleMedium,
                                                     fontWeight = FontWeight.Bold,
-                                                    colorMode = MoneyColorMode.NEUTRAL
+                                                    colorMode = MoneyColorMode.NEUTRAL,
+                                                    animate = true
                                                 )
                                             }
                                             Spacer(modifier = Modifier.height(6.dp))
@@ -268,9 +285,9 @@ fun AnalyticsScreen(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .height(8.dp)
-                                                    .clip(RoundedCornerShape(4.dp)),
+                                                    .clip(RoundedCornerShape(SplitzShapes.Pill)),
                                                 color = IndigoPurple,
-                                                trackColor = MaterialTheme.colorScheme.surfaceVariant
+                                                trackColor = SplitzColors.surfaceElevated()
                                             )
                                         }
                                     }

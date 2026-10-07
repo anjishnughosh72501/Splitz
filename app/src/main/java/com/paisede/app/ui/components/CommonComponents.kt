@@ -1,6 +1,7 @@
 package com.paisede.app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -150,21 +151,24 @@ fun UserAvatar(
     name: String,
     modifier: Modifier = Modifier,
     size: Int = 40,
-    backgroundColor: Color = BrandTeal.copy(alpha = 0.15f),
-    textColor: Color = BrandTeal
+    backgroundColor: Color? = null,
+    textColor: Color? = null
 ) {
     val initial = name.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+    val bg = backgroundColor ?: BrandTeal.copy(alpha = 0.15f)
+    val tc = textColor ?: BrandTeal
+
     Box(
         modifier = modifier
             .size(size.dp)
             .clip(CircleShape)
-            .background(backgroundColor),
+            .background(bg),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = initial,
             style = MaterialTheme.typography.labelLarge,
-            color = textColor,
+            color = tc,
             fontWeight = FontWeight.Bold
         )
     }
@@ -201,4 +205,67 @@ fun SectionHeader(
             )
         }
     }
+}
+
+/**
+ * Splitz 2.0 Design System Surface Components
+ */
+@Composable
+fun GlassCard(
+    modifier: Modifier = Modifier,
+    cornerRadius: androidx.compose.ui.unit.Dp = com.paisede.app.ui.theme.SplitzShapes.cardMedium,
+    content: @Composable () -> Unit
+) {
+    val colors = com.paisede.app.ui.theme.SplitzColors
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(cornerRadius))
+            .background(colors.surfaceGlass())
+            .border(
+                width = com.paisede.app.ui.theme.SplitzBorderWidth.thin,
+                color = colors.borderGlass(),
+                shape = RoundedCornerShape(cornerRadius)
+            )
+            .padding(16.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun GlassCardStrong(
+    modifier: Modifier = Modifier,
+    cornerRadius: androidx.compose.ui.unit.Dp = com.paisede.app.ui.theme.SplitzShapes.cardLarge,
+    content: @Composable () -> Unit
+) {
+    val colors = com.paisede.app.ui.theme.SplitzColors
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(cornerRadius))
+            .background(colors.surfaceGlassStrong())
+            .border(
+                width = com.paisede.app.ui.theme.SplitzBorderWidth.thin,
+                color = colors.borderGlass(),
+                shape = RoundedCornerShape(cornerRadius)
+            )
+            .padding(18.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun ShimmerCard(
+    modifier: Modifier = Modifier,
+    height: androidx.compose.ui.unit.Dp = 100.dp,
+    cornerRadius: androidx.compose.ui.unit.Dp = com.paisede.app.ui.theme.SplitzShapes.cardMedium
+) {
+    val colors = com.paisede.app.ui.theme.SplitzColors
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            .clip(RoundedCornerShape(cornerRadius))
+            .background(colors.surfaceVariant().copy(alpha = 0.5f))
+    )
 }

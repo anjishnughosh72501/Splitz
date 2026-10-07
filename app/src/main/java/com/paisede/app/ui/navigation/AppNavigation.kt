@@ -1,5 +1,7 @@
 package com.paisede.app.ui.navigation
 
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,10 +44,18 @@ fun AppNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Home.route,
+        enterTransition = { SplitzEnterTransition.SlideFade },
+        exitTransition = { SplitzExitTransition.SlideFade },
+        popEnterTransition = { SplitzEnterTransition.SlideFadeReverse },
+        popExitTransition = { SplitzExitTransition.SlideFadeReverse }
     ) {
         // HOME
-        composable(Screen.Home.route) {
+        composable(
+            route = Screen.Home.route,
+            enterTransition = { SplitzEnterTransition.FadeScale },
+            exitTransition = { SplitzExitTransition.FadeScale }
+        ) {
             val homeVm: HomeViewModel = viewModel(factory = ViewModelFactory(app))
             HomeScreen(
                 viewModel = homeVm,
@@ -60,7 +70,11 @@ fun AppNavigation(
         }
 
         // CREATE GROUP
-        composable(Screen.CreateGroup.route) {
+        composable(
+            route = Screen.CreateGroup.route,
+            enterTransition = { SplitzEnterTransition.SlideUp },
+            exitTransition = { SplitzExitTransition.SlideDown }
+        ) {
             CreateGroupScreen(
                 groupRepository = app.groupRepository,
                 onNavigateBack = { navController.popBackStack() },
@@ -74,7 +88,9 @@ fun AppNavigation(
         // GROUP DASHBOARD
         composable(
             route = Screen.GroupDashboard.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val groupVm: GroupViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -97,7 +113,9 @@ fun AppNavigation(
         // ADD EXPENSE
         composable(
             route = Screen.AddExpense.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideUp },
+            exitTransition = { SplitzExitTransition.SlideDown }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val expenseVm: ExpenseViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -115,7 +133,9 @@ fun AppNavigation(
         // EXPENSE HISTORY
         composable(
             route = Screen.ExpenseHistory.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val expenseVm: ExpenseViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -130,7 +150,9 @@ fun AppNavigation(
         // BALANCES
         composable(
             route = Screen.Balances.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val balanceVm: BalanceViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -144,7 +166,9 @@ fun AppNavigation(
         // SIMPLIFY DEBTS
         composable(
             route = Screen.SimplifyDebts.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val simplifyVm: SimplifyViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -158,7 +182,9 @@ fun AppNavigation(
         // SETTLE UP
         composable(
             route = Screen.SettleUp.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideUp },
+            exitTransition = { SplitzExitTransition.SlideDown }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val settleVm: SettlementViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -173,7 +199,9 @@ fun AppNavigation(
         // SETTLEMENT HISTORY
         composable(
             route = Screen.SettlementHistory.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val settleVm: SettlementViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -187,7 +215,9 @@ fun AppNavigation(
         // ANALYTICS
         composable(
             route = Screen.Analytics.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val analyticsVm: AnalyticsViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -201,7 +231,9 @@ fun AppNavigation(
         // DEBT GRAPH
         composable(
             route = Screen.DebtGraph.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.FadeScale },
+            exitTransition = { SplitzExitTransition.FadeScale }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val graphVm: DebtGraphViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -215,7 +247,9 @@ fun AppNavigation(
         // DATA-STRUCTURE DEBUG / VIVA PANEL
         composable(
             route = Screen.DebugPanel.route,
-            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
             val debugVm: DebugViewModel = viewModel(factory = ViewModelFactory(app, groupId))
@@ -235,7 +269,9 @@ fun AppNavigation(
                     nullable = true
                     defaultValue = null
                 }
-            )
+            ),
+            enterTransition = { SplitzEnterTransition.FadeScale },
+            exitTransition = { SplitzExitTransition.FadeScale }
         ) { backStackEntry ->
             val groupId = backStackEntry.arguments?.getString("groupId")
             SettingsScreen(
@@ -248,4 +284,53 @@ fun AppNavigation(
             )
         }
     }
+}
+
+// ============================================================
+// ============================================================
+// NAVIGATION TRANSITIONS
+// ============================================================
+
+object SplitzEnterTransition {
+    val FadeScale: androidx.compose.animation.EnterTransition =
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
+        androidx.compose.animation.scaleIn(initialScale = 0.95f, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+
+    val SlideFade: androidx.compose.animation.EnterTransition =
+        androidx.compose.animation.slideInVertically(initialOffsetY = { 80 }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+
+    val SlideFadeReverse: androidx.compose.animation.EnterTransition =
+        androidx.compose.animation.slideInVertically(initialOffsetY = { -80 }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+
+    val SlideUp: androidx.compose.animation.EnterTransition =
+        androidx.compose.animation.slideInVertically(initialOffsetY = { it }, animationSpec = androidx.compose.animation.core.tween(400, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+
+    val SlideDown: androidx.compose.animation.EnterTransition =
+        androidx.compose.animation.slideInVertically(initialOffsetY = { -it }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+}
+
+object SplitzExitTransition {
+    val FadeScale: androidx.compose.animation.ExitTransition =
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
+        androidx.compose.animation.scaleOut(targetScale = 0.95f, animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+
+    val SlideFade: androidx.compose.animation.ExitTransition =
+        androidx.compose.animation.slideOutVertically(targetOffsetY = { -80 }, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+
+    val SlideFadeReverse: androidx.compose.animation.ExitTransition =
+        androidx.compose.animation.slideOutVertically(targetOffsetY = { 80 }, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+
+    val SlideUp: androidx.compose.animation.ExitTransition =
+        androidx.compose.animation.slideOutVertically(targetOffsetY = { -it }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+
+    val SlideDown: androidx.compose.animation.ExitTransition =
+        androidx.compose.animation.slideOutVertically(targetOffsetY = { it }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
 }
