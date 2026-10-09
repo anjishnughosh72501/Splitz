@@ -57,6 +57,7 @@ fun DebtGraphScreen(
     val memberMap = state.members.associateBy { it.id }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Debt Network",
@@ -68,7 +69,6 @@ fun DebtGraphScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             // Segmented Switcher: All Debts vs Simplified Debts
             Box(

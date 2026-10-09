@@ -72,6 +72,7 @@ fun SimplifyDebtsScreen(
     var selectedViewTab by remember { mutableStateOf(0) } // 0 = List, 1 = Graph
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Simplify Debts",
@@ -83,7 +84,6 @@ fun SimplifyDebtsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             // Transformation Metric Card: Before vs After
             Box(
@@ -91,10 +91,10 @@ fun SimplifyDebtsScreen(
                     .fillMaxWidth()
                     .padding(SplitzSpacing.lg)
                     .clip(RoundedCornerShape(SplitzShapes.cardHero))
-                    .background(SplitzGradients.Hero)
+                    .background(SplitzColors.surfaceElevated().copy(alpha = 0.85f))
                     .border(
                         width = SplitzBorderWidth.thin,
-                        color = Color.White.copy(alpha = 0.12f),
+                        color = SplitzColors.borderGlass(),
                         shape = RoundedCornerShape(SplitzShapes.cardHero)
                     )
                     .padding(20.dp)
@@ -274,28 +274,37 @@ fun SimplifyDebtsScreen(
                         }
                     }
                 } else {
-                    // Graph View
+                    // Graph View with Accessible Transaction Breakdown
                     val membersList = state.members.values.toList()
                     val edges = state.transactions.map {
                         DebtEdge(it.fromUserId, it.toUserId, it.amountPaise)
                     }
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(SplitzSpacing.lg)
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.xs),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        GraphVisualizer(
-                            members = membersList,
-                            edges = edges,
-                            isSimplified = true
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = "Simplified direct settlement network",
-                            style = SplitzTypography.BodySmall,
-                            color = SplitzColors.textSecondary(),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
+                        item {
+                            GraphVisualizer(
+                                members = membersList,
+                                edges = edges,
+                                isSimplified = true
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "Settlement network (${state.transactions.size} direct transfer${if (state.transactions.size == 1) "" else "s"})",
+                                style = SplitzTypography.LabelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.textMuted()
+                            )
+                        }
+
+                        items(state.transactions) { tx ->
+                            SimplifiedTransactionCard(
+                                tx = tx,
+                                members = state.members
+                            )
+                        }
                     }
                 }
             }

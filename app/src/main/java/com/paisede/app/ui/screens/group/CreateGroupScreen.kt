@@ -73,6 +73,7 @@ fun CreateGroupScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Create New Group",
@@ -84,7 +85,6 @@ fun CreateGroupScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
                 .padding(horizontal = SplitzSpacing.lg)
         ) {
             LazyColumn(
@@ -257,9 +257,14 @@ fun CreateGroupScreen(
                         }
                         isSaving = true
                         coroutineScope.launch {
-                            val group = groupRepository.createGroup(name, finalMembers.toList())
-                            isSaving = false
-                            onGroupCreated(group.id)
+                            try {
+                                val group = groupRepository.createGroup(name, finalMembers.toList())
+                                isSaving = false
+                                onGroupCreated(group.id)
+                            } catch (e: Exception) {
+                                isSaving = false
+                                errorMessage = e.message ?: "Failed to create group. Please try again."
+                            }
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),

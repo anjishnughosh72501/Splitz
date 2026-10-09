@@ -93,6 +93,7 @@ fun ExpenseHistoryScreen(
     val groupedByDate = filteredExpenses.groupBy { DateUtils.formatRelativeDate(it.first.createdAt) }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Expense History",
@@ -133,7 +134,6 @@ fun ExpenseHistoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             // Search Bar
             OutlinedTextField(

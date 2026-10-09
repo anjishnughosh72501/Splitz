@@ -1,30 +1,48 @@
 package com.paisede.app.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 
 object SplitzGradients {
+    @Composable
+    fun primary(): Brush {
+        val palette = LocalSplitzPalette.current
+        return Brush.horizontalGradient(
+            colors = listOf(
+                palette.brandPrimary,
+                palette.brandAccent,
+                palette.brandPrimary
+            )
+        )
+    }
+
+    @Composable
+    fun hero(): Brush {
+        val palette = LocalSplitzPalette.current
+        return Brush.verticalGradient(
+            colors = listOf(
+                palette.brandSoft.copy(alpha = 0.5f),
+                palette.surfaceElevated.copy(alpha = 0.85f),
+                palette.background.copy(alpha = 0.95f)
+            )
+        )
+    }
+
     val Primary = Brush.horizontalGradient(
         colors = listOf(
-            Color(0xFF0D9488),
-            Color(0xFF0F766E),
-            Color(0xFF0D9488)
-        ),
-        startX = 0.0f,
-        endX = 1.0f,
-        tileMode = androidx.compose.ui.graphics.TileMode.Clamp
+            Color(0xFF5C9CFF),
+            Color(0xFF86B8FF),
+            Color(0xFF5C9CFF)
+        )
     )
 
     val PrimaryBright = Brush.horizontalGradient(
         colors = listOf(
-            Color(0xFF14B8A6),
-            Color(0xFF0D9488),
-            Color(0xFF14B8A6)
-        ),
-        startX = 0.0f,
-        endX = 1.0f,
-        tileMode = androidx.compose.ui.graphics.TileMode.Clamp
+            Color(0xFF86B8FF),
+            Color(0xFF5C9CFF),
+            Color(0xFF86B8FF)
+        )
     )
 
     val Success = Brush.horizontalGradient(
@@ -65,9 +83,9 @@ object SplitzGradients {
 
     val Hero = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFF0F172A),
-            Color(0xFF1E293B),
-            Color(0xFF0F172A)
+            Color(0xFF14223A),
+            Color(0xFF0D1629),
+            Color(0xFF070D1A)
         )
     )
 
@@ -84,34 +102,6 @@ object SplitzGradients {
             Color.White.copy(alpha = 0.25f),
             Color.White.copy(alpha = 0.08f),
             Color.White.copy(alpha = 0.02f)
-        )
-    )
-
-    val DarkAtmosphereTop = Brush.radialGradient(
-        colors = listOf(
-            Color(0xFF0D9488).copy(alpha = 0.15f),
-            Color.Transparent
-        )
-    )
-
-    val DarkAtmosphereBottom = Brush.radialGradient(
-        colors = listOf(
-            Color(0xFF6366F1).copy(alpha = 0.1f),
-            Color.Transparent
-        )
-    )
-
-    val LightAtmosphereTop = Brush.radialGradient(
-        colors = listOf(
-            Color(0xFF0D9488).copy(alpha = 0.08f),
-            Color.Transparent
-        )
-    )
-
-    val LightAtmosphereBottom = Brush.radialGradient(
-        colors = listOf(
-            Color(0xFF6366F1).copy(alpha = 0.05f),
-            Color.Transparent
         )
     )
 }

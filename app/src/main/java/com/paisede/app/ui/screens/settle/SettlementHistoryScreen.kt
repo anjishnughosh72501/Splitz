@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.paisede.app.ui.components.EmptyStateView
@@ -49,6 +50,7 @@ fun SettlementHistoryScreen(
     val state by viewModel.uiState.collectAsState()
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Settlement History",
@@ -60,7 +62,6 @@ fun SettlementHistoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             if (state.pastSettlements.isEmpty()) {
                 EmptyStateView(

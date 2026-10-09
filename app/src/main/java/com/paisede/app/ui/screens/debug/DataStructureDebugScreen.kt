@@ -58,6 +58,7 @@ fun DataStructureDebugScreen(
     val state by viewModel.uiState.collectAsState()
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Data Structure Inspector",
@@ -77,8 +78,7 @@ fun DataStructureDebugScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(SplitzColors.background()),
+                .padding(padding),
             contentPadding = PaddingValues(SplitzSpacing.lg),
             verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {

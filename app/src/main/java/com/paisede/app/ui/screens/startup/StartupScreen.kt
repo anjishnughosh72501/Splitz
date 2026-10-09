@@ -74,6 +74,7 @@ fun StartupScreen(
     val focusManager = LocalFocusManager.current
 
     Scaffold(
+        containerColor = Color.Transparent,
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
@@ -82,7 +83,6 @@ fun StartupScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             LazyColumn(
                 modifier = Modifier

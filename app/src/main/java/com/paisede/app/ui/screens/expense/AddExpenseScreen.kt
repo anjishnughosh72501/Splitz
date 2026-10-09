@@ -95,6 +95,7 @@ fun AddExpenseScreen(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Add Expense",
@@ -106,7 +107,6 @@ fun AddExpenseScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -463,8 +463,7 @@ fun AddExpenseScreen(
                                                 value = percentVal,
                                                 onValueChange = { input ->
                                                     percentVal = input
-                                                    val p = input.toDoubleOrNull() ?: 0.0
-                                                    val bp = (p * 100).toInt()
+                                                    val bp = CurrencyUtils.parsePercentageToBasisPoints(input)
                                                     viewModel.setPercentageBp(member.id, bp)
                                                 },
                                                 label = { Text("% Share") },

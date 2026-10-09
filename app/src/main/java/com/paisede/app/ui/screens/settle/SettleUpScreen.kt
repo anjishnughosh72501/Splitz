@@ -118,6 +118,7 @@ fun SettleUpScreen(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             SplitzTopAppBar(
@@ -139,7 +140,6 @@ fun SettleUpScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             if (state.recommendedPayments.isEmpty()) {
                 EmptyStateView(

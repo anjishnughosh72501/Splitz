@@ -87,6 +87,7 @@ fun SettingsScreen(
     onInspectDataStructures: ((String) -> Unit)? = null
 ) {
     val currentThemeMode by (themePreferences?.themeMode ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppThemeMode.SYSTEM) }).collectAsState()
+    val currentVisualTheme by (themePreferences?.visualTheme ?: remember { kotlinx.coroutines.flow.MutableStateFlow(com.paisede.app.data.preferences.SplitzVisualTheme.GRAPHITE) }).collectAsState()
     val currentFontSize by (themePreferences?.fontSize ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppFontSize.MEDIUM) }).collectAsState()
     val currentCurrency by (userPreferences?.currency ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppCurrency.DEFAULT) }).collectAsState()
     val currentUserName by (userPreferences?.userName ?: remember { kotlinx.coroutines.flow.MutableStateFlow("") }).collectAsState()
@@ -323,6 +324,7 @@ fun SettingsScreen(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Settings & Help",
@@ -333,8 +335,7 @@ fun SettingsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(SplitzColors.background()),
+                .padding(padding),
             contentPadding = PaddingValues(SplitzSpacing.lg),
             verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {
@@ -344,10 +345,10 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(SplitzShapes.cardHero))
-                        .background(SplitzGradients.Hero)
+                        .background(SplitzColors.surfaceElevated().copy(alpha = 0.85f))
                         .border(
                             width = SplitzBorderWidth.thin,
-                            color = Color.White.copy(alpha = 0.12f),
+                            color = SplitzColors.borderGlass(),
                             shape = RoundedCornerShape(SplitzShapes.cardHero)
                         )
                         .padding(20.dp)
@@ -388,14 +389,41 @@ fun SettingsScreen(
                 }
             }
 
-            // General Preferences: only Theme and Font Size
+            // Visual Theme Selection Section
+            item {
+                Text(
+                    text = "ATMOSPHERIC THEMES",
+                    style = SplitzTypography.LabelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = SplitzColors.textMuted(),
+                    modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                )
+            }
+
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    com.paisede.app.data.preferences.SplitzVisualTheme.entries.forEach { theme ->
+                        com.paisede.app.ui.components.ThemePreviewCard(
+                            theme = theme,
+                            isSelected = currentVisualTheme == theme,
+                            onSelect = {
+                                themePreferences?.setVisualTheme(theme)
+                            }
+                        )
+                    }
+                }
+            }
+
+            // General Preferences
             item {
                 Text(
                     text = "PREFERENCES",
                     style = SplitzTypography.LabelSmall,
                     fontWeight = FontWeight.Bold,
                     color = SplitzColors.textMuted(),
-                    modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp, top = 8.dp)
                 )
             }
 
@@ -429,7 +457,7 @@ fun SettingsScreen(
                         SettingRow(
                             icon = Icons.Default.Palette,
                             iconColor = IndigoPurple,
-                            title = "Theme",
+                            title = "Appearance Mode",
                             value = currentThemeMode.displayName,
                             onClick = { showThemeDialog = true }
                         )

@@ -234,6 +234,7 @@ fun HomeScreen(
     val totalMembers = state.groups.sumOf { it.memberCount }
 
     Scaffold(
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             val interactionSource = remember { MutableInteractionSource() }
@@ -274,8 +275,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(SplitzColors.background()),
+                .padding(padding),
             contentPadding = PaddingValues(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.md),
             verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {
@@ -418,10 +418,10 @@ private fun HeroBalanceOverview(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(SplitzShapes.cardHero))
-            .background(SplitzGradients.Hero)
+            .background(SplitzColors.surfaceElevated().copy(alpha = 0.82f))
             .border(
                 width = SplitzBorderWidth.thin,
-                color = Color.White.copy(alpha = 0.12f),
+                color = SplitzColors.borderGlass(),
                 shape = RoundedCornerShape(SplitzShapes.cardHero)
             )
             .padding(SplitzSpacing.lg)
@@ -533,8 +533,8 @@ fun ModernGroupCard(
     SplitzSurface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(SplitzShapes.cardLarge),
-        backgroundColor = SplitzColors.surface(),
-        borderColor = SplitzColors.borderSubtle(),
+        backgroundColor = SplitzColors.surfaceElevated().copy(alpha = 0.85f),
+        borderColor = SplitzColors.borderGlass(),
         onClick = onClick
     ) {
         Column(

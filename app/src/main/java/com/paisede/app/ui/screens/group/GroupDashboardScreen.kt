@@ -29,6 +29,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.AccountBalanceWallet
@@ -38,10 +40,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Handshake
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.PieChart
-import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
@@ -254,6 +254,7 @@ fun GroupDashboardScreen(
     val memberNames = state.members.map { it.name }
 
     Scaffold(
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             SplitzTopAppBar(
@@ -261,6 +262,24 @@ fun GroupDashboardScreen(
                 subtitle = "${state.members.size} members",
                 onNavigateBack = onNavigateBack,
                 actions = {
+                    if (state.canUndo) {
+                        IconButton(onClick = { viewModel.undo() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Undo,
+                                contentDescription = "Undo Expense",
+                                tint = SplitzColors.primary()
+                            )
+                        }
+                    }
+                    if (state.canRedo) {
+                        IconButton(onClick = { viewModel.redo() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Redo,
+                                contentDescription = "Redo Expense",
+                                tint = SplitzColors.primary()
+                            )
+                        }
+                    }
                     IconButton(
                         onClick = { showMembersDialog = true }
                     ) {
@@ -331,8 +350,7 @@ fun GroupDashboardScreen(
             columns = GridCells.Fixed(2),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(SplitzColors.background()),
+                .padding(padding),
             contentPadding = PaddingValues(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -343,10 +361,10 @@ fun GroupDashboardScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(SplitzShapes.cardHero))
-                        .background(SplitzGradients.Hero)
+                        .background(SplitzColors.surfaceElevated().copy(alpha = 0.85f))
                         .border(
                             width = SplitzBorderWidth.thin,
-                            color = Color.White.copy(alpha = 0.12f),
+                            color = SplitzColors.borderGlass(),
                             shape = RoundedCornerShape(SplitzShapes.cardHero)
                         )
                         .padding(22.dp)
@@ -418,6 +436,43 @@ fun GroupDashboardScreen(
                                     fontWeight = FontWeight.Bold,
                                     showSign = true,
                                     animate = true
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        // Prominent Primary Action Button inside Hero
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val isPressed by interactionSource.collectIsPressedAsState()
+                        val btnScale by animateFloatAsState(
+                            targetValue = if (isPressed) 0.97f else 1.0f,
+                            animationSpec = tween(SplitzMotion.Duration.Fast, easing = SplitzMotion.Easing.Standard),
+                            label = "HeroAddBtnScale"
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .scale(btnScale)
+                                .clip(RoundedCornerShape(SplitzShapes.SM))
+                                .background(Color.White)
+                                .clickable(interactionSource = interactionSource, indication = null, onClick = onAddExpenseClick)
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = SplitzColors.primary(),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Add an Expense",
+                                    style = SplitzTypography.LabelLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = SplitzColors.primary()
                                 )
                             }
                         }
@@ -519,7 +574,7 @@ fun GroupDashboardScreen(
                 SplitzActionCard(
                     title = "Expenses",
                     subtitle = "Full timeline",
-                    icon = Icons.Default.ReceiptLong,
+                    icon = Icons.AutoMirrored.Filled.ReceiptLong,
                     iconTint = SplitzColors.primary(),
                     onClick = onExpensesClick
                 )
@@ -551,7 +606,7 @@ fun GroupDashboardScreen(
                 SplitzActionCard(
                     title = "Settings",
                     subtitle = "Inspect & prefs",
-                    icon = Icons.Default.HelpOutline,
+                    icon = Icons.AutoMirrored.Filled.HelpOutline,
                     iconTint = SplitzColors.textSecondary(),
                     onClick = onSettingsClick
                 )

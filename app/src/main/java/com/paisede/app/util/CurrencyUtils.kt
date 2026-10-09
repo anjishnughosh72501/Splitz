@@ -149,4 +149,29 @@ object CurrencyUtils {
 
         return (units * SUBUNITS_PER_UNIT) + subunits
     }
+
+    /**
+     * Parses percentage input string (e.g. "25", "33.33", "50.5") into basis points (1% = 100 bp).
+     * Avoids IEEE floating point inaccuracies.
+     */
+    fun parsePercentageToBasisPoints(input: String): Int {
+        val sanitized = input.trim().replace("%", "").trim()
+        if (sanitized.isEmpty()) return 0
+        val parts = sanitized.split('.')
+        if (parts.size > 2) return 0
+
+        val wholePart = parts[0].filter { it.isDigit() }
+        val whole = wholePart.toIntOrNull() ?: 0
+
+        val decimalBp = if (parts.size == 2) {
+            val dec = parts[1].filter { it.isDigit() }
+            when (dec.length) {
+                0 -> 0
+                1 -> (dec.toIntOrNull() ?: 0) * 10
+                else -> dec.take(2).toIntOrNull() ?: 0
+            }
+        } else 0
+
+        return (whole * 100) + decimalBp
+    }
 }

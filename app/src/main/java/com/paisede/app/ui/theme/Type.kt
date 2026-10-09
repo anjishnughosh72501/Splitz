@@ -1,67 +1,62 @@
 package com.paisede.app.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 
 object SplitzFontFamily {
-    val Display = FontFamily.Default
-    val Sans = FontFamily.Default
+    val Display = FontFamily.SansSerif
+    val Sans = FontFamily.SansSerif
+    // Uses Monospace / tabular numeric font representation for rock-solid stability in currency and amounts
     val Mono = FontFamily.Monospace
 }
 
 object SplitzTypography {
     val DisplayLarge = TextStyle(
-        fontFamily = SplitzFontFamily.Display,
+        fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Bold,
-        fontSize = 57.sp,
-        lineHeight = 64.sp,
-        letterSpacing = (-1.5).sp
+        fontSize = 52.sp,
+        lineHeight = 60.sp,
+        letterSpacing = (-1.2).sp
     )
 
     val DisplayMedium = TextStyle(
-        fontFamily = SplitzFontFamily.Display,
+        fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Bold,
-        fontSize = 45.sp,
-        lineHeight = 52.sp,
-        letterSpacing = (-1.0).sp
+        fontSize = 42.sp,
+        lineHeight = 48.sp,
+        letterSpacing = (-0.8).sp
     )
 
     val DisplaySmall = TextStyle(
-        fontFamily = SplitzFontFamily.Display,
+        fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 36.sp,
-        lineHeight = 44.sp,
+        fontSize = 34.sp,
+        lineHeight = 40.sp,
         letterSpacing = (-0.5).sp
     )
 
     val HeadlineLarge = TextStyle(
         fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Bold,
-        fontSize = 32.sp,
-        lineHeight = 40.sp,
-        letterSpacing = (-0.5).sp
+        fontSize = 30.sp,
+        lineHeight = 36.sp,
+        letterSpacing = (-0.4).sp
     )
 
     val HeadlineMedium = TextStyle(
         fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
-        letterSpacing = (-0.25).sp
+        fontSize = 26.sp,
+        lineHeight = 32.sp,
+        letterSpacing = (-0.2).sp
     )
 
     val HeadlineSmall = TextStyle(
-        fontFamily = SplitzFontFamily.Sans,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-        lineHeight = 32.sp,
-        letterSpacing = 0.sp
-    )
-
-    val TitleLarge = TextStyle(
         fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.SemiBold,
         fontSize = 22.sp,
@@ -69,11 +64,19 @@ object SplitzTypography {
         letterSpacing = 0.sp
     )
 
+    val TitleLarge = TextStyle(
+        fontFamily = SplitzFontFamily.Sans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
+        letterSpacing = 0.sp
+    )
+
     val TitleMedium = TextStyle(
         fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
+        lineHeight = 22.sp,
         letterSpacing = 0.15.sp
     )
 
@@ -88,8 +91,8 @@ object SplitzTypography {
     val BodyLarge = TextStyle(
         fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
+        fontSize = 15.sp,
+        lineHeight = 22.sp,
         letterSpacing = 0.15.sp
     )
 
@@ -129,7 +132,7 @@ object SplitzTypography {
         fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
-        lineHeight = 16.sp,
+        lineHeight = 15.sp,
         letterSpacing = 0.5.sp
     )
 
@@ -137,45 +140,45 @@ object SplitzTypography {
         fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Normal,
         fontSize = 11.sp,
-        lineHeight = 16.sp,
+        lineHeight = 15.sp,
         letterSpacing = 0.4.sp
     )
 
-    // Money-specific styles
+    // Financial & numeric hierarchy styles with tabular digits stability
     val MoneyDisplay = TextStyle(
-        fontFamily = SplitzFontFamily.Mono,
+        fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.Bold,
-        fontSize = 48.sp,
-        lineHeight = 56.sp,
-        letterSpacing = (-1.0).sp
+        fontSize = 38.sp,
+        lineHeight = 44.sp,
+        letterSpacing = (-0.6).sp
     )
 
     val MoneyLarge = TextStyle(
-        fontFamily = SplitzFontFamily.Mono,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 32.sp,
-        lineHeight = 40.sp,
-        letterSpacing = (-0.5).sp
+        fontFamily = SplitzFontFamily.Sans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        lineHeight = 34.sp,
+        letterSpacing = (-0.3).sp
     )
 
     val MoneyMedium = TextStyle(
-        fontFamily = SplitzFontFamily.Mono,
+        fontFamily = SplitzFontFamily.Sans,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-        lineHeight = 32.sp,
-        letterSpacing = (-0.25).sp
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
+        letterSpacing = (-0.2).sp
     )
 
     val MoneySmall = TextStyle(
-        fontFamily = SplitzFontFamily.Mono,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
+        fontFamily = SplitzFontFamily.Sans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 15.sp,
+        lineHeight = 20.sp,
         letterSpacing = 0.sp
     )
 }
 
-// Material3 Typography mapping for backward compatibility
+// Material3 Typography mapping
 val Typography = Typography(
     displayLarge = SplitzTypography.DisplayLarge,
     displayMedium = SplitzTypography.DisplayMedium,

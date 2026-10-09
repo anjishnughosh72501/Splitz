@@ -70,7 +70,7 @@ fun SplitzTopAppBar(
 ) {
     val colors = SplitzColors
     Surface(
-        color = colors.background().copy(alpha = 0.95f),
+        color = Color.Transparent,
         shadowElevation = SplitzElevation.Level0,
         modifier = modifier
     ) {

@@ -56,6 +56,7 @@ fun BalancesScreen(
     val currentUserName by (userPreferences?.userName ?: remember { kotlinx.coroutines.flow.MutableStateFlow("") }).collectAsState()
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Group Balances",
@@ -67,7 +68,6 @@ fun BalancesScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             // Hero Financial Status Glass Card
             SplitzGlassCard(

@@ -12,6 +12,34 @@ enum class AppThemeMode(val displayName: String) {
     DARK("Dark Theme")
 }
 
+enum class SplitzVisualTheme(
+    val id: String,
+    val displayName: String,
+    val description: String
+) {
+    GRAPHITE(
+        id = "GRAPHITE",
+        displayName = "Graphite",
+        description = "Minimal, cinematic, refined monochrome with graphite brushed textures"
+    ),
+    ELECTRIC_BLUE(
+        id = "ELECTRIC_BLUE",
+        displayName = "Electric Blue",
+        description = "Technical, energetic, premium navy & electric cyan-blue treatments"
+    ),
+    ULTRAVIOLET(
+        id = "ULTRAVIOLET",
+        displayName = "Ultraviolet",
+        description = "Expressive, atmospheric, bold violet & deep twilight contours"
+    );
+
+    companion object {
+        fun fromId(id: String?): SplitzVisualTheme {
+            return entries.firstOrNull { it.id.equals(id, ignoreCase = true) } ?: GRAPHITE
+        }
+    }
+}
+
 enum class AppFontSize(val displayName: String, val scale: Float) {
     SMALL("Small", 0.85f),
     MEDIUM("Medium", 1.0f),
@@ -24,6 +52,9 @@ class ThemePreferences(context: Context) {
 
     private val _themeMode = MutableStateFlow(loadThemeMode())
     val themeMode: StateFlow<AppThemeMode> = _themeMode.asStateFlow()
+
+    private val _visualTheme = MutableStateFlow(loadVisualTheme())
+    val visualTheme: StateFlow<SplitzVisualTheme> = _visualTheme.asStateFlow()
 
     private val _fontSize = MutableStateFlow(loadFontSize())
     val fontSize: StateFlow<AppFontSize> = _fontSize.asStateFlow()
@@ -40,6 +71,16 @@ class ThemePreferences(context: Context) {
     fun setThemeMode(mode: AppThemeMode) {
         prefs.edit().putString("theme_mode", mode.name).apply()
         _themeMode.value = mode
+    }
+
+    private fun loadVisualTheme(): SplitzVisualTheme {
+        val saved = prefs.getString("visual_theme", SplitzVisualTheme.GRAPHITE.name)
+        return SplitzVisualTheme.fromId(saved)
+    }
+
+    fun setVisualTheme(theme: SplitzVisualTheme) {
+        prefs.edit().putString("visual_theme", theme.name).apply()
+        _visualTheme.value = theme
     }
 
     private fun loadFontSize(): AppFontSize {

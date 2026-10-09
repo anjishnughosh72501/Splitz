@@ -54,8 +54,8 @@ import com.paisede.app.ui.theme.SplitzSpacing
 fun SplitzSurface(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(SplitzShapes.cardMedium),
-    backgroundColor: Color = SplitzColors.surface(),
-    borderColor: Color? = SplitzColors.borderSubtle(),
+    backgroundColor: Color = SplitzColors.surfaceElevated().copy(alpha = 0.85f),
+    borderColor: Color? = SplitzColors.borderGlass(),
     borderWidth: Dp = SplitzBorderWidth.thin,
     elevation: Dp = SplitzElevation.Level0,
     onClick: (() -> Unit)? = null,
@@ -298,7 +298,7 @@ fun SplitzActionCard(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     iconTint: Color = SplitzColors.primary(),
-    containerColor: Color = SplitzColors.surface(),
+    containerColor: Color = SplitzColors.surfaceElevated().copy(alpha = 0.85f),
     badgeText: String? = null
 ) {
     val interactionSource = remember { MutableInteractionSource() }

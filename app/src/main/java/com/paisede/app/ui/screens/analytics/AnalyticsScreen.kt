@@ -63,6 +63,7 @@ fun AnalyticsScreen(
     val an = state.analytics
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             SplitzTopAppBar(
                 title = "Spending Analytics",
@@ -74,7 +75,6 @@ fun AnalyticsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(SplitzColors.background())
         ) {
             if (an.expenseCount == 0) {
                 EmptyStateView(
@@ -95,10 +95,10 @@ fun AnalyticsScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(SplitzShapes.cardHero))
-                                .background(SplitzGradients.Hero)
+                                .background(SplitzColors.surfaceElevated().copy(alpha = 0.85f))
                                 .border(
                                     width = SplitzBorderWidth.thin,
-                                    color = Color.White.copy(alpha = 0.12f),
+                                    color = SplitzColors.borderGlass(),
                                     shape = RoundedCornerShape(SplitzShapes.cardHero)
                                 )
                                 .padding(22.dp)
