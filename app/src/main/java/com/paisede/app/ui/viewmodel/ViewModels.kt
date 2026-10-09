@@ -82,8 +82,8 @@ class HomeViewModel(
                     val balances = balanceCalculator.calculateNetBalances(members, expenses, settlements)
                     val totalSpending = expenses.sumOf { it.first.amountPaise }
                     val userMember = members.firstOrNull { m ->
-                        m.name.startsWith("Me (") || (currentUserName.isNotBlank() && m.name == currentUserName)
-                    } ?: members.firstOrNull()
+                        m.name.startsWith("Me (") || (currentUserName.isNotBlank() && m.name.equals(currentUserName, ignoreCase = true))
+                    }
                     val userBal = userMember?.let { balances[it.id] } ?: 0L
 
                     GroupCardData(
@@ -172,8 +172,8 @@ class GroupViewModel(
                 val balances = balanceCalculator.calculateNetBalances(members, expenses, settlements)
                 val totalSpending = expenses.sumOf { it.first.amountPaise }
                 val userMember = members.firstOrNull { m ->
-                    m.name.startsWith("Me (") || (currentUserName.isNotBlank() && m.name == currentUserName)
-                } ?: members.firstOrNull()
+                    m.name.startsWith("Me (") || (currentUserName.isNotBlank() && m.name.equals(currentUserName, ignoreCase = true))
+                }
                 val userBal = userMember?.let { balances[it.id] } ?: 0L
 
                 GroupUiState(

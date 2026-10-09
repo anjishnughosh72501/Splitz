@@ -1,5 +1,6 @@
 package com.paisede.app.data.repository
 
+import androidx.room.withTransaction
 import com.paisede.app.data.db.AppDatabase
 import com.paisede.app.data.db.entities.GroupEntity
 import com.paisede.app.data.db.entities.MemberEntity
@@ -47,11 +48,9 @@ class GroupRepositoryImpl(
             )
         }
 
-        database.runInTransaction {
-            kotlinx.coroutines.runBlocking {
-                groupDao.insertGroup(groupEntity)
-                memberDao.insertMembers(members)
-            }
+        database.withTransaction {
+            groupDao.insertGroup(groupEntity)
+            memberDao.insertMembers(members)
         }
 
         groupEntity.toDomain()

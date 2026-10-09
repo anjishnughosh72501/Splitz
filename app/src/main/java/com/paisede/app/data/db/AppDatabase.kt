@@ -26,7 +26,7 @@ import com.paisede.app.data.db.entities.SettlementEntity
         ExpenseActionEntity::class
     ],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 

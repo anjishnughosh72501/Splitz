@@ -1,5 +1,6 @@
 package com.paisede.app.data.repository
 
+import androidx.room.withTransaction
 import com.paisede.app.data.db.AppDatabase
 import com.paisede.app.data.db.entities.ExpenseActionEntity
 import com.paisede.app.data.db.entities.ExpenseEntity
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class ExpenseRepositoryImpl(
     private val database: AppDatabase,
@@ -25,13 +27,22 @@ class ExpenseRepositoryImpl(
     private val expenseDao = database.expenseDao()
     private val actionDao = database.expenseActionDao()
 
+    private suspend fun mapExpensesWithSplits(
+        expenses: List<ExpenseEntity>
+    ): List<Pair<Expense, List<ExpenseSplit>>> {
+        if (expenses.isEmpty()) return emptyList()
+        val expenseIds = expenses.map { it.id }
+        val splitsByExpense = expenseDao.getSplitsForExpenses(expenseIds).groupBy { it.expenseId }
+        return expenses.map { expEntity ->
+            val splits = splitsByExpense[expEntity.id].orEmpty().map { it.toDomain() }
+            Pair(expEntity.toDomain(), splits)
+        }
+    }
+
     override fun getExpenses(groupId: String): Flow<List<Pair<Expense, List<ExpenseSplit>>>> {
         return expenseDao.getExpensesForGroup(groupId).map { expenses ->
             withContext(Dispatchers.IO) {
-                expenses.map { expEntity ->
-                    val splits = expenseDao.getSplitsForExpense(expEntity.id).map { it.toDomain() }
-                    Pair(expEntity.toDomain(), splits)
-                }
+                mapExpensesWithSplits(expenses)
             }
         }
     }
@@ -45,11 +56,7 @@ class ExpenseRepositoryImpl(
                 undoRedoManager.loadFromHistory(groupId, actions.map { it.toDomain() })
                 val activeIds = undoRedoManager.getActiveExpenseIds(groupId)
                 val activeEntities = expenses.filter { it.id in activeIds }
-
-                activeEntities.map { expEntity ->
-                    val splits = expenseDao.getSplitsForExpense(expEntity.id).map { it.toDomain() }
-                    Pair(expEntity.toDomain(), splits)
-                }
+                mapExpensesWithSplits(activeEntities)
             }
         }
     }
@@ -60,46 +67,53 @@ class ExpenseRepositoryImpl(
             undoRedoManager.loadFromHistory(groupId, actions)
             val activeIds = undoRedoManager.getActiveExpenseIds(groupId)
             val allExpenses = expenseDao.getExpensesForGroupSync(groupId)
-
-            allExpenses.filter { it.id in activeIds }.map { expEntity ->
-                val splits = expenseDao.getSplitsForExpense(expEntity.id).map { it.toDomain() }
-                Pair(expEntity.toDomain(), splits)
-            }
+            val activeEntities = allExpenses.filter { it.id in activeIds }
+            mapExpensesWithSplits(activeEntities)
         }
 
-    override suspend fun addExpense(expense: Expense, splits: List<ExpenseSplit>) = withContext(Dispatchers.IO) {
+    override suspend fun addExpense(expense: Expense, splits: List<ExpenseSplit>): Unit = withContext(Dispatchers.IO) {
         val expEntity = expense.toEntity()
         val splitEntities = splits.map { it.toEntity() }
-        val action = undoRedoManager.recordExpenseAddition(expense.groupId, expense.id)
+        val action = ExpenseAction(
+            id = UUID.randomUUID().toString(),
+            groupId = expense.groupId,
+            expenseId = expense.id,
+            actionType = ActionType.ADD,
+            createdAt = System.currentTimeMillis()
+        )
         val actionEntity = action.toEntity()
 
-        database.runInTransaction {
-            kotlinx.coroutines.runBlocking {
-                expenseDao.insertExpense(expEntity)
-                expenseDao.insertExpenseSplits(splitEntities)
-                actionDao.insertAction(actionEntity)
-            }
+        database.withTransaction {
+            expenseDao.insertExpense(expEntity)
+            expenseDao.insertExpenseSplits(splitEntities)
+            actionDao.insertAction(actionEntity)
         }
+
+        // Update in-memory stack only after successful database transaction
+        undoRedoManager.recordExpenseAddition(expense.groupId, expense.id)
+        Unit
     }
 
     override suspend fun undoExpense(groupId: String): Boolean = withContext(Dispatchers.IO) {
-        // Ensure state is up to date
-        val actions = actionDao.getActionsForGroupSync(groupId).map { it.toDomain() }
-        undoRedoManager.loadFromHistory(groupId, actions)
+        database.withTransaction {
+            val actions = actionDao.getActionsForGroupSync(groupId).map { it.toDomain() }
+            undoRedoManager.loadFromHistory(groupId, actions)
 
-        val undoAction = undoRedoManager.undo(groupId) ?: return@withContext false
-        actionDao.insertAction(undoAction.toEntity())
-        true
+            val undoAction = undoRedoManager.undo(groupId) ?: return@withTransaction false
+            actionDao.insertAction(undoAction.toEntity())
+            true
+        }
     }
 
     override suspend fun redoExpense(groupId: String): Boolean = withContext(Dispatchers.IO) {
-        // Ensure state is up to date
-        val actions = actionDao.getActionsForGroupSync(groupId).map { it.toDomain() }
-        undoRedoManager.loadFromHistory(groupId, actions)
+        database.withTransaction {
+            val actions = actionDao.getActionsForGroupSync(groupId).map { it.toDomain() }
+            undoRedoManager.loadFromHistory(groupId, actions)
 
-        val redoAction = undoRedoManager.redo(groupId) ?: return@withContext false
-        actionDao.insertAction(redoAction.toEntity())
-        true
+            val redoAction = undoRedoManager.redo(groupId) ?: return@withTransaction false
+            actionDao.insertAction(redoAction.toEntity())
+            true
+        }
     }
 
     override fun canUndo(groupId: String): Flow<Boolean> {

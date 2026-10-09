@@ -36,6 +36,14 @@ class SettlementRepositoryImpl(
         require(amountPaise > 0L) { "Settlement amount must be positive" }
         require(fromUserId != toUserId) { "Cannot settle with oneself" }
 
+        val group = database.groupDao().getGroupById(groupId)
+        requireNotNull(group) { "Group with id $groupId does not exist" }
+
+        val members = database.memberDao().getMembersForGroupSync(groupId)
+        val memberIds = members.map { it.id }.toSet()
+        require(fromUserId in memberIds) { "Payer $fromUserId does not belong to group $groupId" }
+        require(toUserId in memberIds) { "Recipient $toUserId does not belong to group $groupId" }
+
         val entity = SettlementEntity(
             id = UUID.randomUUID().toString(),
             groupId = groupId,

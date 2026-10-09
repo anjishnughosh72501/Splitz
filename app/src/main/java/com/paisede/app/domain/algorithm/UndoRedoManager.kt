@@ -34,7 +34,11 @@ class UndoRedoManager {
 
         for (action in actions) {
             when (action.actionType) {
-                ActionType.ADD, ActionType.REDO -> undo.push(action)
+                ActionType.ADD -> {
+                    undo.push(action)
+                    redo.clear()
+                }
+                ActionType.REDO -> undo.push(action)
                 ActionType.UNDO -> {
                     if (undo.isNotEmpty()) {
                         val undone = undo.pop()
