@@ -13,6 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -80,14 +84,22 @@ fun StartupScreen(
             .fillMaxSize()
             .imePadding()
     ) { padding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 20.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+            contentAlignment = Alignment.TopCenter
         ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 560.dp)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(top = 10.dp, bottom = 24.dp)
+            ) {
             // Hero Banner
             item {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -254,7 +266,7 @@ fun StartupScreen(
                     fontWeight = FontWeight.Bold,
                     color = SplitzColors.textPrimary(),
                     letterSpacing = 0.8.sp,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp, top = 6.dp)
                 )
             }
 
@@ -274,7 +286,10 @@ fun StartupScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Surface(
                                 shape = CircleShape,
                                 color = if (isSelected) SplitzColors.positiveContainer() else SplitzColors.backgroundElevated(),
@@ -290,22 +305,27 @@ fun StartupScreen(
                                 }
                             }
                             Spacer(modifier = Modifier.width(12.dp))
-                            Column {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = curr.displayName,
                                     style = SplitzTypography.BodyLarge,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = SplitzColors.textPrimary()
+                                    color = SplitzColors.textPrimary(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = "Subunit: ${curr.subunitName} (100 ${curr.subunitName} = 1 ${curr.code})",
                                     style = SplitzTypography.BodySmall,
-                                    color = SplitzColors.textMuted()
+                                    color = SplitzColors.textMuted(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
 
                         if (isSelected) {
+                            Spacer(modifier = Modifier.width(8.dp))
                             Surface(
                                 shape = CircleShape,
                                 color = SplitzColors.brandPrimary()
@@ -367,4 +387,5 @@ fun StartupScreen(
             }
         }
     }
+}
 }

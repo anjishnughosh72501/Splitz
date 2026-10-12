@@ -18,6 +18,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -80,19 +90,23 @@ fun CreateGroupScreen(
 
     Scaffold(
         containerColor = Color.Transparent,
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         topBar = {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
                 Surface(
                     shape = RoundedCornerShape(SplitzShapes.Pill),
                     color = SplitzColors.surfaceElevated().copy(alpha = 0.9f),
                     border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                    modifier = Modifier.clickable { onNavigateBack() }
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .clickable { onNavigateBack() }
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -114,7 +128,10 @@ fun CreateGroupScreen(
                     }
                 }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         text = "Create Group",
                         style = SplitzTypography.TitleMedium,
@@ -129,21 +146,26 @@ fun CreateGroupScreen(
                         letterSpacing = 1.sp
                     )
                 }
-
-                Box(modifier = Modifier.size(40.dp))
             }
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(padding),
+            contentAlignment = Alignment.TopCenter
         ) {
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 600.dp)
+                    .padding(horizontal = 16.dp)
             ) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    contentPadding = PaddingValues(top = 4.dp, bottom = 12.dp)
+                ) {
                 item {
                     Spacer(modifier = Modifier.height(6.dp))
                     KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
@@ -183,13 +205,17 @@ fun CreateGroupScreen(
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(12.dp),
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(
+                                    capitalization = KeyboardCapitalization.Words,
+                                    imeAction = ImeAction.Next
+                                ),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = SplitzColors.borderFocus(),
                                     unfocusedBorderColor = SplitzColors.borderSubtle(),
                                     focusedContainerColor = SplitzColors.surfaceElevated(),
                                     unfocusedContainerColor = SplitzColors.surfaceElevated()
-                                ),
-                                singleLine = true
+                                )
                             )
                         }
                     }
@@ -226,6 +252,20 @@ fun CreateGroupScreen(
                                             tint = SplitzColors.brandAccent()
                                         )
                                     },
+                                    keyboardOptions = KeyboardOptions(
+                                        capitalization = KeyboardCapitalization.Words,
+                                        imeAction = ImeAction.Done
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onDone = {
+                                            val trimmed = currentMemberInput.trim()
+                                            if (trimmed.isNotEmpty() && !members.contains(trimmed)) {
+                                                members.add(trimmed)
+                                                currentMemberInput = ""
+                                                errorMessage = null
+                                            }
+                                        }
+                                    ),
                                     colors = OutlinedTextFieldDefaults.colors(
                                         focusedBorderColor = SplitzColors.borderFocus(),
                                         unfocusedBorderColor = SplitzColors.borderSubtle(),
@@ -237,17 +277,20 @@ fun CreateGroupScreen(
                                 Surface(
                                     shape = RoundedCornerShape(12.dp),
                                     color = SplitzColors.brandPrimary(),
-                                    modifier = Modifier.clickable {
-                                        val trimmed = currentMemberInput.trim()
-                                        if (trimmed.isNotEmpty() && !members.contains(trimmed)) {
-                                            members.add(trimmed)
-                                            currentMemberInput = ""
-                                            errorMessage = null
+                                    modifier = Modifier
+                                        .height(56.dp)
+                                        .width(56.dp)
+                                        .clickable {
+                                            val trimmed = currentMemberInput.trim()
+                                            if (trimmed.isNotEmpty() && !members.contains(trimmed)) {
+                                                members.add(trimmed)
+                                                currentMemberInput = ""
+                                                errorMessage = null
+                                            }
                                         }
-                                    }
                                 ) {
                                     Box(
-                                        modifier = Modifier.size(50.dp),
+                                        modifier = Modifier.fillMaxSize(),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(
@@ -282,19 +325,27 @@ fun CreateGroupScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 UserAvatar(name = name, size = 32)
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
                                     text = name,
                                     style = SplitzTypography.BodyLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = SplitzColors.textPrimary()
+                                    color = SplitzColors.textPrimary(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
 
                             if (members.size > 2) {
-                                IconButton(onClick = { members.removeAt(index) }) {
+                                IconButton(
+                                    onClick = { members.removeAt(index) },
+                                    modifier = Modifier.size(36.dp)
+                                ) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Remove",
@@ -330,6 +381,7 @@ fun CreateGroupScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
                     .padding(vertical = 12.dp)
             ) {
                 KissatenPrimaryPillButton(
@@ -362,4 +414,5 @@ fun CreateGroupScreen(
             }
         }
     }
+}
 }
