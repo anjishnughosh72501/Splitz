@@ -61,7 +61,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
+import com.paisede.app.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -541,6 +545,81 @@ fun SettingsScreen(
                     groupId = groupId,
                     onInspectDataStructures = onInspectDataStructures
                 )
+            }
+
+            // About Splitz Card
+            item {
+                Text(
+                    text = "ABOUT SPLITZ",
+                    style = SplitzTypography.LabelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = SplitzColors.textPrimary(),
+                    modifier = Modifier.padding(start = 4.dp, top = 8.dp),
+                    letterSpacing = 0.8.sp
+                )
+            }
+
+            item {
+                KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = Color(0xFFE3C69A),
+                            border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                            modifier = Modifier.size(64.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.splitz_logo),
+                                contentDescription = "Splitz Logo",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(16.dp))
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = "Splitz",
+                            style = SplitzTypography.TitleLarge,
+                            fontWeight = FontWeight.Black,
+                            color = SplitzColors.textPrimary()
+                        )
+
+                        Text(
+                            text = "Version 1.1.0 • Build 2",
+                            style = SplitzTypography.LabelSmall,
+                            color = SplitzColors.brandAccent(),
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "An offline-first, private group expense manager powered by graph theory and greedy debt simplification algorithms.",
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textSecondary(),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            KissatenHankoStamp(text = "100% OFFLINE")
+                            KissatenHankoStamp(text = "ZERO ADS")
+                            KissatenHankoStamp(text = "EXACT MATH")
+                        }
+                    }
+                }
             }
 
             item {
