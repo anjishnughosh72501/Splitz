@@ -36,10 +36,9 @@ class MainActivity : ComponentActivity() {
                 fontScale = fontSize.scale,
                 currency = currency
             ) {
-                com.paisede.app.ui.components.AtmosphericBackground(
+                com.paisede.app.ui.components.SplitzAmbientBackground(
                     modifier = Modifier.fillMaxSize(),
-                    visualTheme = visualTheme,
-                    overlayDarkness = 0.50f
+                    visualTheme = visualTheme
                 ) {
                     AppNavigation(app = app)
                 }

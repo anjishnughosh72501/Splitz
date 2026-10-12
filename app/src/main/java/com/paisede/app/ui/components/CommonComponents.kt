@@ -1,6 +1,7 @@
 package com.paisede.app.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -49,7 +50,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.paisede.app.ui.theme.BrandTeal
 import com.paisede.app.ui.theme.SplitzBorderWidth
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzElevation
@@ -578,12 +578,35 @@ fun ShimmerCard(
     height: Dp = 100.dp,
     cornerRadius: Dp = SplitzShapes.cardMedium
 ) {
-    val colors = SplitzColors
+    val transition = androidx.compose.animation.core.rememberInfiniteTransition(label = "ShimmerTransition")
+    val translateAnim by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+            animation = androidx.compose.animation.core.tween(durationMillis = 1200, easing = androidx.compose.animation.core.FastOutSlowInEasing),
+            repeatMode = androidx.compose.animation.core.RepeatMode.Restart
+        ),
+        label = "ShimmerTranslate"
+    )
+
+    val shimmerColors = listOf(
+        SplitzColors.surfaceElevated().copy(alpha = 0.5f),
+        SplitzColors.surfaceElevated().copy(alpha = 0.85f),
+        SplitzColors.surfaceElevated().copy(alpha = 0.5f)
+    )
+
+    val brush = Brush.linearGradient(
+        colors = shimmerColors,
+        start = androidx.compose.ui.geometry.Offset.Zero,
+        end = androidx.compose.ui.geometry.Offset(x = translateAnim, y = translateAnim)
+    )
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
             .clip(RoundedCornerShape(cornerRadius))
-            .background(colors.surfaceVariant().copy(alpha = 0.5f))
+            .background(brush)
+            .border(SplitzBorderWidth.thin, SplitzColors.borderSubtle().copy(alpha = 0.4f), RoundedCornerShape(cornerRadius))
     )
 }

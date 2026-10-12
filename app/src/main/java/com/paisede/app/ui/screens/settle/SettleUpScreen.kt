@@ -1,6 +1,7 @@
 package com.paisede.app.ui.screens.settle
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,19 +16,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,17 +44,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paisede.app.domain.model.Member
 import com.paisede.app.domain.model.SettlementTransaction
-import com.paisede.app.ui.components.EmptyStateView
+import com.paisede.app.ui.components.KissatenHankoStamp
+import com.paisede.app.ui.components.KissatenPerforationDivider
+import com.paisede.app.ui.components.KissatenPrimaryPillButton
+import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.SplitzPrimaryButton
-import com.paisede.app.ui.components.SplitzSurface
-import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
+import com.paisede.app.ui.theme.KissatenTokens
+import com.paisede.app.ui.theme.LocalAppCurrency
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
@@ -66,6 +71,7 @@ fun SettleUpScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val currentCurrency = LocalAppCurrency.current
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -78,16 +84,15 @@ fun SettleUpScreen(
     state.pendingSettlement?.let { tx ->
         val debtor = state.members[tx.fromUserId]?.name ?: "Member"
         val creditor = state.members[tx.toUserId]?.name ?: "Member"
-        val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
         val amountStr = CurrencyUtils.formatPaise(tx.amountPaise, currency = currentCurrency)
 
         AlertDialog(
             onDismissRequest = { viewModel.dismissPrompt() },
-            shape = RoundedCornerShape(SplitzShapes.sheet),
-            containerColor = SplitzColors.surface(),
+            shape = RoundedCornerShape(20.dp),
+            containerColor = SplitzColors.surfaceElevated(),
             title = {
                 Text(
-                    text = "Confirm Settlement",
+                    text = "Record Settlement",
                     style = SplitzTypography.TitleLarge,
                     fontWeight = FontWeight.Bold,
                     color = SplitzColors.textPrimary()
@@ -95,7 +100,7 @@ fun SettleUpScreen(
             },
             text = {
                 Text(
-                    text = "Record a payment of $amountStr from $debtor to $creditor? This will record the transaction and adjust outstanding balances.",
+                    text = "Record payment of $amountStr from $debtor to $creditor? Group balances will be updated.",
                     style = SplitzTypography.BodyMedium,
                     color = SplitzColors.textSecondary()
                 )
@@ -103,15 +108,15 @@ fun SettleUpScreen(
             confirmButton = {
                 Button(
                     onClick = { viewModel.confirmSettlement() },
-                    colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary()),
-                    shape = RoundedCornerShape(SplitzShapes.button)
+                    colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.brandPrimary()),
+                    shape = RoundedCornerShape(SplitzShapes.Pill)
                 ) {
-                    Text("Confirm Payment", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text("Record Payment", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.dismissPrompt() }) {
-                    Text("Cancel", color = SplitzColors.textSecondary())
+                    Text("Cancel", color = SplitzColors.textSecondary(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -121,19 +126,71 @@ fun SettleUpScreen(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            SplitzTopAppBar(
-                title = "Settle Up",
-                onNavigateBack = onNavigateBack,
-                actions = {
-                    IconButton(onClick = onViewHistoryClick) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(SplitzShapes.Pill),
+                    color = SplitzColors.surfaceElevated().copy(alpha = 0.9f),
+                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                    modifier = Modifier.clickable { onNavigateBack() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = "Settlement History",
-                            tint = SplitzColors.primary()
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = SplitzColors.textPrimary(),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Back",
+                            style = SplitzTypography.LabelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
                         )
                     }
                 }
-            )
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Settle Up",
+                        style = SplitzTypography.TitleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = SplitzColors.textPrimary()
+                    )
+                    Text(
+                        text = "SETTLE BALANCES",
+                        style = SplitzTypography.LabelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = SplitzColors.brandAccent(),
+                        letterSpacing = 1.sp
+                    )
+                }
+
+                Surface(
+                    shape = CircleShape,
+                    color = SplitzColors.surfaceElevated(),
+                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                    modifier = Modifier.clickable { onViewHistoryClick() }
+                ) {
+                    Box(modifier = Modifier.size(36.dp), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.History,
+                            contentDescription = "Settlement History",
+                            tint = SplitzColors.textPrimary(),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
         }
     ) { padding ->
         Column(
@@ -142,36 +199,57 @@ fun SettleUpScreen(
                 .padding(padding)
         ) {
             if (state.recommendedPayments.isEmpty()) {
-                EmptyStateView(
-                    title = "All Settled Up!",
-                    subtitle = "No one owes any money in this group. You're completely square!",
-                    icon = Icons.Default.CheckCircle,
-                    modifier = Modifier.weight(1f)
-                )
+                KissatenReceiptCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(36.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        KissatenHankoStamp(text = "ALL SETTLED")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "All balances are settled ☕",
+                            style = SplitzTypography.TitleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "All member balances in this group are even. No pending debts.",
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textMuted()
+                        )
+                    }
+                }
             } else {
                 LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(SplitzSpacing.lg),
-                    verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     item {
                         Text(
-                            text = "RECOMMENDED SETTLEMENTS",
+                            text = "RECOMMENDED SETTLEMENT TRANSFERS",
                             style = SplitzTypography.LabelSmall,
                             fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary(),
+                            letterSpacing = 0.8.sp
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Optimized direct payments calculated to balance all group debts with minimal transactions.",
+                            style = SplitzTypography.BodySmall,
                             color = SplitzColors.textMuted()
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Minimal set of direct transfers calculated to settle debts with the fewest transactions.",
-                            style = SplitzTypography.BodySmall,
-                            color = SplitzColors.textSecondary()
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
                     }
 
                     items(state.recommendedPayments) { tx ->
-                        ModernSettleUpCard(
+                        KissatenSettleUpCard(
                             tx = tx,
                             members = state.members,
                             onSettleClick = { viewModel.promptSettlement(tx) }
@@ -184,25 +262,17 @@ fun SettleUpScreen(
 }
 
 @Composable
-fun ModernSettleUpCard(
+fun KissatenSettleUpCard(
     tx: SettlementTransaction,
     members: Map<String, Member>,
     onSettleClick: () -> Unit
 ) {
     val debtor = members[tx.fromUserId]?.name ?: "Member"
     val creditor = members[tx.toUserId]?.name ?: "Member"
+    val currentCurrency = LocalAppCurrency.current
 
-    SplitzSurface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SplitzShapes.cardMedium),
-        backgroundColor = SplitzColors.surface(),
-        borderColor = SplitzColors.borderSubtle()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(SplitzSpacing.md)
-        ) {
+    KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -212,7 +282,12 @@ fun ModernSettleUpCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    UserAvatar(name = debtor, size = 36, backgroundColor = DebtRed.copy(alpha = 0.15f), textColor = DebtRed)
+                    UserAvatar(
+                        name = debtor,
+                        size = 36,
+                        backgroundColor = SplitzColors.negativeContainer(),
+                        textColor = SplitzColors.negative()
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = debtor,
@@ -223,12 +298,17 @@ fun ModernSettleUpCard(
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = SplitzColors.textMuted(),
+                        contentDescription = "to",
+                        tint = SplitzColors.brandAccent(),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    UserAvatar(name = creditor, size = 36, backgroundColor = CreditGreen.copy(alpha = 0.15f), textColor = CreditGreen)
+                    UserAvatar(
+                        name = creditor,
+                        size = 36,
+                        backgroundColor = SplitzColors.positiveContainer(),
+                        textColor = SplitzColors.positive()
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = creditor,
@@ -242,19 +322,30 @@ fun ModernSettleUpCard(
                     amountPaise = tx.amountPaise,
                     style = SplitzTypography.TitleLarge,
                     fontWeight = FontWeight.Bold,
-                    colorMode = MoneyColorMode.NEUTRAL,
-                    animate = true
+                    colorMode = MoneyColorMode.NEUTRAL
                 )
             }
 
-            Spacer(modifier = Modifier.height(SplitzSpacing.md))
+            Spacer(modifier = Modifier.height(12.dp))
+            KissatenPerforationDivider()
+            Spacer(modifier = Modifier.height(12.dp))
 
-            val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
-            SplitzPrimaryButton(
-                text = "Mark as Settled (${CurrencyUtils.formatPaise(tx.amountPaise, currency = currentCurrency)})",
+            KissatenPrimaryPillButton(
+                text = "Record Payment (${CurrencyUtils.formatPaise(tx.amountPaise, currency = currentCurrency)})",
                 onClick = onSettleClick,
+                icon = Icons.Default.Check,
                 modifier = Modifier.fillMaxWidth()
             )
         }
     }
+}
+
+// Backward compatible alias
+@Composable
+fun ModernSettleUpCard(
+    tx: SettlementTransaction,
+    members: Map<String, Member>,
+    onSettleClick: () -> Unit
+) {
+    KissatenSettleUpCard(tx, members, onSettleClick)
 }

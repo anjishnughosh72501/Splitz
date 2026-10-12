@@ -5,6 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -47,14 +50,21 @@ fun AppNavigation(
     val isStartupCompleted by app.userPreferences.isStartupCompleted.collectAsState()
     val startDestination = if (isStartupCompleted) Screen.Home.route else Screen.Startup.route
 
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-        enterTransition = { SplitzEnterTransition.SlideFade },
-        exitTransition = { SplitzExitTransition.SlideFade },
-        popEnterTransition = { SplitzEnterTransition.SlideFadeReverse },
-        popExitTransition = { SplitzExitTransition.SlideFadeReverse }
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
+        com.paisede.app.ui.components.SplitzAmbientBackground(
+            modifier = Modifier.fillMaxSize()
+        )
+
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            enterTransition = { SplitzEnterTransition.SlideFade },
+            exitTransition = { SplitzExitTransition.SlideFade },
+            popEnterTransition = { SplitzEnterTransition.SlideFadeReverse },
+            popExitTransition = { SplitzExitTransition.SlideFadeReverse }
+        ) {
         // STARTUP SCREEN
         composable(
             route = Screen.Startup.route,
@@ -311,6 +321,7 @@ fun AppNavigation(
         }
     }
 }
+}
 
 // ============================================================
 // ============================================================
@@ -319,44 +330,44 @@ fun AppNavigation(
 
 object SplitzEnterTransition {
     val FadeScale: androidx.compose.animation.EnterTransition =
-        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
-        androidx.compose.animation.scaleIn(initialScale = 0.95f, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(220, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
+        androidx.compose.animation.scaleIn(initialScale = 0.96f, animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.85f, stiffness = 420f))
 
     val SlideFade: androidx.compose.animation.EnterTransition =
-        androidx.compose.animation.slideInVertically(initialOffsetY = { 80 }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
-        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+        androidx.compose.animation.slideInHorizontally(initialOffsetX = { it / 4 }, animationSpec = androidx.compose.animation.core.tween(280, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(220))
 
     val SlideFadeReverse: androidx.compose.animation.EnterTransition =
-        androidx.compose.animation.slideInVertically(initialOffsetY = { -80 }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
-        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+        androidx.compose.animation.slideInHorizontally(initialOffsetX = { -it / 4 }, animationSpec = androidx.compose.animation.core.tween(280, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(220))
 
     val SlideUp: androidx.compose.animation.EnterTransition =
-        androidx.compose.animation.slideInVertically(initialOffsetY = { it }, animationSpec = androidx.compose.animation.core.tween(400, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f))) +
-        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.05f, 0.0f, 0.1f, 1.0f)))
+        androidx.compose.animation.slideInVertically(initialOffsetY = { it / 3 }, animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.88f, stiffness = 340f)) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(250))
 
     val SlideDown: androidx.compose.animation.EnterTransition =
-        androidx.compose.animation.slideInVertically(initialOffsetY = { -it }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
-        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+        androidx.compose.animation.slideInVertically(initialOffsetY = { -it / 3 }, animationSpec = androidx.compose.animation.core.tween(260, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(180))
 }
 
 object SplitzExitTransition {
     val FadeScale: androidx.compose.animation.ExitTransition =
-        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
-        androidx.compose.animation.scaleOut(targetScale = 0.95f, animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(180, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.scaleOut(targetScale = 0.96f, animationSpec = androidx.compose.animation.core.tween(180))
 
     val SlideFade: androidx.compose.animation.ExitTransition =
-        androidx.compose.animation.slideOutVertically(targetOffsetY = { -80 }, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
-        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+        androidx.compose.animation.slideOutHorizontally(targetOffsetX = { -it / 4 }, animationSpec = androidx.compose.animation.core.tween(260, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(180))
 
     val SlideFadeReverse: androidx.compose.animation.ExitTransition =
-        androidx.compose.animation.slideOutVertically(targetOffsetY = { 80 }, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
-        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+        androidx.compose.animation.slideOutHorizontally(targetOffsetX = { it / 4 }, animationSpec = androidx.compose.animation.core.tween(260, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(180))
 
     val SlideUp: androidx.compose.animation.ExitTransition =
-        androidx.compose.animation.slideOutVertically(targetOffsetY = { -it }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
-        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+        androidx.compose.animation.slideOutVertically(targetOffsetY = { -it / 3 }, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(180))
 
     val SlideDown: androidx.compose.animation.ExitTransition =
-        androidx.compose.animation.slideOutVertically(targetOffsetY = { it }, animationSpec = androidx.compose.animation.core.tween(300, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f))) +
-        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(200, easing = androidx.compose.animation.core.CubicBezierEasing(0.4f, 0.0f, 0.2f, 1.0f)))
+        androidx.compose.animation.slideOutVertically(targetOffsetY = { it / 3 }, animationSpec = androidx.compose.animation.core.tween(250, easing = androidx.compose.animation.core.FastOutSlowInEasing)) +
+        androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(180))
 }

@@ -1,5 +1,7 @@
 package com.paisede.app.ui.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
 object SplitzShapes {
@@ -14,10 +16,21 @@ object SplitzShapes {
     val cardMedium = MD
     val cardLarge = LG
     val cardHero = XL
-    val button = SM
+    val button = Pill
+    val buttonPill = Pill
+    val receiptCard = 24.dp
+    val stamp = 12.dp
     val fab = LG
     val sheet = XL
     val avatar = Pill
     val input = SM
     val chip = Pill
 }
+
+val Material3Shapes = Shapes(
+    extraSmall = RoundedCornerShape(SplitzShapes.XS),
+    small = RoundedCornerShape(SplitzShapes.SM),
+    medium = RoundedCornerShape(SplitzShapes.MD),
+    large = RoundedCornerShape(SplitzShapes.LG),
+    extraLarge = RoundedCornerShape(SplitzShapes.XL)
+)

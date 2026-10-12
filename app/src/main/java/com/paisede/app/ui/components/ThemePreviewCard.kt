@@ -46,8 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.data.preferences.SplitzVisualTheme
-import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.SplitzBorderWidth
 import com.paisede.app.ui.theme.SplitzMotion
 import com.paisede.app.ui.theme.SplitzShapes
@@ -174,7 +172,7 @@ fun ThemePreviewCard(
                         text = "+₹3,200",
                         style = SplitzTypography.LabelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = CreditGreen
+                        color = palette.positive
                     )
                 }
             }
@@ -204,8 +202,8 @@ fun ThemePreviewCard(
                     ) {
                         ColorSwatch(color = palette.brandPrimary, tooltip = "Brand")
                         ColorSwatch(color = palette.surfaceElevated, tooltip = "Surface")
-                        ColorSwatch(color = CreditGreen, tooltip = "Positive")
-                        ColorSwatch(color = DebtRed, tooltip = "Negative")
+                        ColorSwatch(color = palette.positive, tooltip = "Positive")
+                        ColorSwatch(color = palette.negative, tooltip = "Negative")
                     }
                 }
 

@@ -1,6 +1,7 @@
 package com.paisede.app.ui.screens.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,30 +16,39 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.CallSplit
 import androidx.compose.material.icons.filled.CurrencyRupee
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Hub
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -54,29 +64,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.paisede.app.data.preferences.AppCurrency
 import com.paisede.app.data.preferences.AppFontSize
 import com.paisede.app.data.preferences.AppThemeMode
 import com.paisede.app.data.preferences.ThemePreferences
-import com.paisede.app.ui.components.SplitzSurface
-import com.paisede.app.ui.components.SplitzTopAppBar
-import com.paisede.app.ui.theme.AccentAmber
-import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.IndigoPurple
-import com.paisede.app.ui.theme.SplitzBorderWidth
+import com.paisede.app.data.preferences.UserPreferences
+import com.paisede.app.ui.components.KissatenHankoStamp
+import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.theme.SplitzColors
-import com.paisede.app.ui.theme.SplitzGradients
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
-
-import androidx.compose.material.icons.filled.AttachMoney
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import com.paisede.app.data.preferences.AppCurrency
-import com.paisede.app.data.preferences.UserPreferences
 
 @Composable
 fun SettingsScreen(
@@ -132,13 +135,13 @@ fun SettingsScreen(
                                     themePreferences?.setThemeMode(mode)
                                     showThemeDialog = false
                                 },
-                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.primary())
+                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.brandAccent())
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = mode.displayName,
                                 style = SplitzTypography.BodyLarge,
-                                color = SplitzColors.textPrimary(),
+                                color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                             )
                         }
@@ -147,7 +150,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text("Close", color = SplitzColors.primary(), fontWeight = FontWeight.SemiBold)
+                    Text("Close", color = SplitzColors.brandAccent(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -187,13 +190,13 @@ fun SettingsScreen(
                                     themePreferences?.setFontSize(size)
                                     showFontSizeDialog = false
                                 },
-                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.primary())
+                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.brandAccent())
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = size.displayName,
                                 style = SplitzTypography.BodyLarge,
-                                color = SplitzColors.textPrimary(),
+                                color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                             )
                         }
@@ -202,7 +205,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showFontSizeDialog = false }) {
-                    Text("Close", color = SplitzColors.primary(), fontWeight = FontWeight.SemiBold)
+                    Text("Close", color = SplitzColors.brandAccent(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -242,13 +245,13 @@ fun SettingsScreen(
                                     userPreferences?.setCurrency(curr)
                                     showCurrencyDialog = false
                                 },
-                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.primary())
+                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.brandAccent())
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = "${curr.symbol}  ${curr.displayName}",
                                 style = SplitzTypography.BodyLarge,
-                                color = SplitzColors.textPrimary(),
+                                color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                             )
                         }
@@ -257,7 +260,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showCurrencyDialog = false }) {
-                    Text("Close", color = SplitzColors.primary(), fontWeight = FontWeight.SemiBold)
+                    Text("Close", color = SplitzColors.brandAccent(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -286,18 +289,20 @@ fun SettingsScreen(
                     OutlinedTextField(
                         value = editingUserName,
                         onValueChange = { editingUserName = it },
-                        placeholder = { Text("Your name", color = SplitzColors.textMuted()) },
+                        placeholder = { Text("Your name", color = SplitzColors.textTertiary()) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(SplitzShapes.SM),
                         singleLine = true,
                         leadingIcon = {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = SplitzColors.primary())
+                            Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = SplitzColors.brandAccent())
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SplitzColors.primary(),
-                            unfocusedBorderColor = SplitzColors.borderSubtle(),
+                            focusedBorderColor = SplitzColors.brandAccent(),
+                            unfocusedBorderColor = SplitzColors.border(),
                             focusedContainerColor = SplitzColors.surface(),
-                            unfocusedContainerColor = SplitzColors.surface()
+                            unfocusedContainerColor = SplitzColors.surface(),
+                            focusedTextColor = SplitzColors.textPrimary(),
+                            unfocusedTextColor = SplitzColors.textPrimary()
                         )
                     )
                 }
@@ -312,12 +317,12 @@ fun SettingsScreen(
                         showUserNameDialog = false
                     }
                 ) {
-                    Text("Save", color = SplitzColors.primary(), fontWeight = FontWeight.Bold)
+                    Text("Save", color = SplitzColors.brandAccent(), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showUserNameDialog = false }) {
-                    Text("Cancel", color = SplitzColors.textMuted())
+                    Text("Cancel", color = SplitzColors.textSecondary())
                 }
             }
         )
@@ -326,10 +331,49 @@ fun SettingsScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            SplitzTopAppBar(
-                title = "Settings & Help",
-                onNavigateBack = onNavigateBack
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(SplitzShapes.Pill),
+                    color = SplitzColors.surface(),
+                    border = BorderStroke(1.dp, SplitzColors.border()),
+                    modifier = Modifier.clickable { onNavigateBack() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = SplitzColors.textPrimary(),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Back",
+                            style = SplitzTypography.LabelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Settings",
+                    style = SplitzTypography.TitleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = SplitzColors.textPrimary()
+                )
+
+                Box(modifier = Modifier.size(40.dp))
+            }
         }
     ) { padding ->
         LazyColumn(
@@ -339,105 +383,123 @@ fun SettingsScreen(
             contentPadding = PaddingValues(SplitzSpacing.lg),
             verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {
-            // App Branding Banner
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(SplitzShapes.cardHero))
-                        .background(SplitzColors.surfaceElevated().copy(alpha = 0.85f))
-                        .border(
-                            width = SplitzBorderWidth.thin,
-                            color = SplitzColors.borderGlass(),
-                            shape = RoundedCornerShape(SplitzShapes.cardHero)
-                        )
-                        .padding(20.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape)
-                                .background(SplitzColors.primary()),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "S",
-                                style = SplitzTypography.HeadlineLarge,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.White
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Text(
-                                text = "Splitz",
-                                style = SplitzTypography.TitleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                text = "Version 2.0 • Modern Fintech & Offline First",
-                                style = SplitzTypography.BodySmall,
-                                color = Color.White.copy(alpha = 0.65f)
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Visual Theme Selection Section
+            // Theme Accent Color Line (Single row with circular color accents)
             item {
                 Text(
-                    text = "ATMOSPHERIC THEMES",
+                    text = "ACCENT THEME",
                     style = SplitzTypography.LabelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = SplitzColors.textMuted(),
-                    modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                    color = SplitzColors.textPrimary(),
+                    modifier = Modifier.padding(start = 4.dp, top = 4.dp),
+                    letterSpacing = 0.8.sp
                 )
             }
 
             item {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    com.paisede.app.data.preferences.SplitzVisualTheme.entries.forEach { theme ->
-                        com.paisede.app.ui.components.ThemePreviewCard(
-                            theme = theme,
-                            isSelected = currentVisualTheme == theme,
-                            onSelect = {
-                                themePreferences?.setVisualTheme(theme)
+                KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            com.paisede.app.data.preferences.SplitzVisualTheme.entries.forEach { theme ->
+                                val isSelected = currentVisualTheme == theme
+                                val accentColor = Color(theme.accentHex)
+                                val scale by animateFloatAsState(
+                                    targetValue = if (isSelected) 1.15f else 1.0f,
+                                    label = "theme_dot_scale"
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .graphicsLayer {
+                                            scaleX = scale
+                                            scaleY = scale
+                                        }
+                                        .size(44.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (isSelected) accentColor.copy(alpha = 0.20f)
+                                            else Color.Transparent
+                                        )
+                                        .border(
+                                            width = if (isSelected) 2.5.dp else 1.dp,
+                                            color = if (isSelected) accentColor else SplitzColors.border(),
+                                            shape = CircleShape
+                                        )
+                                        .clickable {
+                                            themePreferences?.setVisualTheme(theme)
+                                        }
+                                        .semantics {
+                                            contentDescription = "Select ${theme.displayName} theme"
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clip(CircleShape)
+                                            .background(accentColor),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (isSelected) {
+                                            Icon(
+                                                imageVector = Icons.Default.AutoAwesome,
+                                                contentDescription = "Selected",
+                                                tint = Color.White,
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                        }
+                                    }
+                                }
                             }
-                        )
+                        }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Active Palette",
+                                    style = SplitzTypography.BodySmall,
+                                    color = SplitzColors.textSecondary()
+                                )
+                                Text(
+                                    text = currentVisualTheme.displayName,
+                                    style = SplitzTypography.BodySmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(currentVisualTheme.accentHex)
+                                )
+                            }
+                        }
                     }
                 }
-            }
 
-            // General Preferences
-            item {
+                // General Preferences
+                item {
                 Text(
                     text = "PREFERENCES",
                     style = SplitzTypography.LabelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = SplitzColors.textMuted(),
-                    modifier = Modifier.padding(start = 4.dp, top = 8.dp)
+                    color = SplitzColors.textPrimary(),
+                    modifier = Modifier.padding(start = 4.dp, top = 8.dp),
+                    letterSpacing = 0.8.sp
                 )
             }
 
             item {
-                SplitzSurface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(SplitzShapes.MD),
-                    backgroundColor = SplitzColors.surface(),
-                    borderColor = SplitzColors.borderSubtle()
-                ) {
+                KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         SettingRow(
                             icon = Icons.Default.AttachMoney,
-                            iconColor = CreditGreen,
+                            iconColor = SplitzColors.brandAccent(),
                             title = "Currency",
                             value = "${currentCurrency.symbol} (${currentCurrency.code})",
                             onClick = { showCurrencyDialog = true }
@@ -445,7 +507,7 @@ fun SettingsScreen(
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
                         SettingRow(
                             icon = Icons.Default.Person,
-                            iconColor = SplitzColors.primary(),
+                            iconColor = SplitzColors.brandAccent(),
                             title = "Your Name",
                             value = if (currentUserName.isNotBlank()) "Me ($currentUserName)" else "Set your name",
                             onClick = {
@@ -456,7 +518,7 @@ fun SettingsScreen(
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
                         SettingRow(
                             icon = Icons.Default.Palette,
-                            iconColor = IndigoPurple,
+                            iconColor = SplitzColors.brandAccent(),
                             title = "Appearance Mode",
                             value = currentThemeMode.displayName,
                             onClick = { showThemeDialog = true }
@@ -464,7 +526,7 @@ fun SettingsScreen(
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
                         SettingRow(
                             icon = Icons.Default.FormatSize,
-                            iconColor = SplitzColors.primary(),
+                            iconColor = SplitzColors.brandAccent(),
                             title = "Font Size",
                             value = currentFontSize.displayName,
                             onClick = { showFontSizeDialog = true }
@@ -516,7 +578,7 @@ private fun SettingRow(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(iconColor.copy(alpha = 0.12f)),
+                    .background(iconColor.copy(alpha = 0.16f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -530,7 +592,7 @@ private fun SettingRow(
             Text(
                 text = title,
                 style = SplitzTypography.BodyMedium,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 color = SplitzColors.textPrimary()
             )
         }
@@ -545,7 +607,7 @@ private fun SettingRow(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
-                    tint = SplitzColors.textMuted(),
+                    tint = SplitzColors.textSecondary(),
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -560,12 +622,10 @@ private fun WorkingDropdownCard(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    SplitzSurface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SplitzShapes.MD),
-        backgroundColor = SplitzColors.surface(),
-        borderColor = SplitzColors.borderSubtle(),
-        onClick = { expanded = !expanded }
+    KissatenReceiptCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { expanded = !expanded }
     ) {
         Column(
             modifier = Modifier
@@ -585,13 +645,13 @@ private fun WorkingDropdownCard(
                         modifier = Modifier
                             .size(38.dp)
                             .clip(CircleShape)
-                            .background(SplitzColors.primary().copy(alpha = 0.12f)),
+                            .background(SplitzColors.brandAccent().copy(alpha = 0.15f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.HelpOutline,
                             contentDescription = "Working",
-                            tint = SplitzColors.primary(),
+                            tint = SplitzColors.brandAccent(),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -614,7 +674,7 @@ private fun WorkingDropdownCard(
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = if (expanded) "Collapse" else "Expand",
-                    tint = SplitzColors.textMuted()
+                    tint = SplitzColors.textSecondary()
                 )
             }
 
@@ -631,13 +691,13 @@ private fun WorkingDropdownCard(
                     val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
                     SettingRow(
                         icon = Icons.Default.CurrencyRupee,
-                        iconColor = SplitzColors.primary(),
+                        iconColor = SplitzColors.brandAccent(),
                         title = "Selected Currency",
                         value = "${currentCurrency.displayName} (${currentCurrency.subunitName})"
                     )
                     SettingRow(
                         icon = Icons.Default.Shield,
-                        iconColor = CreditGreen,
+                        iconColor = SplitzColors.positive(),
                         title = "Math Engine",
                         value = "Integer Subunits (0 Rounding Error)"
                     )
@@ -647,7 +707,7 @@ private fun WorkingDropdownCard(
                     // Smart Debt Simplification
                     HelpAccordionCard(
                         icon = Icons.Default.AutoAwesome,
-                        iconTint = SplitzColors.primary(),
+                        iconTint = SplitzColors.brandAccent(),
                         title = "Smart Debt Simplification",
                         summary = "Minimizes payments so friends settle with the fewest transactions.",
                         details = "Without simplification, if person A owes B, B owes C, and C owes A, multiple back-and-forth transfers occur.\n\n" +
@@ -658,7 +718,7 @@ private fun WorkingDropdownCard(
                     // Splitting Expenses
                     HelpAccordionCard(
                         icon = Icons.Default.CallSplit,
-                        iconTint = IndigoPurple,
+                        iconTint = SplitzColors.brandAccent(),
                         title = "Splitting Expenses",
                         summary = "Equal, Exact, Percentage, or Share-based allocations.",
                         details = "• Equal Split: Divides the total evenly. Any remainder paise are distributed +1 paise to initial members so the exact total is always conserved.\n\n" +
@@ -670,7 +730,7 @@ private fun WorkingDropdownCard(
                     // Circular Debts
                     HelpAccordionCard(
                         icon = Icons.Default.Hub,
-                        iconTint = AccentAmber,
+                        iconTint = SplitzColors.negative(),
                         title = "Debt Network & Circular Debts",
                         summary = "Visualizes debt links and detects circular cycles.",
                         details = "The Debt Graph models members as nodes and debts as directed edges.\n\n" +
@@ -680,7 +740,7 @@ private fun WorkingDropdownCard(
                     // Integer Precision
                     HelpAccordionCard(
                         icon = Icons.Default.CurrencyRupee,
-                        iconTint = CreditGreen,
+                        iconTint = SplitzColors.positive(),
                         title = "Strict Integer Precision",
                         summary = "Zero floating-point rounding errors.",
                         details = "Standard floating-point numbers (Float, Double) suffer from precision drift (e.g. 0.1 + 0.2 ≠ 0.3).\n\n" +
@@ -690,7 +750,7 @@ private fun WorkingDropdownCard(
                     // Undo & Redo
                     HelpAccordionCard(
                         icon = Icons.AutoMirrored.Filled.Undo,
-                        iconTint = SplitzColors.primary(),
+                        iconTint = SplitzColors.brandAccent(),
                         title = "Undo & Redo Engine",
                         summary = "Reverse or replay any expense changes effortlessly.",
                         details = "All ledger mutations are tracked on a Last-In First-Out (LIFO) stack. Tapping Undo reverts the last operation, and Redo restores it, keeping your group state completely safe."
@@ -698,12 +758,10 @@ private fun WorkingDropdownCard(
 
                     // Live Data Structures Inspector if in group context
                     if (groupId != null && onInspectDataStructures != null) {
-                        SplitzSurface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(SplitzShapes.SM),
-                            backgroundColor = SplitzColors.surfaceElevated(),
-                            borderColor = SplitzColors.borderSubtle(),
-                            onClick = { onInspectDataStructures(groupId) }
+                        KissatenReceiptCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onInspectDataStructures(groupId) }
                         ) {
                             Row(
                                 modifier = Modifier
@@ -717,13 +775,13 @@ private fun WorkingDropdownCard(
                                         modifier = Modifier
                                             .size(36.dp)
                                             .clip(CircleShape)
-                                            .background(DebtRed.copy(alpha = 0.12f)),
+                                            .background(SplitzColors.negative().copy(alpha = 0.12f)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.BugReport,
                                             contentDescription = "Data Structures Inspector",
-                                            tint = DebtRed,
+                                            tint = SplitzColors.negative(),
                                             modifier = Modifier.size(18.dp)
                                         )
                                     }
@@ -745,7 +803,7 @@ private fun WorkingDropdownCard(
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
-                                    tint = SplitzColors.textMuted(),
+                                    tint = SplitzColors.textSecondary(),
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -767,12 +825,10 @@ private fun HelpAccordionCard(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    SplitzSurface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SplitzShapes.SM),
-        backgroundColor = SplitzColors.surface(),
-        borderColor = SplitzColors.borderSubtle(),
-        onClick = { expanded = !expanded }
+    KissatenReceiptCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { expanded = !expanded }
     ) {
         Column(
             modifier = Modifier
@@ -792,7 +848,7 @@ private fun HelpAccordionCard(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(iconTint.copy(alpha = 0.12f)),
+                            .background(iconTint.copy(alpha = 0.16f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -821,7 +877,7 @@ private fun HelpAccordionCard(
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = if (expanded) "Collapse" else "Expand",
-                    tint = SplitzColors.textMuted(),
+                    tint = SplitzColors.textSecondary(),
                     modifier = Modifier.size(20.dp)
                 )
             }

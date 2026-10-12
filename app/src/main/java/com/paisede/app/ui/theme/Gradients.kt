@@ -10,9 +10,9 @@ object SplitzGradients {
         val palette = LocalSplitzPalette.current
         return Brush.horizontalGradient(
             colors = listOf(
-                palette.brandPrimary,
-                palette.brandAccent,
-                palette.brandPrimary
+                palette.gradientStart,
+                palette.gradientEnd,
+                palette.gradientStart
             )
         )
     }
@@ -22,26 +22,72 @@ object SplitzGradients {
         val palette = LocalSplitzPalette.current
         return Brush.verticalGradient(
             colors = listOf(
-                palette.brandSoft.copy(alpha = 0.5f),
+                palette.claySurface.copy(alpha = 0.90f),
                 palette.surfaceElevated.copy(alpha = 0.85f),
                 palette.background.copy(alpha = 0.95f)
             )
         )
     }
 
+    @Composable
+    fun success(): Brush {
+        val palette = LocalSplitzPalette.current
+        return Brush.horizontalGradient(
+            colors = listOf(
+                palette.positive,
+                palette.positiveStrong
+            )
+        )
+    }
+
+    @Composable
+    fun debt(): Brush {
+        val palette = LocalSplitzPalette.current
+        return Brush.horizontalGradient(
+            colors = listOf(
+                palette.negative,
+                palette.negativeStrong
+            )
+        )
+    }
+
+    @Composable
+    fun warning(): Brush {
+        val palette = LocalSplitzPalette.current
+        return Brush.horizontalGradient(
+            colors = listOf(
+                palette.warning,
+                palette.warningStrong
+            )
+        )
+    }
+
+    @Composable
+    fun clayHighlight(): Brush {
+        val palette = LocalSplitzPalette.current
+        return Brush.verticalGradient(
+            0.0f to palette.clayHighlight,
+            0.45f to palette.clayHighlight.copy(alpha = 0.04f),
+            1.0f to Color.Transparent
+        )
+    }
+
+    @Composable
+    fun clayInnerShadow(): Brush {
+        val palette = LocalSplitzPalette.current
+        return Brush.verticalGradient(
+            0.0f to Color.Transparent,
+            0.7f to palette.clayShadow.copy(alpha = 0.04f),
+            1.0f to palette.clayShadow.copy(alpha = 0.35f)
+        )
+    }
+
+    // Static fallbacks for backward compatibility
     val Primary = Brush.horizontalGradient(
         colors = listOf(
-            Color(0xFF5C9CFF),
-            Color(0xFF86B8FF),
-            Color(0xFF5C9CFF)
-        )
-    )
-
-    val PrimaryBright = Brush.horizontalGradient(
-        colors = listOf(
-            Color(0xFF86B8FF),
-            Color(0xFF5C9CFF),
-            Color(0xFF86B8FF)
+            Color(0xFF4A3525),
+            Color(0xFFC87D43),
+            Color(0xFF4A3525)
         )
     )
 

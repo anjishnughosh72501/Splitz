@@ -1,6 +1,8 @@
 package com.paisede.app.ui.screens.group
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,11 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,12 +48,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paisede.app.domain.repository.GroupRepository
-import com.paisede.app.ui.components.SplitzPrimaryButton
-import com.paisede.app.ui.components.SplitzSurface
-import com.paisede.app.ui.components.SplitzTopAppBar
+import com.paisede.app.ui.components.KissatenPrimaryPillButton
+import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.DebtRed
+import com.paisede.app.ui.theme.KissatenTokens
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
@@ -75,124 +81,200 @@ fun CreateGroupScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            SplitzTopAppBar(
-                title = "Create New Group",
-                onNavigateBack = onNavigateBack
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(SplitzShapes.Pill),
+                    color = SplitzColors.surfaceElevated().copy(alpha = 0.9f),
+                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                    modifier = Modifier.clickable { onNavigateBack() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = SplitzColors.textPrimary(),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Back",
+                            style = SplitzTypography.LabelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                    }
+                }
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Create Group",
+                        style = SplitzTypography.TitleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = SplitzColors.textPrimary()
+                    )
+                    Text(
+                        text = "OPEN NEW LEDGER",
+                        style = SplitzTypography.LabelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = SplitzColors.brandAccent(),
+                        letterSpacing = 1.sp
+                    )
+                }
+
+                Box(modifier = Modifier.size(40.dp))
+            }
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = SplitzSpacing.lg)
+                .padding(horizontal = 16.dp)
         ) {
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "CREATE A GROUP",
-                        style = SplitzTypography.LabelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textMuted()
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "Trips, roommates, friends, projects",
-                        style = SplitzTypography.BodyMedium,
-                        color = SplitzColors.textSecondary()
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    OutlinedTextField(
-                        value = groupName,
-                        onValueChange = {
-                            groupName = it
-                            errorMessage = null
-                        },
-                        placeholder = { Text("e.g. Goa Trip, Flatmates, Weekend Trek", color = SplitzColors.textMuted()) },
-                        leadingIcon = {
-                            Icon(imageVector = Icons.Default.Group, contentDescription = null, tint = SplitzColors.primary())
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(SplitzShapes.SM),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SplitzColors.primary(),
-                            unfocusedBorderColor = SplitzColors.borderSubtle(),
-                            focusedContainerColor = SplitzColors.surface(),
-                            unfocusedContainerColor = SplitzColors.surface()
-                        ),
-                        singleLine = true
-                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "GROUP NAME",
+                                style = SplitzTypography.LabelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.textPrimary(),
+                                letterSpacing = 0.8.sp
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Trip, flatmates, dinner, or shared project",
+                                style = SplitzTypography.BodySmall,
+                                color = SplitzColors.textMuted()
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            OutlinedTextField(
+                                value = groupName,
+                                onValueChange = {
+                                    groupName = it
+                                    errorMessage = null
+                                },
+                                placeholder = {
+                                    Text(
+                                        "e.g. Goa Trip, Flatmates, Coffee Club",
+                                        color = SplitzColors.textMuted().copy(alpha = 0.6f)
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.LocalCafe,
+                                        contentDescription = null,
+                                        tint = SplitzColors.brandAccent()
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = SplitzColors.borderFocus(),
+                                    unfocusedBorderColor = SplitzColors.borderSubtle(),
+                                    focusedContainerColor = SplitzColors.surfaceElevated(),
+                                    unfocusedContainerColor = SplitzColors.surfaceElevated()
+                                ),
+                                singleLine = true
+                            )
+                        }
+                    }
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Add Members",
-                        style = SplitzTypography.LabelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        OutlinedTextField(
-                            value = currentMemberInput,
-                            onValueChange = { currentMemberInput = it },
-                            placeholder = { Text("Member Name", color = SplitzColors.textMuted()) },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(SplitzShapes.SM),
-                            singleLine = true,
-                            leadingIcon = {
-                                Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = SplitzColors.textMuted())
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = SplitzColors.primary(),
-                                unfocusedBorderColor = SplitzColors.borderSubtle(),
-                                focusedContainerColor = SplitzColors.surface(),
-                                unfocusedContainerColor = SplitzColors.surface()
+                    KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "ADD MEMBERS",
+                                style = SplitzTypography.LabelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.textPrimary(),
+                                letterSpacing = 0.8.sp
                             )
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button(
-                            onClick = {
-                                val trimmed = currentMemberInput.trim()
-                                if (trimmed.isNotEmpty() && !members.contains(trimmed)) {
-                                    members.add(trimmed)
-                                    currentMemberInput = ""
-                                    errorMessage = null
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                OutlinedTextField(
+                                    value = currentMemberInput,
+                                    onValueChange = { currentMemberInput = it },
+                                    placeholder = {
+                                        Text("Enter member name", color = SplitzColors.textMuted().copy(alpha = 0.6f))
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp),
+                                    singleLine = true,
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = null,
+                                            tint = SplitzColors.brandAccent()
+                                        )
+                                    },
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = SplitzColors.borderFocus(),
+                                        unfocusedBorderColor = SplitzColors.borderSubtle(),
+                                        focusedContainerColor = SplitzColors.surfaceElevated(),
+                                        unfocusedContainerColor = SplitzColors.surfaceElevated()
+                                    )
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = SplitzColors.brandPrimary(),
+                                    modifier = Modifier.clickable {
+                                        val trimmed = currentMemberInput.trim()
+                                        if (trimmed.isNotEmpty() && !members.contains(trimmed)) {
+                                            members.add(trimmed)
+                                            currentMemberInput = ""
+                                            errorMessage = null
+                                        }
+                                    }
+                                ) {
+                                    Box(
+                                        modifier = Modifier.size(50.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Add,
+                                            contentDescription = "Add",
+                                            tint = SplitzColors.onPrimary()
+                                        )
+                                    }
                                 }
-                            },
-                            shape = RoundedCornerShape(SplitzShapes.SM),
-                            colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.primary())
-                        ) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = "Add", tint = Color.White)
+                            }
                         }
                     }
                 }
 
                 item {
                     Text(
-                        text = "MEMBERS (${members.size})",
+                        text = "Members (${members.size})",
                         style = SplitzTypography.LabelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textMuted(),
-                        modifier = Modifier.padding(top = 8.dp)
+                        color = SplitzColors.textPrimary(),
+                        letterSpacing = 0.8.sp,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
 
                 itemsIndexed(members) { index, name ->
-                    SplitzSurface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(SplitzShapes.SM),
-                        backgroundColor = SplitzColors.surface(),
-                        borderColor = SplitzColors.borderSubtle()
-                    ) {
+                    KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -201,12 +283,12 @@ fun CreateGroupScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                UserAvatar(name = name, size = 34)
+                                UserAvatar(name = name, size = 32)
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
                                     text = name,
                                     style = SplitzTypography.BodyLarge,
-                                    fontWeight = FontWeight.Medium,
+                                    fontWeight = FontWeight.SemiBold,
                                     color = SplitzColors.textPrimary()
                                 )
                             }
@@ -216,7 +298,7 @@ fun CreateGroupScreen(
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Remove",
-                                        tint = DebtRed,
+                                        tint = SplitzColors.negative(),
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }
@@ -227,13 +309,20 @@ fun CreateGroupScreen(
 
                 if (errorMessage != null) {
                     item {
-                        Text(
-                            text = errorMessage!!,
-                            style = SplitzTypography.BodyMedium,
-                            color = DebtRed,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = SplitzColors.negativeContainer(),
+                            border = BorderStroke(1.dp, SplitzColors.negative().copy(alpha = 0.3f)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = errorMessage!!,
+                                style = SplitzTypography.BodyMedium,
+                                color = SplitzColors.negative(),
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(12.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -241,15 +330,15 @@ fun CreateGroupScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = SplitzSpacing.md)
+                    .padding(vertical = 12.dp)
             ) {
-                SplitzPrimaryButton(
-                    text = if (isSaving) "Creating Group..." else "Create Group →",
+                KissatenPrimaryPillButton(
+                    text = if (isSaving) "Creating..." else "Create Group →",
                     onClick = {
                         val name = groupName.trim()
                         if (name.isEmpty()) {
                             errorMessage = "Please enter a group name"
-                            return@SplitzPrimaryButton
+                            return@KissatenPrimaryPillButton
                         }
                         val finalMembers = members.toMutableList()
                         if (!finalMembers.any { it.startsWith("Me (") || it == "Me ($currentUserName)" }) {
@@ -263,7 +352,7 @@ fun CreateGroupScreen(
                                 onGroupCreated(group.id)
                             } catch (e: Exception) {
                                 isSaving = false
-                                errorMessage = e.message ?: "Failed to create group. Please try again."
+                                errorMessage = e.message ?: "Failed to create group"
                             }
                         }
                     },

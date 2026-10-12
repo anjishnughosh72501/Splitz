@@ -22,8 +22,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.paisede.app.domain.algorithm.DebtEdge
 import com.paisede.app.domain.model.Member
-import com.paisede.app.ui.theme.BrandTeal
-import com.paisede.app.ui.theme.DebtRed
+import com.paisede.app.ui.theme.SplitzColors
 
 import com.paisede.app.util.CurrencyUtils
 import kotlin.math.PI
@@ -36,7 +35,7 @@ fun GraphVisualizer(
     members: List<Member>,
     edges: List<DebtEdge>,
     modifier: Modifier = Modifier,
-    highlightColor: Color = BrandTeal,
+    highlightColor: Color = SplitzColors.primary(),
     isSimplified: Boolean = false
 ) {
     val memberMap = members.associateBy { it.id }
@@ -64,6 +63,8 @@ fun GraphVisualizer(
         val badgeBgColor = MaterialTheme.colorScheme.surfaceVariant.toArgb()
         val badgeTextColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
         val currentCurrency = com.paisede.app.ui.theme.LocalAppCurrency.current
+        val positiveEdgeColor = SplitzColors.positive()
+        val negativeEdgeColor = SplitzColors.negative().copy(alpha = 0.8f)
 
         Canvas(modifier = Modifier.fillMaxSize().padding(24.dp)) {
             val width = size.width
@@ -84,7 +85,7 @@ fun GraphVisualizer(
             }
 
             // 2. Draw directed edges
-            val edgeColor = if (isSimplified) BrandTeal else DebtRed.copy(alpha = 0.8f)
+            val edgeColor = if (isSimplified) positiveEdgeColor else negativeEdgeColor
 
             for (edge in edges) {
                 val start = nodePositions[edge.fromUserId] ?: continue

@@ -1,18 +1,28 @@
 package com.paisede.app.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
+import com.paisede.app.R
 
 object SplitzFontFamily {
-    val Display = FontFamily.SansSerif
-    val Sans = FontFamily.SansSerif
-    // Uses Monospace / tabular numeric font representation for rock-solid stability in currency and amounts
-    val Mono = FontFamily.Monospace
+    val Sans = FontFamily(
+        Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
+        Font(R.font.plus_jakarta_sans_medium, FontWeight.Medium),
+        Font(R.font.plus_jakarta_sans_semibold, FontWeight.SemiBold),
+        Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold)
+    )
+
+    val Display = Sans
+
+    // DM Mono tabular digits for precision and currency alignment
+    val Mono = FontFamily(
+        Font(R.font.dm_mono_regular, FontWeight.Normal),
+        Font(R.font.dm_mono_medium, FontWeight.Medium)
+    )
 }
 
 object SplitzTypography {
@@ -144,34 +154,34 @@ object SplitzTypography {
         letterSpacing = 0.4.sp
     )
 
-    // Financial & numeric hierarchy styles with tabular digits stability
+    // Financial & numeric hierarchy styles with tabular digits stability in DM Mono
     val MoneyDisplay = TextStyle(
-        fontFamily = SplitzFontFamily.Sans,
-        fontWeight = FontWeight.Bold,
+        fontFamily = SplitzFontFamily.Mono,
+        fontWeight = FontWeight.Medium,
         fontSize = 38.sp,
         lineHeight = 44.sp,
         letterSpacing = (-0.6).sp
     )
 
     val MoneyLarge = TextStyle(
-        fontFamily = SplitzFontFamily.Sans,
-        fontWeight = FontWeight.Bold,
+        fontFamily = SplitzFontFamily.Mono,
+        fontWeight = FontWeight.Medium,
         fontSize = 28.sp,
         lineHeight = 34.sp,
         letterSpacing = (-0.3).sp
     )
 
     val MoneyMedium = TextStyle(
-        fontFamily = SplitzFontFamily.Sans,
-        fontWeight = FontWeight.SemiBold,
+        fontFamily = SplitzFontFamily.Mono,
+        fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
         lineHeight = 26.sp,
         letterSpacing = (-0.2).sp
     )
 
     val MoneySmall = TextStyle(
-        fontFamily = SplitzFontFamily.Sans,
-        fontWeight = FontWeight.SemiBold,
+        fontFamily = SplitzFontFamily.Mono,
+        fontWeight = FontWeight.Medium,
         fontSize = 15.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.sp

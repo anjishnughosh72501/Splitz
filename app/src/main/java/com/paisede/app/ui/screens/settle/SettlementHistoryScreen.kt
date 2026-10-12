@@ -1,7 +1,9 @@
 package com.paisede.app.ui.screens.settle
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,10 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,13 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.paisede.app.ui.components.EmptyStateView
+import androidx.compose.ui.unit.sp
+import com.paisede.app.ui.components.KissatenHankoStamp
+import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.SplitzSurface
-import com.paisede.app.ui.components.SplitzTopAppBar
-import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.CreditGreen
+import com.paisede.app.ui.theme.KissatenTokens
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
@@ -52,10 +54,57 @@ fun SettlementHistoryScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            SplitzTopAppBar(
-                title = "Settlement History",
-                onNavigateBack = onNavigateBack
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(SplitzShapes.Pill),
+                    color = SplitzColors.surface(),
+                    border = BorderStroke(1.dp, SplitzColors.border()),
+                    modifier = Modifier.clickable { onNavigateBack() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = SplitzColors.textPrimary(),
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Back",
+                            style = SplitzTypography.LabelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                    }
+                }
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Settlement History",
+                        style = SplitzTypography.TitleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = SplitzColors.textPrimary()
+                    )
+                    Text(
+                        text = "SETTLEMENT TIMELINE",
+                        style = SplitzTypography.LabelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = SplitzColors.brandAccent(),
+                        letterSpacing = 1.sp
+                    )
+                }
+
+                Box(modifier = Modifier.size(40.dp))
+            }
         }
     ) { padding ->
         Column(
@@ -64,46 +113,62 @@ fun SettlementHistoryScreen(
                 .padding(padding)
         ) {
             if (state.pastSettlements.isEmpty()) {
-                EmptyStateView(
-                    title = "No Past Settlements",
-                    subtitle = "When payments are recorded via 'Settle Up', they will appear in this timeline.",
-                    icon = Icons.Default.History,
-                    modifier = Modifier.weight(1f)
-                )
+                KissatenReceiptCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(36.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.History,
+                            contentDescription = null,
+                            tint = SplitzColors.brandAccent(),
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Text(
+                            text = "No Settlement History",
+                            style = SplitzTypography.TitleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Recorded settlements from the Settle Up screen will appear here.",
+                            style = SplitzTypography.BodySmall,
+                            color = SplitzColors.textSecondary()
+                        )
+                    }
+                }
             } else {
                 LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(SplitzSpacing.lg),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(state.pastSettlements) { tx ->
                         val fromName = state.members[tx.fromUserId]?.name ?: "Member"
                         val toName = state.members[tx.toUserId]?.name ?: "Member"
 
-                        SplitzSurface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(SplitzShapes.cardMedium),
-                            backgroundColor = SplitzColors.surface(),
-                            borderColor = SplitzColors.borderSubtle()
-                        ) {
+                        KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(SplitzSpacing.md),
+                                    .padding(16.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        imageVector = Icons.Default.CheckCircle,
-                                        contentDescription = null,
-                                        tint = CreditGreen,
-                                        modifier = Modifier.size(24.dp)
-                                    )
+                                    KissatenHankoStamp(text = "PAID")
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column {
                                         Text(
-                                            text = "$fromName paid $toName",
+                                            text = "$fromName → $toName",
                                             style = SplitzTypography.TitleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = SplitzColors.textPrimary()
@@ -112,8 +177,8 @@ fun SettlementHistoryScreen(
                                         Text(
                                             text = "Completed Settlement",
                                             style = SplitzTypography.BodySmall,
-                                            color = CreditGreen,
-                                            fontWeight = FontWeight.Medium
+                                            color = SplitzColors.brandAccent(),
+                                            fontWeight = FontWeight.SemiBold
                                         )
                                     }
                                 }
@@ -122,8 +187,7 @@ fun SettlementHistoryScreen(
                                     amountPaise = tx.amountPaise,
                                     style = SplitzTypography.TitleLarge,
                                     fontWeight = FontWeight.Bold,
-                                    colorMode = MoneyColorMode.NEUTRAL,
-                                    animate = true
+                                    colorMode = MoneyColorMode.NEUTRAL
                                 )
                             }
                         }

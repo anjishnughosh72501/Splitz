@@ -15,27 +15,43 @@ enum class AppThemeMode(val displayName: String) {
 enum class SplitzVisualTheme(
     val id: String,
     val displayName: String,
-    val description: String
+    val description: String,
+    val accentHex: Long
 ) {
+    KISSATEN(
+        id = "KISSATEN",
+        displayName = "Espresso",
+        description = "Warm tactile washi paper, deep espresso, and caramel accents",
+        accentHex = 0xFFC87D43
+    ),
     GRAPHITE(
         id = "GRAPHITE",
         displayName = "Graphite",
-        description = "Minimal, cinematic, refined monochrome with graphite brushed textures"
+        description = "Minimal, cinematic, refined monochrome with graphite brushed textures",
+        accentHex = 0xFF94A3B8
     ),
     ELECTRIC_BLUE(
         id = "ELECTRIC_BLUE",
-        displayName = "Electric Blue",
-        description = "Technical, energetic, premium navy & electric cyan-blue treatments"
+        displayName = "Ocean",
+        description = "Technical, energetic, premium navy & electric cyan-blue treatments",
+        accentHex = 0xFF3B82F6
     ),
     ULTRAVIOLET(
         id = "ULTRAVIOLET",
-        displayName = "Ultraviolet",
-        description = "Expressive, atmospheric, bold violet & deep twilight contours"
+        displayName = "Amethyst",
+        description = "Expressive, atmospheric, bold violet & deep twilight contours",
+        accentHex = 0xFF8B5CF6
+    ),
+    EMERALD(
+        id = "EMERALD",
+        displayName = "Emerald",
+        description = "Balanced, modern, fresh botanical jade & forest contours",
+        accentHex = 0xFF10B981
     );
 
     companion object {
         fun fromId(id: String?): SplitzVisualTheme {
-            return entries.firstOrNull { it.id.equals(id, ignoreCase = true) } ?: GRAPHITE
+            return entries.firstOrNull { it.id.equals(id, ignoreCase = true) } ?: KISSATEN
         }
     }
 }
@@ -74,7 +90,7 @@ class ThemePreferences(context: Context) {
     }
 
     private fun loadVisualTheme(): SplitzVisualTheme {
-        val saved = prefs.getString("visual_theme", SplitzVisualTheme.GRAPHITE.name)
+        val saved = prefs.getString("visual_theme", SplitzVisualTheme.KISSATEN.name)
         return SplitzVisualTheme.fromId(saved)
     }
 

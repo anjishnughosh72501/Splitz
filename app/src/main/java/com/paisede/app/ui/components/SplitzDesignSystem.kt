@@ -151,6 +151,75 @@ fun SplitzGlassCard(
 }
 
 /**
+ * Claymorphic Card Primitive:
+ * Delivers signature soft tactile inflation, top light refraction,
+ * and deep perimeter shadow for hero elements.
+ */
+@Composable
+fun SplitzClayCard(
+    modifier: Modifier = Modifier,
+    cornerRadius: Dp = SplitzShapes.cardHero,
+    backgroundColor: Color? = null,
+    borderColor: Color? = null,
+    elevation: Dp = 12.dp,
+    onClick: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit
+) {
+    val palette = com.paisede.app.ui.theme.LocalSplitzPalette.current
+    val shape = RoundedCornerShape(cornerRadius)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed && onClick != null) 0.982f else 1.0f,
+        animationSpec = tween(SplitzMotion.Duration.Fast, easing = SplitzMotion.Easing.Standard),
+        label = "ClayCardScale"
+    )
+
+    val surfaceColor = backgroundColor ?: palette.claySurface
+    val borderCol = borderColor ?: palette.borderGlass
+
+    val clickModifier = if (onClick != null) {
+        Modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onClick = onClick
+        )
+    } else Modifier
+
+    Surface(
+        modifier = modifier
+            .scale(scale)
+            .then(clickModifier),
+        shape = shape,
+        color = surfaceColor,
+        shadowElevation = elevation
+    ) {
+        Box(
+            modifier = Modifier
+                .border(SplitzBorderWidth.thin, borderCol, shape)
+        ) {
+            // Soft top refraction highlight
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(SplitzGradients.clayHighlight())
+            )
+            // Soft bottom clay ambient shadow
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(SplitzGradients.clayInnerShadow())
+            )
+
+            Box(modifier = Modifier.padding(SplitzSpacing.lg)) {
+                content()
+            }
+        }
+    }
+}
+
+/**
  * ElevatedCard: Rich solid surface with refined subtle border and elevation.
  */
 @Composable

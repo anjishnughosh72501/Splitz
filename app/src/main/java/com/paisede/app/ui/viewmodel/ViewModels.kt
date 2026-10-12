@@ -139,7 +139,9 @@ data class GroupUiState(
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
     val isLoading: Boolean = false,
-    val message: String? = null
+    val message: String? = null,
+    val balances: Map<String, Long> = emptyMap(),
+    val expenses: List<Pair<Expense, List<ExpenseSplit>>> = emptyList()
 )
 
 class GroupViewModel(
@@ -183,7 +185,9 @@ class GroupViewModel(
                     userNetBalancePaise = userBal,
                     canUndo = canUndo,
                     canRedo = canRedo,
-                    isLoading = false
+                    isLoading = false,
+                    balances = balances,
+                    expenses = expenses
                 )
             }.collect { newState ->
                 _uiState.value = newState

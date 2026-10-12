@@ -3,6 +3,7 @@ package com.paisede.app.ui.screens.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,66 +21,68 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.NorthEast
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.SouthWest
-import androidx.compose.material.icons.filled.TrendingDown
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.AvatarStack
 import com.paisede.app.ui.components.EmptyStateView
+import com.paisede.app.ui.components.KissatenHankoStamp
+import com.paisede.app.ui.components.KissatenPerforationDivider
+import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SectionHeader
-import com.paisede.app.ui.components.SplitzGlassCard
-import com.paisede.app.ui.components.SplitzSurface
+import com.paisede.app.ui.components.ShimmerCard
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.BrandTeal
-import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.SplitzBorderWidth
+import com.paisede.app.ui.theme.KissatenTokens
+import com.paisede.app.ui.theme.LocalAppCurrency
 import com.paisede.app.ui.theme.SplitzColors
-import com.paisede.app.ui.theme.SplitzGradients
 import com.paisede.app.ui.theme.SplitzMotion
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
@@ -112,7 +115,7 @@ fun HomeScreen(
     if (groupToDelete != null) {
         AlertDialog(
             onDismissRequest = { groupToDelete = null },
-            shape = RoundedCornerShape(SplitzShapes.sheet),
+            shape = RoundedCornerShape(20.dp),
             containerColor = SplitzColors.surface(),
             title = {
                 Text(
@@ -124,7 +127,7 @@ fun HomeScreen(
             },
             text = {
                 Text(
-                    text = "Are you sure you want to delete \"${groupToDelete?.group?.name}\"? All members, expenses, balances, and records will be permanently removed.",
+                    text = "All members, expenses, and settlement records in \"${groupToDelete?.group?.name}\" will be permanently deleted.",
                     style = SplitzTypography.BodyMedium,
                     color = SplitzColors.textSecondary()
                 )
@@ -136,26 +139,26 @@ fun HomeScreen(
                         groupToDelete = null
                         toDelete?.let { viewModel.deleteGroup(it.group.id) }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed),
-                    shape = RoundedCornerShape(SplitzShapes.button)
+                    colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.error()),
+                    shape = RoundedCornerShape(SplitzShapes.Pill)
                 ) {
-                    Text("Delete", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text("Delete", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { groupToDelete = null }) {
-                    Text("Cancel", color = SplitzColors.textSecondary())
+                    Text("Cancel", color = SplitzColors.textPrimary(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
     }
 
-    // Members Bottom Sheet / Dialog
+    // Members Dialog
     if (groupForMembersDialog != null) {
         val groupData = groupForMembersDialog!!
         AlertDialog(
             onDismissRequest = { groupForMembersDialog = null },
-            shape = RoundedCornerShape(SplitzShapes.sheet),
+            shape = RoundedCornerShape(20.dp),
             containerColor = SplitzColors.surface(),
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -178,20 +181,20 @@ fun HomeScreen(
                         text = "Members (${groupData.members.size})",
                         style = SplitzTypography.LabelLarge,
                         color = SplitzColors.textSecondary(),
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.Bold
                     )
                     if (groupData.members.isEmpty()) {
                         Text(
-                            text = "No members in this group",
+                            text = "No members registered yet",
                             style = SplitzTypography.BodyMedium,
-                            color = SplitzColors.textMuted()
+                            color = SplitzColors.textTertiary()
                         )
                     } else {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(max = 260.dp),
-                            verticalArrangement = Arrangement.spacedBy(SplitzSpacing.xs)
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             items(groupData.members) { member ->
                                 val displayName = when {
@@ -199,22 +202,25 @@ fun HomeScreen(
                                     member.name.equals(currentUserName, ignoreCase = true) && currentUserName.isNotBlank() -> "Me ($currentUserName)"
                                     else -> member.name
                                 }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(SplitzShapes.cardSmall))
-                                        .background(SplitzColors.surfaceVariant().copy(alpha = 0.5f))
-                                        .padding(horizontal = SplitzSpacing.md, vertical = SplitzSpacing.xs),
-                                    verticalAlignment = Alignment.CenterVertically
+                                Surface(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = SplitzColors.surfaceElevated(),
+                                    border = BorderStroke(1.dp, SplitzColors.border()),
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    UserAvatar(name = displayName, size = 32)
-                                    Spacer(modifier = Modifier.width(SplitzSpacing.sm))
-                                    Text(
-                                        text = displayName,
-                                        style = SplitzTypography.BodyLarge,
-                                        fontWeight = FontWeight.Medium,
-                                        color = SplitzColors.textPrimary()
-                                    )
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        UserAvatar(name = displayName, size = 30)
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = displayName,
+                                            style = SplitzTypography.BodyMedium,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = SplitzColors.textPrimary()
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -223,7 +229,7 @@ fun HomeScreen(
             },
             confirmButton = {
                 TextButton(onClick = { groupForMembersDialog = null }) {
-                    Text("Close", color = SplitzColors.primary(), fontWeight = FontWeight.SemiBold)
+                    Text("Close", color = SplitzColors.brandAccent(), fontWeight = FontWeight.Bold)
                 }
             }
         )
@@ -232,6 +238,12 @@ fun HomeScreen(
     val totalNetBalance = state.groups.sumOf { it.userNetBalancePaise }
     val totalSpending = state.groups.sumOf { it.totalSpendingPaise }
     val totalMembers = state.groups.sumOf { it.memberCount }
+    val listState = rememberLazyListState()
+    val isFabExpanded by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset < 100
+        }
+    }
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -245,167 +257,192 @@ fun HomeScreen(
                 label = "FabScale"
             )
 
-            Box(
+            Surface(
+                shape = RoundedCornerShape(SplitzShapes.Pill),
+                color = SplitzColors.brandAccent(),
+                shadowElevation = 6.dp,
                 modifier = Modifier
                     .scale(fabScale)
-                    .clip(RoundedCornerShape(SplitzShapes.LG))
-                    .background(SplitzGradients.Primary)
                     .clickable(interactionSource = interactionSource, indication = null, onClick = onCreateGroupClick)
-                    .padding(horizontal = 20.dp, vertical = 14.dp),
-                contentAlignment = Alignment.Center
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.padding(horizontal = if (isFabExpanded) 20.dp else 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "New Group",
                         tint = Color.White,
                         modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "New Group",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
+                    AnimatedVisibility(visible = isFabExpanded) {
+                        Row {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "New Group",
+                                style = SplitzTypography.LabelLarge,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             }
         }
     ) { padding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.md),
-            verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Header Bar
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = SplitzSpacing.xs),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = if (currentUserName.isNotBlank()) "Hello, $currentUserName" else "Splitz",
-                            style = SplitzTypography.HeadlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
-                        Text(
-                            text = if (currentUserName.isNotBlank()) "Splitz • Financial clarity among friends" else "Financial clarity among friends",
-                            style = SplitzTypography.BodyMedium,
-                            color = SplitzColors.textSecondary()
-                        )
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(SplitzShapes.Pill))
-                                .background(SplitzColors.primary().copy(alpha = 0.12f))
-                                .border(SplitzBorderWidth.thin, SplitzColors.primary().copy(alpha = 0.3f), RoundedCornerShape(SplitzShapes.Pill))
-                                .clickable {
-                                    viewModel.loadSampleData { groupId ->
-                                        onGroupClick(groupId)
-                                    }
-                                }
-                                .padding(horizontal = SplitzSpacing.sm, vertical = SplitzSpacing.xxs)
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.AutoAwesome,
-                                    contentDescription = "Demo Data",
-                                    tint = SplitzColors.primary(),
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Demo",
-                                    style = SplitzTypography.LabelMedium,
-                                    color = SplitzColors.primary(),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
+                // Header Bar with Clean Branding
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Splitz",
+                                style = SplitzTypography.HeadlineMedium,
+                                fontWeight = FontWeight.Black,
+                                color = SplitzColors.textPrimary()
+                            )
+                            Text(
+                                text = if (currentUserName.isNotBlank()) "Welcome back, $currentUserName"
+                                else "Group expense splitting",
+                                style = SplitzTypography.BodySmall,
+                                color = SplitzColors.textSecondary()
+                            )
                         }
 
-                        Spacer(modifier = Modifier.width(SplitzSpacing.xs))
-
-                        IconButton(onClick = onSettingsClick) {
-                            Box(
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Settings icon button
+                            Surface(
+                                shape = CircleShape,
+                                color = SplitzColors.surface(),
+                                border = BorderStroke(1.dp, SplitzColors.border()),
                                 modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(SplitzColors.surfaceGlass())
-                                    .border(SplitzBorderWidth.thin, SplitzColors.borderGlass(), CircleShape),
-                                contentAlignment = Alignment.Center
+                                    .size(40.dp)
+                                    .clickable { onSettingsClick() }
+                            ) {
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.Settings,
+                                        contentDescription = "Open Settings",
+                                        tint = SplitzColors.textPrimary(),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Hero Financial Overview Card (Washi Receipt Card)
+                item {
+                    KissatenHeroBalanceOverview(
+                        netBalancePaise = totalNetBalance,
+                        totalSpendingPaise = totalSpending,
+                        groupCount = state.groups.size,
+                        memberCount = totalMembers
+                    )
+                }
+
+                // Groups Section Header
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "GROUPS (${state.groups.size})",
+                            style = SplitzTypography.LabelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary(),
+                            letterSpacing = 0.8.sp
+                        )
+                    }
+                }
+
+                // Loading / Empty / Group Cards
+                if (state.isLoading) {
+                    item {
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            ShimmerCard(height = 110.dp, cornerRadius = 20.dp)
+                            ShimmerCard(height = 110.dp, cornerRadius = 20.dp)
+                        }
+                    }
+                } else if (state.groups.isEmpty()) {
+                    item {
+                        KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(32.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings & Help",
-                                    tint = SplitzColors.textSecondary(),
-                                    modifier = Modifier.size(18.dp)
+                                    imageVector = Icons.Default.LocalCafe,
+                                    contentDescription = null,
+                                    tint = SplitzColors.brandAccent(),
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = "Welcome to Splitz",
+                                    style = SplitzTypography.TitleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = SplitzColors.textPrimary()
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Create a group below to start tracking shared expenses and settling debts seamlessly.",
+                                    style = SplitzTypography.BodySmall,
+                                    color = SplitzColors.textSecondary(),
+                                    modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }
                         }
                     }
+                } else {
+                    itemsIndexed(state.groups, key = { _, it -> it.group.id }) { index, cardData ->
+                        var visible by remember { mutableStateOf(false) }
+                        LaunchedEffect(cardData.group.id) {
+                            delay(index * 60L)
+                            visible = true
+                        }
+                        AnimatedVisibility(
+                            visible = visible,
+                            enter = fadeIn(tween(250)) + slideInVertically(tween(250)) { it / 4 }
+                        ) {
+                            KissatenGroupCard(
+                                data = cardData,
+                                onClick = { onGroupClick(cardData.group.id) },
+                                onDeleteClick = { groupToDelete = cardData },
+                                onMembersClick = { groupForMembersDialog = cardData }
+                            )
+                        }
+                    }
                 }
-            }
 
-            // Hero Financial Overview Card
-            item {
-                HeroBalanceOverview(
-                    netBalancePaise = totalNetBalance,
-                    totalSpendingPaise = totalSpending,
-                    groupCount = state.groups.size,
-                    memberCount = totalMembers
-                )
-            }
-
-            // Groups Section Header
-            item {
-                SectionHeader(
-                    title = "Your Groups",
-                    actionText = if (state.groups.size > 3) "${state.groups.size} active" else null,
-                    onActionClick = {}
-                )
-            }
-
-            // Group Cards or Modern Empty State
-            if (state.groups.isEmpty() && !state.isLoading) {
                 item {
-                    EmptyStateView(
-                        title = "Welcome to Splitz",
-                        subtitle = "Split expenses, track balances, and settle up without the headache. Create your first group or tap 'Demo' to try sample data.",
-                        icon = Icons.Default.Group,
-                        actionButtonText = "+ Create Group",
-                        onActionClick = onCreateGroupClick,
-                        modifier = Modifier.padding(vertical = SplitzSpacing.xl)
-                    )
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
-            } else {
-                items(state.groups, key = { it.group.id }) { cardData ->
-                    ModernGroupCard(
-                        data = cardData,
-                        onClick = { onGroupClick(cardData.group.id) },
-                        onDeleteClick = { groupToDelete = cardData },
-                        onMembersClick = { groupForMembersDialog = cardData }
-                    )
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
-}
 
 @Composable
-private fun HeroBalanceOverview(
+private fun KissatenHeroBalanceOverview(
     netBalancePaise: Long,
     totalSpendingPaise: Long,
     groupCount: Int,
@@ -414,19 +451,12 @@ private fun HeroBalanceOverview(
     val isPositive = netBalancePaise > 0L
     val isNegative = netBalancePaise < 0L
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(SplitzShapes.cardHero))
-            .background(SplitzColors.surfaceElevated().copy(alpha = 0.82f))
-            .border(
-                width = SplitzBorderWidth.thin,
-                color = SplitzColors.borderGlass(),
-                shape = RoundedCornerShape(SplitzShapes.cardHero)
-            )
-            .padding(SplitzSpacing.lg)
+    KissatenReceiptCard(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -435,45 +465,54 @@ private fun HeroBalanceOverview(
                 Column {
                     Text(
                         text = "TOTAL NET BALANCE",
-                        style = SplitzTypography.LabelMedium,
-                        color = Color.White.copy(alpha = 0.7f),
-                        letterSpacing = 1.sp,
-                        fontWeight = FontWeight.SemiBold
+                        style = SplitzTypography.LabelSmall,
+                        color = SplitzColors.textTertiary(),
+                        letterSpacing = 0.8.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     MoneyText(
                         amountPaise = netBalancePaise,
-                        style = SplitzTypography.MoneyDisplay,
-                        fontWeight = FontWeight.Bold,
+                        style = SplitzTypography.DisplayMedium,
+                        fontWeight = FontWeight.Black,
                         colorMode = if (isPositive) MoneyColorMode.CREDIT else if (isNegative) MoneyColorMode.DEBT else MoneyColorMode.SETTLED,
                         showSign = true,
                         animate = true
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(CircleShape)
-                        .background(
-                            if (isPositive) SplitzGradients.Success
-                            else if (isNegative) SplitzGradients.Debt
-                            else SplitzGradients.Primary
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (isPositive) Icons.Default.TrendingUp else if (isNegative) Icons.Default.TrendingDown else Icons.Default.Group,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(26.dp)
+                val balanceDescription = when {
+                    isPositive -> "Total net balance: positive. You are owed money."
+                    isNegative -> "Total net balance: negative. You owe money."
+                    else -> "Total net balance: all settled up."
+                }
+
+                Surface(
+                    shape = CircleShape,
+                    color = if (isPositive) SplitzColors.positiveContainer()
+                    else if (isNegative) SplitzColors.negativeContainer()
+                    else SplitzColors.surfaceElevated(),
+                    border = BorderStroke(
+                        1.dp,
+                        if (isPositive) SplitzColors.positive().copy(alpha = 0.3f)
+                        else if (isNegative) SplitzColors.negative().copy(alpha = 0.3f)
+                        else SplitzColors.border()
                     )
+                ) {
+                    Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = if (isPositive) Icons.AutoMirrored.Filled.TrendingUp else if (isNegative) Icons.AutoMirrored.Filled.TrendingDown else Icons.Default.LocalCafe,
+                            contentDescription = balanceDescription,
+                            tint = if (isPositive) SplitzColors.positive() else if (isNegative) SplitzColors.negative() else SplitzColors.brandAccent(),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(SplitzSpacing.md))
-            HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
-            Spacer(modifier = Modifier.height(SplitzSpacing.md))
+            Spacer(modifier = Modifier.height(14.dp))
+            KissatenPerforationDivider()
+            Spacer(modifier = Modifier.height(14.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -482,15 +521,15 @@ private fun HeroBalanceOverview(
             ) {
                 Column {
                     Text(
-                        text = "Total Spending",
-                        style = SplitzTypography.BodySmall,
-                        color = Color.White.copy(alpha = 0.65f)
+                        text = "Total Group Spend",
+                        style = SplitzTypography.LabelSmall,
+                        color = SplitzColors.textTertiary()
                     )
                     MoneyText(
                         amountPaise = totalSpendingPaise,
-                        style = SplitzTypography.MoneySmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        style = SplitzTypography.TitleMedium,
+                        fontWeight = FontWeight.Bold,
+                        colorMode = MoneyColorMode.NEUTRAL
                     )
                 }
 
@@ -498,14 +537,15 @@ private fun HeroBalanceOverview(
                     Icon(
                         imageVector = Icons.Default.People,
                         contentDescription = null,
-                        tint = Color.White.copy(alpha = 0.65f),
+                        tint = SplitzColors.brandAccent(),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$groupCount groups · $memberCount people",
+                        text = "$groupCount groups • $memberCount members",
                         style = SplitzTypography.BodySmall,
-                        color = Color.White.copy(alpha = 0.85f)
+                        fontWeight = FontWeight.SemiBold,
+                        color = SplitzColors.textPrimary()
                     )
                 }
             }
@@ -514,7 +554,7 @@ private fun HeroBalanceOverview(
 }
 
 @Composable
-fun ModernGroupCard(
+fun KissatenGroupCard(
     data: GroupCardData,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -523,24 +563,22 @@ fun ModernGroupCard(
 ) {
     val netBalance = data.userNetBalancePaise
     val statusText = when {
-        netBalance > 0 -> "You're owed"
+        netBalance > 0 -> "You are owed"
         netBalance < 0 -> "You owe"
         else -> "Settled up"
     }
 
     val memberNames = data.members.map { it.name }
 
-    SplitzSurface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SplitzShapes.cardLarge),
-        backgroundColor = SplitzColors.surfaceElevated().copy(alpha = 0.85f),
-        borderColor = SplitzColors.borderGlass(),
-        onClick = onClick
+    KissatenReceiptCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(SplitzSpacing.md)
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -551,8 +589,8 @@ fun ModernGroupCard(
                     modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    UserAvatar(name = data.group.name, size = 46)
-                    Spacer(modifier = Modifier.width(SplitzSpacing.sm))
+                    UserAvatar(name = data.group.name, size = 44)
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
                             text = data.group.name,
@@ -568,10 +606,11 @@ fun ModernGroupCard(
                             Text(
                                 text = "${data.memberCount} members",
                                 style = SplitzTypography.BodySmall,
-                                color = SplitzColors.textSecondary()
+                                color = SplitzColors.textSecondary(),
+                                fontWeight = FontWeight.SemiBold
                             )
                             if (memberNames.isNotEmpty()) {
-                                Spacer(modifier = Modifier.width(SplitzSpacing.sm))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 AvatarStack(names = memberNames, avatarSize = 20, maxVisible = 3)
                             }
                         }
@@ -585,32 +624,32 @@ fun ModernGroupCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteOutline,
-                            contentDescription = "Delete Group",
-                            tint = DebtRed.copy(alpha = 0.7f),
-                            modifier = Modifier.size(20.dp)
+                            contentDescription = "Delete ${data.group.name}",
+                            tint = SplitzColors.textTertiary().copy(alpha = 0.5f),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(SplitzColors.surfaceVariant().copy(alpha = 0.6f)),
-                        contentAlignment = Alignment.Center
+                    Surface(
+                        shape = CircleShape,
+                        color = SplitzColors.surface(),
+                        border = BorderStroke(1.dp, SplitzColors.border())
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Open Group",
-                            tint = SplitzColors.textPrimary(),
-                            modifier = Modifier.size(16.dp)
-                        )
+                        Box(modifier = Modifier.size(32.dp), contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = "Open ${data.group.name}",
+                                tint = SplitzColors.textPrimary(),
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(SplitzSpacing.sm))
-            HorizontalDivider(color = SplitzColors.borderSubtle().copy(alpha = 0.5f))
-            Spacer(modifier = Modifier.height(SplitzSpacing.sm))
+            Spacer(modifier = Modifier.height(10.dp))
+            KissatenPerforationDivider()
+            Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -619,14 +658,14 @@ fun ModernGroupCard(
             ) {
                 Column {
                     Text(
-                        text = "Total Spending",
-                        style = SplitzTypography.LabelMedium,
-                        color = SplitzColors.textSecondary()
+                        text = "Total Spent",
+                        style = SplitzTypography.LabelSmall,
+                        color = SplitzColors.textTertiary()
                     )
                     MoneyText(
                         amountPaise = data.totalSpendingPaise,
-                        style = SplitzTypography.MoneyMedium,
-                        fontWeight = FontWeight.SemiBold,
+                        style = SplitzTypography.TitleMedium,
+                        fontWeight = FontWeight.Bold,
                         colorMode = MoneyColorMode.NEUTRAL
                     )
                 }
@@ -634,12 +673,12 @@ fun ModernGroupCard(
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         text = statusText,
-                        style = SplitzTypography.LabelMedium,
-                        color = SplitzColors.textSecondary()
+                        style = SplitzTypography.LabelSmall,
+                        color = SplitzColors.textTertiary()
                     )
                     MoneyText(
                         amountPaise = data.userNetBalancePaise,
-                        style = SplitzTypography.MoneyMedium,
+                        style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
                         showSign = true
                     )
@@ -649,7 +688,24 @@ fun ModernGroupCard(
     }
 }
 
-// Backward compatible GroupCard
+// Backward compatible aliases
+@Composable
+fun ModernGroupCard(
+    data: GroupCardData,
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onMembersClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    KissatenGroupCard(
+        data = data,
+        onClick = onClick,
+        onDeleteClick = onDeleteClick,
+        onMembersClick = onMembersClick,
+        modifier = modifier
+    )
+}
+
 @Composable
 fun GroupCard(
     data: GroupCardData,
@@ -657,7 +713,7 @@ fun GroupCard(
     onDeleteClick: () -> Unit,
     onMembersClick: () -> Unit
 ) {
-    ModernGroupCard(
+    KissatenGroupCard(
         data = data,
         onClick = onClick,
         onDeleteClick = onDeleteClick,

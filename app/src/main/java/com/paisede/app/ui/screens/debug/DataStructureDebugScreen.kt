@@ -1,7 +1,8 @@
 package com.paisede.app.ui.screens.debug
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,12 +18,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,16 +37,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.paisede.app.ui.components.KissatenHankoStamp
+import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.SplitzSurface
-import com.paisede.app.ui.components.SplitzTopAppBar
-import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.IndigoPurple
-import com.paisede.app.ui.theme.SplitzBorderWidth
+import com.paisede.app.ui.theme.KissatenTokens
 import com.paisede.app.ui.theme.SplitzColors
-import com.paisede.app.ui.theme.SplitzGradients
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
@@ -59,68 +57,123 @@ fun DataStructureDebugScreen(
 
     Scaffold(
         containerColor = Color.Transparent,
-        topBar = {
-            SplitzTopAppBar(
-                title = "Data Structure Inspector",
-                onNavigateBack = onNavigateBack,
-                actions = {
-                    IconButton(onClick = { viewModel.refreshDebugData() }) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh DS state",
-                            tint = SplitzColors.primary()
-                        )
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(SplitzSpacing.lg),
-            verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
-        ) {
-            // Intro Callout for Viva
-            item {
-                Box(
+            topBar = {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(SplitzShapes.cardHero))
-                        .background(SplitzGradients.Hero)
-                        .border(
-                            width = SplitzBorderWidth.thin,
-                            color = Color.White.copy(alpha = 0.12f),
-                            shape = RoundedCornerShape(SplitzShapes.cardHero)
-                        )
-                        .padding(18.dp)
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                        color = KissatenTokens.PaperSurface.copy(alpha = 0.9f),
+                        border = BorderStroke(1.dp, KissatenTokens.BorderWashi),
+                        modifier = Modifier.clickable { onNavigateBack() }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Icon(
-                                imageVector = Icons.Default.BugReport,
-                                contentDescription = null,
-                                tint = SplitzColors.primaryBright(),
-                                modifier = Modifier.size(22.dp)
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = KissatenTokens.EspressoPrimary,
+                                modifier = Modifier.size(18.dp)
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "LIVE DATA STRUCTURE MONITOR",
-                                style = SplitzTypography.TitleSmall,
+                                text = "Back",
+                                style = SplitzTypography.LabelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = KissatenTokens.EspressoPrimary
                             )
                         }
-                        Spacer(modifier = Modifier.height(6.dp))
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Live internal memory states of HashMap, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycles, and Stacks used in Splitz.",
-                            style = SplitzTypography.BodySmall,
-                            color = Color.White.copy(alpha = 0.7f)
+                            text = "Data Structures",
+                            style = SplitzTypography.TitleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = KissatenTokens.EspressoPrimary
                         )
+                        Text(
+                            text = "INTERNAL MEMORY AUDIT",
+                            style = SplitzTypography.LabelSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = KissatenTokens.CaramelSecondary,
+                            letterSpacing = 1.sp
+                        )
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                        color = KissatenTokens.PaperSurface.copy(alpha = 0.9f),
+                        border = BorderStroke(1.dp, KissatenTokens.BorderWashi),
+                        modifier = Modifier.clickable { viewModel.refreshDebugData() }
+                    ) {
+                        Box(modifier = Modifier.padding(8.dp), contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Refresh DS state",
+                                tint = KissatenTokens.EspressoPrimary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
             }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentPadding = PaddingValues(SplitzSpacing.lg),
+                verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
+            ) {
+                // Intro Callout for Viva
+                item {
+                    KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.padding(18.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.BugReport,
+                                        contentDescription = null,
+                                        tint = KissatenTokens.VermilionRed,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Text(
+                                            text = "DATA STRUCTURE MONITOR",
+                                            style = SplitzTypography.TitleSmall,
+                                            fontWeight = FontWeight.Black,
+                                            color = KissatenTokens.EspressoPrimary
+                                        )
+                                        Text(
+                                            text = "Live internal memory states of Splitz engines",
+                                            style = SplitzTypography.BodySmall,
+                                            color = KissatenTokens.TextMuted
+                                        )
+                                    }
+                                }
+                                KissatenHankoStamp(text = "DEBUG")
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "Monitors HashMaps, PriorityQueues (Max & Min Heaps), Adjacency Map, DFS Cycle Elimination, and Undo/Redo Stacks in realtime.",
+                                style = SplitzTypography.BodySmall,
+                                color = KissatenTokens.TextMuted
+                            )
+                        }
+                    }
+                }
 
             // 1. HashMap: Net Balances
             item {
@@ -156,7 +209,7 @@ fun DataStructureDebugScreen(
                     Text(
                         text = "Sum Invariant: $sum paise (Zero-sum verified ✓)",
                         style = SplitzTypography.LabelSmall,
-                        color = CreditGreen,
+                        color = SplitzColors.positive(),
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -266,7 +319,7 @@ fun DataStructureDebugScreen(
                     Text(
                         text = cycleInfo,
                         style = SplitzTypography.BodySmall,
-                        color = if (state.detectedCycles != null) DebtRed else CreditGreen,
+                        color = if (state.detectedCycles != null) SplitzColors.negative() else SplitzColors.positive(),
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -308,7 +361,7 @@ fun DataStructureDebugScreen(
                             text = if (state.exactTxCount != null) "${state.exactTxCount} transactions" else "N/A (>8 members)",
                             style = SplitzTypography.BodyMedium,
                             fontWeight = FontWeight.Bold,
-                            color = IndigoPurple
+                            color = SplitzColors.primaryBright()
                         )
                     }
                 }
@@ -343,47 +396,36 @@ fun DebugSectionCard(
     complexity: String,
     content: @Composable () -> Unit
 ) {
-    SplitzSurface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SplitzShapes.MD),
-        backgroundColor = SplitzColors.surface(),
-        borderColor = SplitzColors.borderSubtle()
-    ) {
+    KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    style = SplitzTypography.TitleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = SplitzColors.textPrimary(),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(SplitzShapes.XS))
-                    .background(SplitzColors.surfaceElevated())
-                    .padding(horizontal = 8.dp, vertical = 2.dp)
+            Text(
+                text = title,
+                style = SplitzTypography.TitleSmall,
+                fontWeight = FontWeight.Bold,
+                color = KissatenTokens.EspressoPrimary
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Surface(
+                shape = RoundedCornerShape(SplitzShapes.Pill),
+                color = KissatenTokens.MatchaContainer,
+                border = BorderStroke(1.dp, KissatenTokens.MatchaTertiary.copy(alpha = 0.3f))
             ) {
                 Text(
                     text = complexity,
                     style = SplitzTypography.LabelSmall,
-                    color = SplitzColors.primary(),
+                    color = KissatenTokens.MatchaText,
                     fontFamily = FontFamily.Monospace,
-                    fontSize = 11.sp
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            HorizontalDivider(color = SplitzColors.borderSubtle())
+            HorizontalDivider(color = KissatenTokens.BorderWashi)
             Spacer(modifier = Modifier.height(10.dp))
             content()
         }

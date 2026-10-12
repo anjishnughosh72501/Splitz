@@ -1,6 +1,8 @@
 package com.paisede.app.ui.theme
 
 import android.app.Activity
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +11,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -20,8 +23,8 @@ import com.paisede.app.data.preferences.AppCurrency
 import com.paisede.app.data.preferences.SplitzVisualTheme
 
 val LocalAppCurrency = staticCompositionLocalOf { AppCurrency.DEFAULT }
-val LocalSplitzVisualTheme = staticCompositionLocalOf { SplitzVisualTheme.GRAPHITE }
-val LocalSplitzPalette = staticCompositionLocalOf { ThemePalettes.Graphite }
+val LocalSplitzVisualTheme = staticCompositionLocalOf { SplitzVisualTheme.KISSATEN }
+val LocalSplitzPalette = staticCompositionLocalOf { ThemePalettes.Kissaten }
 
 fun createColorSchemeForTheme(
     palette: SplitzPalette,
@@ -37,10 +40,10 @@ fun createColorSchemeForTheme(
             onSecondary = palette.onBrandPrimary,
             secondaryContainer = palette.surfaceElevated,
             onSecondaryContainer = palette.textPrimary,
-            tertiary = palette.brandAccent,
+            tertiary = palette.positive,
             onTertiary = palette.onBrandPrimary,
-            tertiaryContainer = palette.brandSoft,
-            onTertiaryContainer = palette.textPrimary,
+            tertiaryContainer = palette.positiveContainer,
+            onTertiaryContainer = palette.positiveStrong,
             error = palette.negative,
             onError = palette.onNegative,
             errorContainer = palette.negativeContainer,
@@ -59,31 +62,31 @@ fun createColorSchemeForTheme(
     } else {
         // Coordinated light appearance with identical semantic structure
         lightColorScheme(
-            primary = if (palette == ThemePalettes.Graphite) Color(0xFF1E212B) else palette.brandPrimary,
-            onPrimary = Color.White,
-            primaryContainer = if (palette == ThemePalettes.Graphite) Color(0xFFE2E4E9) else palette.brandSoft,
-            onPrimaryContainer = Color(0xFF0F172A),
+            primary = palette.brandPrimary,
+            onPrimary = palette.onBrandPrimary,
+            primaryContainer = palette.brandSoft,
+            onPrimaryContainer = palette.textPrimary,
             secondary = palette.brandAccent,
             onSecondary = Color.White,
-            secondaryContainer = Color(0xFFF1F5F9),
-            onSecondaryContainer = Color(0xFF0F172A),
-            tertiary = palette.brandAccent,
+            secondaryContainer = palette.backgroundElevated,
+            onSecondaryContainer = palette.textPrimary,
+            tertiary = palette.positive,
             onTertiary = Color.White,
-            tertiaryContainer = Color(0xFFEEF2FF),
-            onTertiaryContainer = Color(0xFF1E1B4B),
+            tertiaryContainer = palette.positiveContainer,
+            onTertiaryContainer = palette.positiveStrong,
             error = palette.negative,
             onError = Color.White,
-            errorContainer = Color(0xFFFEE2E2),
-            onErrorContainer = Color(0xFF7F1D1D),
-            background = Color(0xFFF8FAFC),
-            onBackground = Color(0xFF0F172A),
-            surface = Color.White,
-            onSurface = Color(0xFF0F172A),
-            surfaceVariant = Color(0xFFF1F5F9),
-            onSurfaceVariant = Color(0xFF475569),
-            outline = Color(0xFFCBD5E1),
-            outlineVariant = Color(0xFFE2E8F0),
-            scrim = Color(0xFF000000).copy(alpha = 0.32f),
+            errorContainer = palette.negativeContainer,
+            onErrorContainer = palette.negativeStrong,
+            background = palette.background,
+            onBackground = palette.textPrimary,
+            surface = palette.surfaceElevated,
+            onSurface = palette.textPrimary,
+            surfaceVariant = palette.backgroundElevated,
+            onSurfaceVariant = palette.textSecondary,
+            outline = palette.border,
+            outlineVariant = palette.borderSubtle,
+            scrim = palette.surfaceScrim,
             surfaceTint = palette.brandPrimary
         )
     }
@@ -92,12 +95,40 @@ fun createColorSchemeForTheme(
 @Composable
 fun SplitzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    visualTheme: SplitzVisualTheme = SplitzVisualTheme.GRAPHITE,
+    visualTheme: SplitzVisualTheme = SplitzVisualTheme.KISSATEN,
     fontScale: Float = 1.0f,
     currency: AppCurrency = AppCurrency.DEFAULT,
     content: @Composable () -> Unit
 ) {
-    val palette = ThemePalettes.forTheme(visualTheme)
+    val rawPalette = ThemePalettes.forTheme(visualTheme)
+    val animSpec = tween<Color>(250)
+    val background by animateColorAsState(rawPalette.background, animSpec, label = "bg")
+    val backgroundElevated by animateColorAsState(rawPalette.backgroundElevated, animSpec, label = "bgElev")
+    val surface by animateColorAsState(rawPalette.surface, animSpec, label = "surface")
+    val surfaceElevated by animateColorAsState(rawPalette.surfaceElevated, animSpec, label = "surfElev")
+    val brandPrimary by animateColorAsState(rawPalette.brandPrimary, animSpec, label = "brandPri")
+    val brandAccent by animateColorAsState(rawPalette.brandAccent, animSpec, label = "brandAcc")
+    val brandSoft by animateColorAsState(rawPalette.brandSoft, animSpec, label = "brandSoft")
+    val textPrimary by animateColorAsState(rawPalette.textPrimary, animSpec, label = "txtPri")
+    val textSecondary by animateColorAsState(rawPalette.textSecondary, animSpec, label = "txtSec")
+    val textMuted by animateColorAsState(rawPalette.textMuted, animSpec, label = "txtMut")
+    val border by animateColorAsState(rawPalette.border, animSpec, label = "border")
+    val borderSubtle by animateColorAsState(rawPalette.borderSubtle, animSpec, label = "borderSub")
+
+    val palette = rawPalette.copy(
+        background = background,
+        backgroundElevated = backgroundElevated,
+        surface = surface,
+        surfaceElevated = surfaceElevated,
+        brandPrimary = brandPrimary,
+        brandAccent = brandAccent,
+        brandSoft = brandSoft,
+        textPrimary = textPrimary,
+        textSecondary = textSecondary,
+        textMuted = textMuted,
+        border = border,
+        borderSubtle = borderSubtle
+    )
     val colorScheme = createColorSchemeForTheme(palette, darkTheme)
 
     val view = LocalView.current
@@ -130,6 +161,7 @@ fun SplitzTheme(
         MaterialTheme(
             colorScheme = colorScheme,
             typography = Typography,
+            shapes = Material3Shapes,
             content = content
         )
     }
@@ -207,6 +239,15 @@ object SplitzColors {
     fun primaryDark(): Color = LocalSplitzPalette.current.brandSoft
 
     @Composable
+    fun brandPrimary(): Color = LocalSplitzPalette.current.brandPrimary
+
+    @Composable
+    fun brandAccent(): Color = LocalSplitzPalette.current.brandAccent
+
+    @Composable
+    fun brandSoft(): Color = LocalSplitzPalette.current.brandSoft
+
+    @Composable
     fun positive(): Color = LocalSplitzPalette.current.positive
 
     @Composable
@@ -265,4 +306,10 @@ object SplitzColors {
 
     @Composable
     fun onWarning(): Color = LocalSplitzPalette.current.onWarning
+
+    @Composable
+    fun textTertiary(): Color = LocalSplitzPalette.current.textMuted
+
+    @Composable
+    fun error(): Color = LocalSplitzPalette.current.negative
 }

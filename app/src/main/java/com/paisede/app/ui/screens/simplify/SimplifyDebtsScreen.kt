@@ -1,7 +1,10 @@
 package com.paisede.app.ui.screens.simplify
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,19 +19,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Hub
+import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,23 +51,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paisede.app.domain.algorithm.DebtEdge
 import com.paisede.app.domain.model.Member
 import com.paisede.app.domain.model.SettlementTransaction
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.GraphVisualizer
+import com.paisede.app.ui.components.KissatenHankoStamp
+import com.paisede.app.ui.components.KissatenPerforationDivider
+import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
-import com.paisede.app.ui.components.SplitzSegmentedControl
-import com.paisede.app.ui.components.SplitzSurface
-import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
-import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
-import com.paisede.app.ui.theme.SplitzBorderWidth
+import com.paisede.app.ui.theme.KissatenTokens
+import com.paisede.app.ui.theme.LocalAppCurrency
 import com.paisede.app.ui.theme.SplitzColors
-import com.paisede.app.ui.theme.SplitzGradients
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
@@ -70,322 +80,565 @@ fun SimplifyDebtsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     var selectedViewTab by remember { mutableStateOf(0) } // 0 = List, 1 = Graph
+    val currentCurrency = LocalAppCurrency.current
 
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            SplitzTopAppBar(
-                title = "Simplify Debts",
-                onNavigateBack = onNavigateBack
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            // Transformation Metric Card: Before vs After
-            Box(
+            // Top App Bar styled per Kissaten Design
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(SplitzSpacing.lg)
-                    .clip(RoundedCornerShape(SplitzShapes.cardHero))
-                    .background(SplitzColors.surfaceElevated().copy(alpha = 0.85f))
-                    .border(
-                        width = SplitzBorderWidth.thin,
-                        color = SplitzColors.borderGlass(),
-                        shape = RoundedCornerShape(SplitzShapes.cardHero)
-                    )
-                    .padding(20.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "DEBT OPTIMIZATION",
-                        style = SplitzTypography.LabelSmall,
-                        color = Color.White.copy(alpha = 0.6f),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
+                Surface(
+                    shape = RoundedCornerShape(SplitzShapes.Pill),
+                    color = SplitzColors.surfaceElevated().copy(alpha = 0.9f),
+                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                    modifier = Modifier.clickable { onNavigateBack() }
+                ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "BEFORE",
-                                style = SplitzTypography.LabelSmall,
-                                color = DebtRed,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "${state.beforeCount}",
-                                style = SplitzTypography.DisplayMedium,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "debts",
-                                style = SplitzTypography.BodySmall,
-                                color = Color.White.copy(alpha = 0.6f)
-                            )
-                        }
-
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Optimized into",
-                            tint = SplitzColors.primaryBright(),
-                            modifier = Modifier.size(32.dp)
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = SplitzColors.textPrimary(),
+                            modifier = Modifier.size(18.dp)
                         )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Back",
+                            style = SplitzTypography.LabelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                    }
+                }
 
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "AFTER",
-                                style = SplitzTypography.LabelSmall,
-                                color = CreditGreen,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "${state.afterCount}",
-                                style = SplitzTypography.DisplayMedium,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "transfers",
-                                style = SplitzTypography.BodySmall,
-                                color = Color.White.copy(alpha = 0.6f)
-                            )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Simplify Debts",
+                        style = SplitzTypography.TitleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = SplitzColors.textPrimary()
+                    )
+                    Text(
+                        text = "SMART DEBT SETTLEMENT",
+                        style = SplitzTypography.LabelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = SplitzColors.brandAccent(),
+                        letterSpacing = 1.sp
+                    )
+                }
+
+                Surface(
+                    shape = CircleShape,
+                    color = SplitzColors.brandSoft(),
+                    border = BorderStroke(1.dp, SplitzColors.brandAccent().copy(alpha = 0.3f))
+                ) {
+                    Box(modifier = Modifier.size(36.dp), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.AutoFixHigh,
+                            contentDescription = "Optimization active",
+                            tint = SplitzColors.brandAccent(),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
+        }
+    ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    // Item 1: Hero Optimization Card (Deep Espresso / Wood Paper aesthetic)
+                    item {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(24.dp),
+                            color = SplitzColors.surfaceElevated(),
+                            border = BorderStroke(1.dp, SplitzColors.border()),
+                            shadowElevation = 4.dp
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(20.dp)
+                            ) {
+                                // Top Badges
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Surface(
+                                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                                        color = KissatenTokens.MatchaTertiary.copy(alpha = 0.3f),
+                                        border = BorderStroke(1.dp, KissatenTokens.MatchaContainer.copy(alpha = 0.4f))
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(6.dp)
+                                                    .clip(CircleShape)
+                                                    .background(KissatenTokens.MatchaContainer)
+                                            )
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = "DIRECT SETTLE ENGINE",
+                                                style = SplitzTypography.LabelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = KissatenTokens.MatchaContainer,
+                                                letterSpacing = 0.6.sp
+                                            )
+                                        }
+                                    }
+
+                                    val reductionPercent = if (state.beforeCount > 0) {
+                                        val diff = state.beforeCount - state.afterCount
+                                        if (diff > 0) "-${(diff * 100) / state.beforeCount}%" else "Optimal"
+                                    } else "0%"
+
+                                    Surface(
+                                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                                        color = KissatenTokens.CaramelSecondary.copy(alpha = 0.25f),
+                                        border = BorderStroke(1.dp, KissatenTokens.CaramelSecondary.copy(alpha = 0.5f))
+                                    ) {
+                                        Text(
+                                            text = "$reductionPercent STEPS",
+                                            style = SplitzTypography.LabelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = KissatenTokens.CaramelSecondary,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(14.dp))
+
+                                Text(
+                                    text = "Debt Simplification",
+                                    style = SplitzTypography.HeadlineSmall,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "Resolve circular balances and settle all group debts with minimal transfers.",
+                                    style = SplitzTypography.BodySmall,
+                                    color = Color.White.copy(alpha = 0.75f)
+                                )
+
+                                Spacer(modifier = Modifier.height(18.dp))
+
+                                // Transformation Metrics row
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(Color.White.copy(alpha = 0.08f))
+                                        .padding(14.dp),
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(
+                                            text = "BEFORE OPTIMIZATION",
+                                            style = SplitzTypography.LabelSmall,
+                                            color = KissatenTokens.CaramelSecondary,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "${state.beforeCount}",
+                                            style = SplitzTypography.HeadlineMedium,
+                                            fontWeight = FontWeight.Black,
+                                            color = Color.White
+                                        )
+                                        Text(
+                                            text = "raw debts",
+                                            style = SplitzTypography.LabelSmall,
+                                            color = Color.White.copy(alpha = 0.6f)
+                                        )
+                                    }
+
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                        contentDescription = "to",
+                                        tint = KissatenTokens.CaramelSecondary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(
+                                            text = "AFTER OPTIMIZATION",
+                                            style = SplitzTypography.LabelSmall,
+                                            color = KissatenTokens.MatchaContainer,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "${state.afterCount}",
+                                            style = SplitzTypography.HeadlineMedium,
+                                            fontWeight = FontWeight.Black,
+                                            color = KissatenTokens.MatchaContainer
+                                        )
+                                        Text(
+                                            text = "transfers",
+                                            style = SplitzTypography.LabelSmall,
+                                            color = Color.White.copy(alpha = 0.6f)
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                    HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
-                    Spacer(modifier = Modifier.height(10.dp))
+                    // Item 2: Algorithm Switcher (Greedy vs Exact)
+                    if (state.isExactAvailable && state.exactCount != null) {
+                        item {
+                            Surface(
+                                shape = RoundedCornerShape(16.dp),
+                                color = KissatenTokens.PaperSurface,
+                                border = BorderStroke(1.dp, KissatenTokens.BorderWashi),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Algorithm:",
+                                        style = SplitzTypography.LabelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = SplitzColors.textPrimary()
+                                    )
 
-                    val reduction = if (state.beforeCount > state.afterCount) state.beforeCount - state.afterCount else 0
-                    Text(
-                        text = if (reduction > 0) "Eliminated $reduction redundant transaction(s)" else "All debts are in minimal form",
-                        style = SplitzTypography.BodySmall,
-                        color = SplitzColors.primaryBright(),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        val isGreedy = state.selectedMode == "Greedy"
+                                        val isExact = state.selectedMode == "Exact"
 
-            // Algorithm Strategy Switcher
-            if (state.isExactAvailable && state.exactCount != null) {
-                SplitzSurface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = SplitzSpacing.lg, vertical = 2.dp),
-                    shape = RoundedCornerShape(SplitzShapes.SM),
-                    backgroundColor = SplitzColors.surface(),
-                    borderColor = SplitzColors.borderSubtle()
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                                        Surface(
+                                            shape = RoundedCornerShape(SplitzShapes.Pill),
+                                            color = if (isGreedy) SplitzColors.brandAccent() else SplitzColors.surface(),
+                                            border = BorderStroke(1.dp, if (isGreedy) SplitzColors.brandAccent() else SplitzColors.border()),
+                                            modifier = Modifier.clickable { viewModel.selectAlgorithm("Greedy") }
+                                        ) {
+                                            Text(
+                                                text = "Greedy (${state.greedyCount})",
+                                                style = SplitzTypography.LabelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (isGreedy) Color.White else SplitzColors.textPrimary(),
+                                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                            )
+                                        }
+
+                                        Surface(
+                                            shape = RoundedCornerShape(SplitzShapes.Pill),
+                                            color = if (isExact) SplitzColors.brandAccent() else SplitzColors.surface(),
+                                            border = BorderStroke(1.dp, if (isExact) SplitzColors.brandAccent() else SplitzColors.border()),
+                                            modifier = Modifier.clickable { viewModel.selectAlgorithm("Exact") }
+                                        ) {
+                                            Text(
+                                                text = "Exact Min (${state.exactCount})",
+                                                style = SplitzTypography.LabelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (isExact) Color.White else SplitzColors.textPrimary(),
+                                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Item 3: View Switcher (List vs Graph)
+                    item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Solver Strategy:",
-                                style = SplitzTypography.LabelMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = SplitzColors.textPrimary()
+                                text = "SETTLEMENT TRANSFERS (${state.transactions.size})",
+                                style = SplitzTypography.LabelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.textPrimary(),
+                                letterSpacing = 0.8.sp
                             )
 
-                            Row {
-                                val isGreedy = state.selectedMode == "Greedy"
-                                FilterChip(
-                                    selected = isGreedy,
-                                    onClick = { viewModel.selectAlgorithm("Greedy") },
-                                    label = { Text("Greedy (${state.greedyCount})") },
-                                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = SplitzColors.primary(),
-                                        selectedLabelColor = Color.White,
-                                        containerColor = SplitzColors.surfaceElevated(),
-                                        labelColor = SplitzColors.textSecondary()
+                            Row(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(SplitzShapes.Pill))
+                                    .background(SplitzColors.surface())
+                                    .border(1.dp, SplitzColors.border(), RoundedCornerShape(SplitzShapes.Pill))
+                                    .padding(2.dp)
+                            ) {
+                                val isList = selectedViewTab == 0
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(SplitzShapes.Pill))
+                                        .background(if (isList) SplitzColors.brandAccent() else Color.Transparent)
+                                        .clickable { selectedViewTab = 0 }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = "List",
+                                        style = SplitzTypography.LabelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isList) Color.White else SplitzColors.textPrimary()
                                     )
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                val isExact = state.selectedMode == "Exact"
-                                FilterChip(
-                                    selected = isExact,
-                                    onClick = { viewModel.selectAlgorithm("Exact") },
-                                    label = { Text("Exact Min (${state.exactCount})") },
-                                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = SplitzColors.primary(),
-                                        selectedLabelColor = Color.White,
-                                        containerColor = SplitzColors.surfaceElevated(),
-                                        labelColor = SplitzColors.textSecondary()
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(SplitzShapes.Pill))
+                                        .background(if (!isList) SplitzColors.brandAccent() else Color.Transparent)
+                                        .clickable { selectedViewTab = 1 }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = "Graph",
+                                        style = SplitzTypography.LabelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (!isList) Color.White else SplitzColors.textPrimary()
                                     )
-                                )
+                                }
                             }
                         }
                     }
-                }
-            }
 
-            // View Mode Toggle (List vs Graph)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.xs),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Box(modifier = Modifier.width(180.dp)) {
-                    SplitzSegmentedControl(
-                        items = listOf("List", "Graph"),
-                        selectedIndex = selectedViewTab,
-                        onItemSelected = { selectedViewTab = it }
-                    )
-                }
-            }
-
-            // Body Content
-            if (state.transactions.isEmpty()) {
-                EmptyStateView(
-                    title = "Everyone is Settled",
-                    subtitle = "No outstanding payments required for this group.",
-                    icon = Icons.Default.CheckCircle,
-                    modifier = Modifier.weight(1f)
-                )
-            } else {
-                if (selectedViewTab == 0) {
-                    // List View
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.xs),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        items(state.transactions) { tx ->
-                            SimplifiedTransactionCard(
-                                tx = tx,
-                                members = state.members
-                            )
-                        }
-                    }
-                } else {
-                    // Graph View with Accessible Transaction Breakdown
-                    val membersList = state.members.values.toList()
-                    val edges = state.transactions.map {
-                        DebtEdge(it.fromUserId, it.toUserId, it.amountPaise)
-                    }
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(horizontal = SplitzSpacing.lg, vertical = SplitzSpacing.xs),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
+                    // Body Transactions / Empty State
+                    if (state.transactions.isEmpty()) {
                         item {
-                            GraphVisualizer(
-                                members = membersList,
-                                edges = edges,
-                                isSimplified = true
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                text = "Settlement network (${state.transactions.size} direct transfer${if (state.transactions.size == 1) "" else "s"})",
-                                style = SplitzTypography.LabelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = SplitzColors.textMuted()
-                            )
+                            KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(32.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    KissatenHankoStamp(text = "SETTLED")
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = "All debts are settled!",
+                                        style = SplitzTypography.TitleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = KissatenTokens.EspressoPrimary
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Everyone in this group is squared up. No transfers needed.",
+                                        style = SplitzTypography.BodySmall,
+                                        color = KissatenTokens.TextMuted,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        if (selectedViewTab == 1) {
+                            // Graph View item
+                            item {
+                                val membersList = state.members.values.toList()
+                                val edges = state.transactions.map {
+                                    DebtEdge(it.fromUserId, it.toUserId, it.amountPaise)
+                                }
+                                KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                                    Column(modifier = Modifier.padding(16.dp)) {
+                                        GraphVisualizer(
+                                            members = membersList,
+                                            edges = edges,
+                                            isSimplified = true
+                                        )
+                                    }
+                                }
+                            }
                         }
 
+                        // Transfer Cards
                         items(state.transactions) { tx ->
-                            SimplifiedTransactionCard(
+                            KissatenSimplifiedTransferCard(
                                 tx = tx,
                                 members = state.members
                             )
                         }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
                 }
             }
         }
     }
-}
 
 @Composable
-fun SimplifiedTransactionCard(
+fun KissatenSimplifiedTransferCard(
     tx: SettlementTransaction,
     members: Map<String, Member>
 ) {
     val debtorName = members[tx.fromUserId]?.name ?: "Member"
     val creditorName = members[tx.toUserId]?.name ?: "Member"
+    val currentCurrency = LocalAppCurrency.current
+    var isMarkedSettled by remember { mutableStateOf(false) }
 
-    SplitzSurface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SplitzShapes.cardMedium),
-        backgroundColor = SplitzColors.surface(),
-        borderColor = SplitzColors.borderSubtle()
+    KissatenReceiptCard(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(SplitzSpacing.md),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                UserAvatar(name = debtorName, size = 36, backgroundColor = DebtRed.copy(alpha = 0.15f), textColor = DebtRed)
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = debtorName,
-                        style = SplitzTypography.TitleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
+                // Left: Debtor (Payer)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    UserAvatar(
+                        name = debtorName,
+                        size = 38,
+                        backgroundColor = SplitzColors.negativeContainer(),
+                        textColor = SplitzColors.negative()
                     )
-                    Text(
-                        text = "pays",
-                        style = SplitzTypography.LabelSmall,
-                        color = SplitzColors.textMuted()
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            text = debtorName,
+                            style = SplitzTypography.BodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                        Text(
+                            text = "Owes",
+                            style = SplitzTypography.LabelSmall,
+                            color = SplitzColors.negative(),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                // Middle: Coffee cup arrow
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocalCafe,
+                        contentDescription = null,
+                        tint = SplitzColors.brandAccent(),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "transfers to",
+                        tint = SplitzColors.brandAccent(),
+                        modifier = Modifier.size(16.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.width(10.dp))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = SplitzColors.primary(),
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-
-                UserAvatar(name = creditorName, size = 36, backgroundColor = CreditGreen.copy(alpha = 0.15f), textColor = CreditGreen)
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = creditorName,
-                        style = SplitzTypography.TitleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
-                    )
-                    Text(
-                        text = "receives",
-                        style = SplitzTypography.LabelSmall,
-                        color = SplitzColors.textMuted()
+                // Right: Creditor (Receiver)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = creditorName,
+                            style = SplitzTypography.BodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = SplitzColors.textPrimary()
+                        )
+                        Text(
+                            text = "Receives",
+                            style = SplitzTypography.LabelSmall,
+                            color = SplitzColors.positive(),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    UserAvatar(
+                        name = creditorName,
+                        size = 38,
+                        backgroundColor = SplitzColors.positiveContainer(),
+                        textColor = SplitzColors.positive()
                     )
                 }
             }
 
-            MoneyText(
-                amountPaise = tx.amountPaise,
-                style = SplitzTypography.TitleLarge,
-                fontWeight = FontWeight.Bold,
-                colorMode = MoneyColorMode.NEUTRAL,
-                animate = true
-            )
+            Spacer(modifier = Modifier.height(12.dp))
+            KissatenPerforationDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Bottom Amount & Settle action row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "SETTLEMENT AMOUNT",
+                        style = SplitzTypography.LabelSmall,
+                        color = SplitzColors.textMuted(),
+                        letterSpacing = 0.5.sp
+                    )
+                    MoneyText(
+                        amountPaise = tx.amountPaise,
+                        style = SplitzTypography.HeadlineSmall,
+                        fontWeight = FontWeight.Black,
+                        colorMode = MoneyColorMode.NEUTRAL
+                    )
+                }
+
+                if (isMarkedSettled) {
+                    KissatenHankoStamp(text = "SETTLED")
+                } else {
+                    Surface(
+                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                        color = SplitzColors.brandPrimary(),
+                        modifier = Modifier.clickable { isMarkedSettled = true }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Payments,
+                                contentDescription = "Settle",
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Settle Debt",
+                                style = SplitzTypography.LabelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -11,8 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import com.paisede.app.ui.theme.CreditGreen
-import com.paisede.app.ui.theme.DebtRed
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzMotion
 import com.paisede.app.ui.theme.SplitzTypography
@@ -33,12 +31,12 @@ fun MoneyText(
     val colors = SplitzColors
     val targetTextColor = color ?: when (colorMode) {
         MoneyColorMode.AUTO -> when {
-            amountPaise > 0L -> CreditGreen
-            amountPaise < 0L -> DebtRed
+            amountPaise > 0L -> colors.positive()
+            amountPaise < 0L -> colors.negative()
             else -> colors.textMuted()
         }
-        MoneyColorMode.CREDIT -> CreditGreen
-        MoneyColorMode.DEBT -> DebtRed
+        MoneyColorMode.CREDIT -> colors.positive()
+        MoneyColorMode.DEBT -> colors.negative()
         MoneyColorMode.NEUTRAL -> colors.textPrimary()
         MoneyColorMode.SETTLED -> colors.textMuted()
     }
