@@ -81,10 +81,10 @@ data class SplitzPalette(
 object ThemePalettes {
 
     // ========================================================
-    // 0. KISSATEN THEME (Kohi Split / Stitch Source of Truth)
-    // Warm tactile washi paper, deep espresso, and matcha accents
+    // 1. LIGHT THEME (Basic Splitz Kissaten / Kohi Split)
+    // Warm tactile washi paper, deep espresso, and caramel accents
     // ========================================================
-    val Kissaten = SplitzPalette(
+    val Light = SplitzPalette(
         background = Color(0xFFFDF9F3),
         backgroundElevated = Color(0xFFF7F3ED),
         backgroundSecondary = Color(0xFFF1EDE7),
@@ -111,6 +111,7 @@ object ThemePalettes {
         brandAccent = Color(0xFFC87D43),
         brandSoft = Color(0xFFFEDCC5),
         onBrandPrimary = Color(0xFFFAF6F0),
+        onBrandAccent = Color(0xFFFFFFFF),
         onBrandGradient = Color(0xFFFAF6F0),
         gradientStart = Color(0xFF4A3525),
         gradientEnd = Color(0xFFC87D43),
@@ -145,188 +146,88 @@ object ThemePalettes {
     )
 
     // ========================================================
-    // 1. GRAPHITE THEME
-    // Minimal, cinematic, refined, calm, sophisticated monochrome
+    // 2. DARK THEME (Basic Splitz Dark Espresso & Roasted Caramel)
+    // Deep warm espresso charcoal, cream contrast, and glowing caramel accents
     // ========================================================
-    val Graphite = SplitzPalette(
-        background = Color(0xFF0A0B0F),
-        backgroundElevated = Color(0xFF111319),
-        backgroundSecondary = Color(0xFF151821),
+    val Dark = SplitzPalette(
+        background = Color(0xFF141210),
+        backgroundElevated = Color(0xFF1C1916),
+        backgroundSecondary = Color(0xFF221E1A),
 
-        surface = Color(0xFF111319),
-        surfaceElevated = Color(0xFF181B23),
-        surfaceHover = Color(0xFF20242D),
-        surfacePressed = Color(0xFF282D38),
-        surfaceGlass = Color(0xFF111319).copy(alpha = 0.82f),
-        surfaceGlassStrong = Color(0xFF181B23).copy(alpha = 0.92f),
-        surfaceScrim = Color(0xFF050608).copy(alpha = 0.65f),
+        surface = Color(0xFF1A1714),
+        surfaceElevated = Color(0xFF25211D),
+        surfaceHover = Color(0xFF2F2A25),
+        surfacePressed = Color(0xFF3A342E),
+        surfaceGlass = Color(0xFF1A1714).copy(alpha = 0.88f),
+        surfaceGlassStrong = Color(0xFF25211D).copy(alpha = 0.94f),
+        surfaceScrim = Color(0xFF080706).copy(alpha = 0.70f),
 
-        claySurface = Color(0xFF1B1E28),
+        claySurface = Color(0xFF25211D),
         clayShadow = Color(0xFF000000).copy(alpha = 0.55f),
-        clayHighlight = Color(0xFFFFFFFF).copy(alpha = 0.18f),
+        clayHighlight = Color(0xFFFFFFFF).copy(alpha = 0.12f),
 
-        borderSubtle = Color(0xFF282C3A),
-        border = Color(0xFF3B4154),
-        borderStrong = Color(0xFF555D75),
-        borderGlass = Color(0xFFE6E8EE).copy(alpha = 0.22f),
-        borderFocus = Color(0xFFE6E8EE),
+        borderSubtle = Color(0xFF332C26),
+        border = Color(0xFF4A4138),
+        borderStrong = Color(0xFF706356),
+        borderGlass = Color(0xFFDDA16B).copy(alpha = 0.22f),
+        borderFocus = Color(0xFFDDA16B),
 
-        brandPrimary = Color(0xFFE6E8EE),
-        brandAccent = Color(0xFFA9B2C3),
-        brandSoft = Color(0xFF20242D),
-        onBrandPrimary = Color(0xFF0A0B0F),
-        onBrandGradient = Color(0xFF0A0B0F),
-        gradientStart = Color(0xFFE6E8EE),
-        gradientEnd = Color(0xFFA9B2C3),
+        brandPrimary = Color(0xFFF5EBE1),
+        brandAccent = Color(0xFFDDA16B),
+        brandSoft = Color(0xFF3A291E),
+        onBrandPrimary = Color(0xFF141210),
+        onBrandAccent = Color(0xFF141210),
+        onBrandGradient = Color(0xFF141210),
+        gradientStart = Color(0xFFDDA16B),
+        gradientEnd = Color(0xFFC87D43),
 
-        textPrimary = Color(0xFFF5F6F8),
-        textSecondary = Color(0xFFB0B4BF),
-        textMuted = Color(0xFF858A97),
-        textInverse = Color(0xFF0A0B0F),
-        textDisabled = Color(0xFF565B66),
+        textPrimary = Color(0xFFFDF9F3),
+        textSecondary = Color(0xFFD4C8BE),
+        textMuted = Color(0xFF9E9186),
+        textInverse = Color(0xFF141210),
+        textDisabled = Color(0xFF6B6259),
+
+        positive = Color(0xFF34D399),
+        positiveContainer = Color(0xFF0E2E1E),
+        positiveStrong = Color(0xFF6EE7B7),
+        onPositive = Color(0xFF041F11),
+        onPositiveContainer = Color(0xFF6EE7B7),
+
+        negative = Color(0xFFF87171),
+        negativeContainer = Color(0xFF361418),
+        negativeStrong = Color(0xFFFECACA),
+        onNegative = Color(0xFF28070B),
+        onNegativeContainer = Color(0xFFFECACA),
+
+        warning = Color(0xFFFBBF24),
+        warningContainer = Color(0xFF362309),
+        warningStrong = Color(0xFFFDE047),
+        onWarning = Color(0xFF261502),
+
+        info = Color(0xFF60A5FA),
+        infoContainer = Color(0xFF142244),
 
         textureResId = R.drawable.bg_graphite_texture
     )
 
-    // ========================================================
-    // 2. ELECTRIC BLUE THEME
-    // Technical, energetic, intelligent, premium, modern, clear
-    // ========================================================
-    val ElectricBlue = SplitzPalette(
-        background = Color(0xFF070D1A),
-        backgroundElevated = Color(0xFF0D1629),
-        backgroundSecondary = Color(0xFF101B33),
+    // Backward-compatibility aliases
+    val Kissaten = Light
+    val Graphite = Dark
+    val ElectricBlue = Dark
+    val Ultraviolet = Dark
+    val Emerald = Dark
 
-        surface = Color(0xFF0D1629),
-        surfaceElevated = Color(0xFF152646),
-        surfaceHover = Color(0xFF1B3058),
-        surfacePressed = Color(0xFF223A68),
-        surfaceGlass = Color(0xFF0D1629).copy(alpha = 0.82f),
-        surfaceGlassStrong = Color(0xFF152646).copy(alpha = 0.94f),
-        surfaceScrim = Color(0xFF03070E).copy(alpha = 0.65f),
+    /**
+     * Resolves the palette based directly on the theme mode (light vs dark).
+     */
+    fun forMode(darkTheme: Boolean): SplitzPalette {
+        return if (darkTheme) Dark else Light
+    }
 
-        claySurface = Color(0xFF162747),
-        clayShadow = Color(0xFF02050B).copy(alpha = 0.60f),
-        clayHighlight = Color(0xFF5C9CFF).copy(alpha = 0.22f),
-
-        borderSubtle = Color(0xFF22375C),
-        border = Color(0xFF345284),
-        borderStrong = Color(0xFF4C73B3),
-        borderGlass = Color(0xFF5C9CFF).copy(alpha = 0.25f),
-        borderFocus = Color(0xFF5C9CFF),
-
-        brandPrimary = Color(0xFF5C9CFF),
-        brandAccent = Color(0xFF86B8FF),
-        brandSoft = Color(0xFF162E54),
-        onBrandPrimary = Color(0xFF070D1A),
-        onBrandGradient = Color(0xFFFFFFFF),
-        gradientStart = Color(0xFF3B82F6),
-        gradientEnd = Color(0xFF60A5FA),
-
-        textPrimary = Color(0xFFF3F7FF),
-        textSecondary = Color(0xFFB8C7E3),
-        textMuted = Color(0xFF8294B4),
-        textInverse = Color(0xFF070D1A),
-        textDisabled = Color(0xFF4C5D7A),
-
-        textureResId = R.drawable.bg_electric_blue_texture
-    )
-
-    // ========================================================
-    // 3. ULTRAVIOLET THEME
-    // Expressive, atmospheric, creative, bold, premium, slightly futuristic
-    // ========================================================
-    val Ultraviolet = SplitzPalette(
-        background = Color(0xFF10081F),
-        backgroundElevated = Color(0xFF190D2B),
-        backgroundSecondary = Color(0xFF211138),
-
-        surface = Color(0xFF190D2B),
-        surfaceElevated = Color(0xFF281442),
-        surfaceHover = Color(0xFF321A52),
-        surfacePressed = Color(0xFF3D2063),
-        surfaceGlass = Color(0xFF190D2B).copy(alpha = 0.82f),
-        surfaceGlassStrong = Color(0xFF281442).copy(alpha = 0.94f),
-        surfaceScrim = Color(0xFF080312).copy(alpha = 0.65f),
-
-        claySurface = Color(0xFF2C1648),
-        clayShadow = Color(0xFF05010B).copy(alpha = 0.60f),
-        clayHighlight = Color(0xFFA78BFA).copy(alpha = 0.24f),
-
-        borderSubtle = Color(0xFF381F57),
-        border = Color(0xFF52317E),
-        borderStrong = Color(0xFF7247AC),
-        borderGlass = Color(0xFFA78BFA).copy(alpha = 0.25f),
-        borderFocus = Color(0xFFA78BFA),
-
-        brandPrimary = Color(0xFFA78BFA),
-        brandAccent = Color(0xFFC4A7FF),
-        brandSoft = Color(0xFF39205A),
-        onBrandPrimary = Color(0xFF10081F),
-        onBrandGradient = Color(0xFFFFFFFF),
-        gradientStart = Color(0xFF8B5CF6),
-        gradientEnd = Color(0xFFA78BFA),
-
-        textPrimary = Color(0xFFFAF6FF),
-        textSecondary = Color(0xFFCDBDE6),
-        textMuted = Color(0xFF9B88B9),
-        textInverse = Color(0xFF10081F),
-        textDisabled = Color(0xFF5C4B74),
-
-        textureResId = R.drawable.bg_ultraviolet_texture
-    )
-
-    // ========================================================
-    // 4. EMERALD THEME
-    // Balanced, modern, fresh botanical jade & forest contours
-    // ========================================================
-    val Emerald = SplitzPalette(
-        background = Color(0xFF08140F),
-        backgroundElevated = Color(0xFF0E2019),
-        backgroundSecondary = Color(0xFF132A22),
-
-        surface = Color(0xFF0E2019),
-        surfaceElevated = Color(0xFF163227),
-        surfaceHover = Color(0xFF1D3E31),
-        surfacePressed = Color(0xFF244C3D),
-        surfaceGlass = Color(0xFF0E2019).copy(alpha = 0.82f),
-        surfaceGlassStrong = Color(0xFF163227).copy(alpha = 0.94f),
-        surfaceScrim = Color(0xFF030A07).copy(alpha = 0.65f),
-
-        claySurface = Color(0xFF16382D),
-        clayShadow = Color(0xFF020705).copy(alpha = 0.60f),
-        clayHighlight = Color(0xFF34D399).copy(alpha = 0.22f),
-
-        borderSubtle = Color(0xFF1E4637),
-        border = Color(0xFF2E634F),
-        borderStrong = Color(0xFF438A70),
-        borderGlass = Color(0xFF34D399).copy(alpha = 0.25f),
-        borderFocus = Color(0xFF10B981),
-
-        brandPrimary = Color(0xFF34D399),
-        brandAccent = Color(0xFF10B981),
-        brandSoft = Color(0xFF164435),
-        onBrandPrimary = Color(0xFF08140F),
-        onBrandGradient = Color(0xFFFFFFFF),
-        gradientStart = Color(0xFF059669),
-        gradientEnd = Color(0xFF34D399),
-
-        textPrimary = Color(0xFFF0FDF4),
-        textSecondary = Color(0xFFB7E4C7),
-        textMuted = Color(0xFF74A892),
-        textInverse = Color(0xFF08140F),
-        textDisabled = Color(0xFF43695B),
-
-        textureResId = R.drawable.bg_electric_blue_texture
-    )
-
+    /**
+     * Legacy adapter for backward compatibility.
+     */
     fun forTheme(theme: SplitzVisualTheme): SplitzPalette {
-        return when (theme) {
-            SplitzVisualTheme.KISSATEN -> Kissaten
-            SplitzVisualTheme.GRAPHITE -> Graphite
-            SplitzVisualTheme.ELECTRIC_BLUE -> ElectricBlue
-            SplitzVisualTheme.ULTRAVIOLET -> Ultraviolet
-            SplitzVisualTheme.EMERALD -> Emerald
-        }
+        return Light
     }
 }

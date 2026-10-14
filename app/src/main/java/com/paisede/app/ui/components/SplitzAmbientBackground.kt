@@ -27,32 +27,19 @@ fun SplitzAmbientBackground(
     content: @Composable BoxScope.() -> Unit = {}
 ) {
     val palette = LocalSplitzPalette.current
+    val isDark = com.paisede.app.ui.theme.SplitzColors.isDark()
 
-    val (glowTopRight, glowBottomLeft, baseBg) = remember(palette) {
-        when (visualTheme) {
-            SplitzVisualTheme.KISSATEN -> Triple(
+    val (glowTopRight, glowBottomLeft, baseBg) = remember(palette, isDark) {
+        if (isDark) {
+            Triple(
+                Color(0xFF38291F).copy(alpha = 0.50f), // Warm dark espresso glow
+                Color(0xFF1E2619).copy(alpha = 0.35f), // Muted dark matcha glow
+                palette.background
+            )
+        } else {
+            Triple(
                 Color(0xFFFEDCC5).copy(alpha = 0.45f), // Warm caramel/roasted top-right glow
                 Color(0xFFDDE8AB).copy(alpha = 0.30f), // Soft matcha bottom-left glow
-                palette.background
-            )
-            SplitzVisualTheme.GRAPHITE -> Triple(
-                Color(0xFF222633),
-                Color(0xFF13151D),
-                palette.background
-            )
-            SplitzVisualTheme.ELECTRIC_BLUE -> Triple(
-                Color(0xFF132A54),
-                Color(0xFF09172E),
-                palette.background
-            )
-            SplitzVisualTheme.ULTRAVIOLET -> Triple(
-                Color(0xFF2E134D),
-                Color(0xFF1C0A33),
-                palette.background
-            )
-            SplitzVisualTheme.EMERALD -> Triple(
-                Color(0xFF0F382C),
-                Color(0xFF082019),
                 palette.background
             )
         }

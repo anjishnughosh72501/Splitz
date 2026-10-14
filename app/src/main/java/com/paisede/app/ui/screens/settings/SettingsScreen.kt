@@ -97,7 +97,6 @@ fun SettingsScreen(
     onInspectDataStructures: ((String) -> Unit)? = null
 ) {
     val currentThemeMode by (themePreferences?.themeMode ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppThemeMode.SYSTEM) }).collectAsState()
-    val currentVisualTheme by (themePreferences?.visualTheme ?: remember { kotlinx.coroutines.flow.MutableStateFlow(com.paisede.app.data.preferences.SplitzVisualTheme.GRAPHITE) }).collectAsState()
     val currentFontSize by (themePreferences?.fontSize ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppFontSize.MEDIUM) }).collectAsState()
     val currentCurrency by (userPreferences?.currency ?: remember { kotlinx.coroutines.flow.MutableStateFlow(AppCurrency.DEFAULT) }).collectAsState()
     val currentUserName by (userPreferences?.userName ?: remember { kotlinx.coroutines.flow.MutableStateFlow("") }).collectAsState()
@@ -353,107 +352,8 @@ fun SettingsScreen(
             contentPadding = PaddingValues(SplitzSpacing.lg),
             verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {
-            // Theme Accent Color Line (Single row with circular color accents)
+            // General Preferences
             item {
-                Text(
-                    text = "ACCENT THEME",
-                    style = SplitzTypography.LabelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = SplitzColors.textPrimary(),
-                    modifier = Modifier.padding(start = 4.dp, top = 4.dp),
-                    letterSpacing = 0.8.sp
-                )
-            }
-
-            item {
-                KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            com.paisede.app.data.preferences.SplitzVisualTheme.entries.forEach { theme ->
-                                val isSelected = currentVisualTheme == theme
-                                val accentColor = Color(theme.accentHex)
-                                val scale by animateFloatAsState(
-                                    targetValue = if (isSelected) 1.15f else 1.0f,
-                                    label = "theme_dot_scale"
-                                )
-
-                                Box(
-                                    modifier = Modifier
-                                        .graphicsLayer {
-                                            scaleX = scale
-                                            scaleY = scale
-                                        }
-                                        .size(44.dp)
-                                        .clip(CircleShape)
-                                        .background(
-                                            if (isSelected) accentColor.copy(alpha = 0.20f)
-                                            else Color.Transparent
-                                        )
-                                        .border(
-                                            width = if (isSelected) 2.5.dp else 1.dp,
-                                            color = if (isSelected) accentColor else SplitzColors.border(),
-                                            shape = CircleShape
-                                        )
-                                        .clickable {
-                                            themePreferences?.setVisualTheme(theme)
-                                        }
-                                        .semantics {
-                                            contentDescription = "Select ${theme.displayName} theme"
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(28.dp)
-                                            .clip(CircleShape)
-                                            .background(accentColor),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        if (isSelected) {
-                                            Icon(
-                                                imageVector = Icons.Default.AutoAwesome,
-                                                contentDescription = "Selected",
-                                                tint = ThemePalettes.forTheme(theme).onBrandAccent,
-                                                modifier = Modifier.size(14.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Active Palette",
-                                    style = SplitzTypography.BodySmall,
-                                    color = SplitzColors.textSecondary()
-                                )
-                                Text(
-                                    text = currentVisualTheme.displayName,
-                                    style = SplitzTypography.BodySmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(currentVisualTheme.accentHex)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // General Preferences
-                item {
                 Text(
                     text = "PREFERENCES",
                     style = SplitzTypography.LabelSmall,

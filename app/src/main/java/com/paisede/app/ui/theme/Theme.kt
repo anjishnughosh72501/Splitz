@@ -24,7 +24,7 @@ import com.paisede.app.data.preferences.SplitzVisualTheme
 
 val LocalAppCurrency = staticCompositionLocalOf { AppCurrency.DEFAULT }
 val LocalSplitzVisualTheme = staticCompositionLocalOf { SplitzVisualTheme.KISSATEN }
-val LocalSplitzPalette = staticCompositionLocalOf { ThemePalettes.Kissaten }
+val LocalSplitzPalette = staticCompositionLocalOf { ThemePalettes.Light }
 
 fun createColorSchemeForTheme(
     palette: SplitzPalette,
@@ -32,7 +32,7 @@ fun createColorSchemeForTheme(
 ): ColorScheme {
     return if (darkTheme) {
         darkColorScheme(
-            primary = palette.brandPrimary,
+            primary = palette.brandAccent,
             onPrimary = palette.onBrandPrimary,
             primaryContainer = palette.brandSoft,
             onPrimaryContainer = palette.textPrimary,
@@ -41,7 +41,7 @@ fun createColorSchemeForTheme(
             secondaryContainer = palette.surfaceElevated,
             onSecondaryContainer = palette.textPrimary,
             tertiary = palette.positive,
-            onTertiary = palette.onBrandPrimary,
+            onTertiary = palette.onPositive,
             tertiaryContainer = palette.positiveContainer,
             onTertiaryContainer = palette.positiveStrong,
             error = palette.negative,
@@ -50,14 +50,14 @@ fun createColorSchemeForTheme(
             onErrorContainer = palette.negativeStrong,
             background = palette.background,
             onBackground = palette.textPrimary,
-            surface = palette.surface,
+            surface = palette.surfaceElevated,
             onSurface = palette.textPrimary,
-            surfaceVariant = palette.surfaceElevated,
+            surfaceVariant = palette.surface,
             onSurfaceVariant = palette.textSecondary,
             outline = palette.border,
             outlineVariant = palette.borderSubtle,
             scrim = palette.surfaceScrim,
-            surfaceTint = palette.brandPrimary
+            surfaceTint = palette.brandAccent
         )
     } else {
         // Coordinated light appearance with identical semantic structure
@@ -95,12 +95,11 @@ fun createColorSchemeForTheme(
 @Composable
 fun SplitzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    visualTheme: SplitzVisualTheme = SplitzVisualTheme.KISSATEN,
     fontScale: Float = 1.0f,
     currency: AppCurrency = AppCurrency.DEFAULT,
     content: @Composable () -> Unit
 ) {
-    val rawPalette = ThemePalettes.forTheme(visualTheme)
+    val rawPalette = ThemePalettes.forMode(darkTheme)
     val animSpec = tween<Color>(250)
     val background by animateColorAsState(rawPalette.background, animSpec, label = "bg")
     val backgroundElevated by animateColorAsState(rawPalette.backgroundElevated, animSpec, label = "bgElev")
@@ -155,7 +154,6 @@ fun SplitzTheme(
     CompositionLocalProvider(
         LocalDensity provides scaledDensity,
         LocalAppCurrency provides currency,
-        LocalSplitzVisualTheme provides visualTheme,
         LocalSplitzPalette provides palette
     ) {
         MaterialTheme(
@@ -168,20 +166,32 @@ fun SplitzTheme(
 }
 
 @Composable
-fun PaiseDeTheme(
+fun SplitzTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    visualTheme: SplitzVisualTheme = SplitzVisualTheme.GRAPHITE,
+    visualTheme: SplitzVisualTheme,
+    fontScale: Float = 1.0f,
+    currency: AppCurrency = AppCurrency.DEFAULT,
     content: @Composable () -> Unit
 ) {
-    SplitzTheme(darkTheme = darkTheme, visualTheme = visualTheme, content = content)
+    SplitzTheme(
+        darkTheme = darkTheme,
+        fontScale = fontScale,
+        currency = currency,
+        content = content
+    )
+}
+
+@Composable
+fun PaiseDeTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    visualTheme: SplitzVisualTheme = SplitzVisualTheme.KISSATEN,
+    content: @Composable () -> Unit
+) {
+    SplitzTheme(darkTheme = darkTheme, fontScale = 1.0f, content = content)
 }
 
 val ColorScheme.isDark: Boolean
-    get() = this.background == DarkColors.Background || 
-            this.background == ThemePalettes.Graphite.background || 
-            this.background == ThemePalettes.ElectricBlue.background || 
-            this.background == ThemePalettes.Ultraviolet.background || 
-            this.background == ThemePalettes.Emerald.background
+    get() = this.background == ThemePalettes.Dark.background
 
 // Semantic color accessors for use across UI components
 object SplitzColors {

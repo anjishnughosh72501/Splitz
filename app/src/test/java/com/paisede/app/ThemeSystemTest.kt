@@ -3,6 +3,7 @@ package com.paisede.app
 import com.paisede.app.data.preferences.SplitzVisualTheme
 import com.paisede.app.ui.theme.ThemePalettes
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -29,29 +30,24 @@ class ThemeSystemTest {
     }
 
     @Test
-    fun `theme palettes provide correct asset drawables and distinct colors`() {
-        val kissatenPalette = ThemePalettes.forTheme(SplitzVisualTheme.KISSATEN)
-        val graphitePalette = ThemePalettes.forTheme(SplitzVisualTheme.GRAPHITE)
-        val bluePalette = ThemePalettes.forTheme(SplitzVisualTheme.ELECTRIC_BLUE)
-        val violetPalette = ThemePalettes.forTheme(SplitzVisualTheme.ULTRAVIOLET)
-        val emeraldPalette = ThemePalettes.forTheme(SplitzVisualTheme.EMERALD)
+    fun `theme palettes provide complete Light and Dark modes of basic Splitz theme`() {
+        val lightPalette = ThemePalettes.forMode(false)
+        val darkPalette = ThemePalettes.forMode(true)
 
-        assertNotNull(kissatenPalette)
-        assertNotNull(emeraldPalette)
-        assertEquals(R.drawable.bg_graphite_texture, graphitePalette.textureResId)
-        assertEquals(R.drawable.bg_electric_blue_texture, bluePalette.textureResId)
-        assertEquals(R.drawable.bg_ultraviolet_texture, violetPalette.textureResId)
+        assertEquals(ThemePalettes.Light, lightPalette)
+        assertEquals(ThemePalettes.Dark, darkPalette)
 
-        // Financial status colors remain consistent across themes
-        assertEquals(graphitePalette.positive, bluePalette.positive)
-        assertEquals(bluePalette.positive, violetPalette.positive)
-        assertEquals(graphitePalette.negative, bluePalette.negative)
-        assertEquals(bluePalette.negative, violetPalette.negative)
+        assertNotNull(lightPalette)
+        assertNotNull(darkPalette)
 
-        // Brand colors differ distinctly per theme
-        assertTrue(kissatenPalette.brandPrimary != graphitePalette.brandPrimary)
-        assertTrue(graphitePalette.brandPrimary != bluePalette.brandPrimary)
-        assertTrue(bluePalette.brandPrimary != violetPalette.brandPrimary)
-        assertTrue(violetPalette.brandPrimary != emeraldPalette.brandPrimary)
+        // Light & Dark backgrounds differ
+        assertNotEquals(lightPalette.background, darkPalette.background)
+        assertNotEquals(lightPalette.textPrimary, darkPalette.textPrimary)
+
+        // Financial status indicators are active and properly defined for both modes
+        assertNotNull(lightPalette.positive)
+        assertNotNull(darkPalette.positive)
+        assertNotNull(lightPalette.negative)
+        assertNotNull(darkPalette.negative)
     }
 }

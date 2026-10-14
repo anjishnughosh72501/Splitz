@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val themeMode by app.themePreferences.themeMode.collectAsState()
-            val visualTheme by app.themePreferences.visualTheme.collectAsState()
             val fontSize by app.themePreferences.fontSize.collectAsState()
             val currency by app.userPreferences.currency.collectAsState()
             val isDark = when (themeMode) {
@@ -34,13 +33,11 @@ class MainActivity : ComponentActivity() {
 
             SplitzTheme(
                 darkTheme = isDark,
-                visualTheme = visualTheme,
                 fontScale = fontSize.scale,
                 currency = currency
             ) {
                 com.paisede.app.ui.components.SplitzAmbientBackground(
-                    modifier = Modifier.fillMaxSize(),
-                    visualTheme = visualTheme
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     AppNavigation(app = app)
                 }
