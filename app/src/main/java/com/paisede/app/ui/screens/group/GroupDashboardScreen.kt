@@ -96,6 +96,7 @@ import com.paisede.app.ui.components.KissatenPerforationDivider
 import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
@@ -314,74 +315,65 @@ fun GroupDashboardScreen(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            Surface(
-                modifier = Modifier.statusBarsPadding(),
-                color = SplitzColors.background().copy(alpha = 0.95f),
-                shadowElevation = 1.dp
-            ) {
-                TopAppBar(
-                    title = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(32.dp)
-                                    .clip(CircleShape)
-                                    .background(SplitzColors.brandSoft()),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.LocalCafe,
-                                    contentDescription = null,
-                                    tint = SplitzColors.brandPrimary(),
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    text = state.group?.name ?: "Group",
-                                    style = SplitzTypography.TitleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = SplitzColors.textPrimary(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Text(
-                                    text = "${state.members.size} members",
-                                    style = SplitzTypography.Caption,
-                                    color = SplitzColors.textMuted()
-                                )
-                            }
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
+            SplitzTopAppBar(
+                centerTitle = false,
+                onNavigateBack = onNavigateBack,
+                titleContent = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(CircleShape)
+                                .background(SplitzColors.brandSoft()),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = SplitzColors.textPrimary()
+                                imageVector = Icons.Default.LocalCafe,
+                                contentDescription = null,
+                                tint = SplitzColors.brandPrimary(),
+                                modifier = Modifier.size(18.dp)
                             )
                         }
-                    },
-                    actions = {
-                        IconButton(onClick = { showMembersDialog = true }) {
-                            Icon(
-                                imageVector = Icons.Default.Group,
-                                contentDescription = "Members",
-                                tint = SplitzColors.textPrimary()
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = state.group?.name ?: "Group",
+                                style = SplitzTypography.TitleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.textPrimary(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = "${state.members.size} members",
+                                style = SplitzTypography.Caption,
+                                color = SplitzColors.textMuted(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
-                        IconButton(onClick = onSettingsClick) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings",
-                                tint = SplitzColors.textPrimary()
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
-                )
-            }
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showMembersDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Group,
+                            contentDescription = "Members",
+                            tint = SplitzColors.textPrimary()
+                        )
+                    }
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = SplitzColors.textPrimary()
+                        )
+                    }
+                }
+            )
         },
         bottomBar = {
             KissatenBottomBar(
@@ -719,7 +711,7 @@ fun GroupDashboardScreen(
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(72.dp))
+                    Spacer(modifier = Modifier.height(96.dp))
                 }
             }
 

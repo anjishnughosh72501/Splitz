@@ -79,6 +79,7 @@ import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
 import com.paisede.app.ui.components.SectionHeader
 import com.paisede.app.ui.components.ShimmerCard
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.KissatenTokens
 import com.paisede.app.ui.theme.LocalAppCurrency
@@ -248,6 +249,32 @@ fun HomeScreen(
     Scaffold(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            SplitzTopAppBar(
+                title = "Splitz",
+                subtitle = if (currentUserName.isNotBlank()) "Welcome back, $currentUserName" else "Group expense splitting",
+                centerTitle = false,
+                actions = {
+                    Surface(
+                        shape = CircleShape,
+                        color = SplitzColors.surface(),
+                        border = BorderStroke(1.dp, SplitzColors.border()),
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clickable { onSettingsClick() }
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Open Settings",
+                                tint = SplitzColors.textPrimary(),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             val interactionSource = remember { MutableInteractionSource() }
             val isPressed by interactionSource.collectIsPressedAsState()
@@ -295,56 +322,9 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 88.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-                // Header Bar with Clean Branding
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .statusBarsPadding()
-                            .padding(vertical = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "Splitz",
-                                style = SplitzTypography.HeadlineMedium,
-                                fontWeight = FontWeight.Black,
-                                color = SplitzColors.textPrimary()
-                            )
-                            Text(
-                                text = if (currentUserName.isNotBlank()) "Welcome back, $currentUserName"
-                                else "Group expense splitting",
-                                style = SplitzTypography.BodySmall,
-                                color = SplitzColors.textSecondary()
-                            )
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Settings icon button
-                            Surface(
-                                shape = CircleShape,
-                                color = SplitzColors.surface(),
-                                border = BorderStroke(1.dp, SplitzColors.border()),
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clickable { onSettingsClick() }
-                            ) {
-                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Default.Settings,
-                                        contentDescription = "Open Settings",
-                                        tint = SplitzColors.textPrimary(),
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
 
                 // Hero Financial Overview Card (Washi Receipt Card)
                 item {

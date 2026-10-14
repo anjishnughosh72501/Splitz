@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import com.paisede.app.ui.components.SplitzTopAppBar
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -335,55 +337,18 @@ fun SettingsScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                    color = SplitzColors.surface(),
-                    border = BorderStroke(1.dp, SplitzColors.border()),
-                    modifier = Modifier.clickable { onNavigateBack() }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = SplitzColors.textPrimary(),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Back",
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
-                    }
-                }
-
-                Text(
-                    text = "Settings",
-                    style = SplitzTypography.TitleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = SplitzColors.textPrimary()
-                )
-
-                Box(modifier = Modifier.size(40.dp))
-            }
+            SplitzTopAppBar(
+                title = "Settings",
+                subtitle = "PREFERENCES & DATA",
+                onNavigateBack = onNavigateBack
+            )
         }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
+                .navigationBarsPadding(),
             contentPadding = PaddingValues(SplitzSpacing.lg),
             verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {

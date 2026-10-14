@@ -42,6 +42,8 @@ import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
+import androidx.compose.foundation.layout.navigationBarsPadding
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.viewmodel.SettlementViewModel
 
 @Composable
@@ -54,63 +56,18 @@ fun SettlementHistoryScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                    color = SplitzColors.surface(),
-                    border = BorderStroke(1.dp, SplitzColors.border()),
-                    modifier = Modifier.clickable { onNavigateBack() }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = SplitzColors.textPrimary(),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Back",
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
-                    }
-                }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Settlement History",
-                        style = SplitzTypography.TitleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
-                    )
-                    Text(
-                        text = "SETTLEMENT TIMELINE",
-                        style = SplitzTypography.LabelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = SplitzColors.brandAccent(),
-                        letterSpacing = 1.sp
-                    )
-                }
-
-                Box(modifier = Modifier.size(40.dp))
-            }
+            SplitzTopAppBar(
+                title = "Settlement History",
+                subtitle = "SETTLEMENT TIMELINE",
+                onNavigateBack = onNavigateBack
+            )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .navigationBarsPadding()
         ) {
             if (state.pastSettlements.isEmpty()) {
                 KissatenReceiptCard(

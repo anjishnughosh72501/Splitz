@@ -50,6 +50,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.theme.SplitzBorderWidth
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzElevation
@@ -57,72 +62,185 @@ import com.paisede.app.ui.theme.SplitzGradients
 import com.paisede.app.ui.theme.SplitzMotion
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
+import com.paisede.app.ui.theme.SplitzTypography
 import kotlin.math.abs
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SplitzTopAppBar(
-    title: String,
+    title: String = "",
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     onNavigateBack: (() -> Unit)? = null,
-    actions: @Composable () -> Unit = {}
+    backButtonText: String = "Back",
+    centerTitle: Boolean = true,
+    navigationIcon: (@Composable () -> Unit)? = null,
+    actions: @Composable RowScope.() -> Unit = {},
+    titleContent: (@Composable () -> Unit)? = null
 ) {
-    val colors = SplitzColors
     Surface(
-        color = Color.Transparent,
-        shadowElevation = SplitzElevation.Level0,
-        modifier = modifier
+        modifier = modifier.fillMaxWidth(),
+        color = SplitzColors.surfaceElevated().copy(alpha = 0.96f),
+        shadowElevation = 2.dp,
+        border = BorderStroke(1.dp, SplitzColors.borderSubtle().copy(alpha = 0.5f))
     ) {
-        TopAppBar(
-            title = {
-                Column {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = colors.textPrimary(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    if (subtitle != null) {
-                        Text(
-                            text = subtitle,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colors.textSecondary(),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-            },
-            navigationIcon = {
-                if (onNavigateBack != null) {
-                    IconButton(onClick = onNavigateBack) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(colors.surfaceGlass())
-                                .border(SplitzBorderWidth.thin, colors.borderGlass(), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Navigate back",
-                                tint = colors.textPrimary(),
-                                modifier = Modifier.size(18.dp)
-                            )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+        ) {
+            if (centerTitle) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 56.dp)
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Leading navigation slot
+                    Box(
+                        modifier = Modifier.align(Alignment.CenterStart),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (navigationIcon != null) {
+                            navigationIcon()
+                        } else if (onNavigateBack != null) {
+                            Surface(
+                                shape = RoundedCornerShape(SplitzShapes.Pill),
+                                color = SplitzColors.surface(),
+                                border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                                modifier = Modifier.clickable(onClick = onNavigateBack)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = backButtonText,
+                                        tint = SplitzColors.textPrimary(),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = backButtonText,
+                                        style = SplitzTypography.LabelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = SplitzColors.textPrimary()
+                                    )
+                                }
+                            }
                         }
                     }
+
+                    // Center title & subtitle slot
+                    if (titleContent != null) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 80.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            titleContent()
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 80.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (title.isNotBlank()) {
+                                Text(
+                                    text = title,
+                                    style = SplitzTypography.TitleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = SplitzColors.textPrimary(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            if (subtitle != null) {
+                                Text(
+                                    text = subtitle,
+                                    style = SplitzTypography.LabelSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = SplitzColors.brandAccent(),
+                                    letterSpacing = 1.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+
+                    // Trailing actions slot
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        content = actions
+                    )
                 }
-            },
-            actions = { actions() },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent,
-                titleContentColor = colors.textPrimary()
-            )
-        )
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 56.dp)
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (navigationIcon != null) {
+                        navigationIcon()
+                        Spacer(modifier = Modifier.width(8.dp))
+                    } else if (onNavigateBack != null) {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = backButtonText,
+                                tint = SplitzColors.textPrimary()
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (titleContent != null) {
+                            titleContent()
+                        } else {
+                            Column {
+                                if (title.isNotBlank()) {
+                                    Text(
+                                        text = title,
+                                        style = SplitzTypography.TitleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = SplitzColors.textPrimary(),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                if (subtitle != null) {
+                                    Text(
+                                        text = subtitle,
+                                        style = SplitzTypography.BodySmall,
+                                        color = SplitzColors.textSecondary(),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        content = actions
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -130,7 +248,7 @@ fun SplitzTopAppBar(
 fun PaiseDeTopAppBar(
     title: String,
     onNavigateBack: (() -> Unit)? = null,
-    actions: @Composable () -> Unit = {}
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     SplitzTopAppBar(title = title, onNavigateBack = onNavigateBack, actions = actions)
 }

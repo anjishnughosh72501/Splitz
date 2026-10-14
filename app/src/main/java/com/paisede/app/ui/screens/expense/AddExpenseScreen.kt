@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import com.paisede.app.ui.components.SplitzTopAppBar
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -118,91 +119,59 @@ fun AddExpenseScreen(
     Scaffold(
         containerColor = Color.Transparent,
             topBar = {
-                // Top Action Bar styled per Stitch Screen 2
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Back pill button
-                    Surface(
-                        shape = RoundedCornerShape(SplitzShapes.Pill),
-                        color = SplitzColors.surface(),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                        modifier = Modifier.clickable { onNavigateBack() }
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                SplitzTopAppBar(
+                    backButtonText = "Cancel",
+                    onNavigateBack = onNavigateBack,
+                    titleContent = {
+                        Surface(
+                            shape = RoundedCornerShape(SplitzShapes.Pill),
+                            color = SplitzColors.surfaceElevated(),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
                         ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = SplitzColors.textPrimary(),
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Cancel",
-                                style = SplitzTypography.LabelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = SplitzColors.textPrimary()
-                            )
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(SplitzColors.brandAccent())
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "NEW EXPENSE",
+                                    style = SplitzTypography.LabelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = SplitzColors.textPrimary(),
+                                    letterSpacing = 0.5.sp
+                                )
+                            }
                         }
-                    }
-
-                    // Center draft badge
-                    Surface(
-                        shape = RoundedCornerShape(SplitzShapes.Pill),
-                        color = SplitzColors.surfaceElevated(),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, SplitzColors.borderSubtle())
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                    },
+                    actions = {
+                        Surface(
+                            shape = CircleShape,
+                            color = SplitzColors.brandAccent(),
+                            modifier = Modifier.clickable(enabled = !state.isSaving) {
+                                haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                                viewModel.saveExpense { onExpenseAdded() }
+                            }
                         ) {
                             Box(
-                                modifier = Modifier
-                                    .size(6.dp)
-                                    .clip(CircleShape)
-                                    .background(SplitzColors.brandAccent())
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "NEW EXPENSE",
-                                style = SplitzTypography.LabelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = SplitzColors.textPrimary(),
-                                letterSpacing = 0.5.sp
-                            )
+                                modifier = Modifier.size(36.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Save",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                         }
                     }
-
-                    // Save icon shortcut
-                    Surface(
-                        shape = CircleShape,
-                        color = SplitzColors.brandAccent(),
-                        modifier = Modifier.clickable(enabled = !state.isSaving) {
-                            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
-                            viewModel.saveExpense { onExpenseAdded() }
-                        }
-                    ) {
-                        Box(
-                            modifier = Modifier.size(36.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = "Save",
-                                tint = Color.White,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
-                }
+                )
             }
         ) { padding ->
             Column(

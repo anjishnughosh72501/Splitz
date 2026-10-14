@@ -94,59 +94,11 @@ fun CreateGroupScreen(
             .fillMaxSize()
             .imePadding(),
         topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                    color = SplitzColors.surfaceElevated().copy(alpha = 0.9f),
-                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clickable { onNavigateBack() }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = SplitzColors.textPrimary(),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Back",
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Create Group",
-                        style = SplitzTypography.TitleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
-                    )
-                    Text(
-                        text = "OPEN NEW LEDGER",
-                        style = SplitzTypography.LabelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = SplitzColors.brandAccent(),
-                        letterSpacing = 1.sp
-                    )
-                }
-            }
+            com.paisede.app.ui.components.SplitzTopAppBar(
+                title = "Create Group",
+                subtitle = "OPEN NEW LEDGER",
+                onNavigateBack = onNavigateBack
+            )
         }
     ) { padding ->
         Box(

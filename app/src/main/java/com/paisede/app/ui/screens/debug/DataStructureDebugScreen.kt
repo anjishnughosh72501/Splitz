@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import com.paisede.app.ui.components.SplitzTopAppBar
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -57,78 +59,36 @@ fun DataStructureDebugScreen(
 
     Scaffold(
         containerColor = Color.Transparent,
-            topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+        topBar = {
+            SplitzTopAppBar(
+                title = "Data Structures",
+                subtitle = "INTERNAL MEMORY AUDIT",
+                onNavigateBack = onNavigateBack,
+                actions = {
                     Surface(
                         shape = RoundedCornerShape(SplitzShapes.Pill),
-                        color = KissatenTokens.PaperSurface.copy(alpha = 0.9f),
-                        border = BorderStroke(1.dp, KissatenTokens.BorderWashi),
-                        modifier = Modifier.clickable { onNavigateBack() }
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = KissatenTokens.EspressoPrimary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Back",
-                                style = SplitzTypography.LabelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = KissatenTokens.EspressoPrimary
-                            )
-                        }
-                    }
-
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Data Structures",
-                            style = SplitzTypography.TitleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = KissatenTokens.EspressoPrimary
-                        )
-                        Text(
-                            text = "INTERNAL MEMORY AUDIT",
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = KissatenTokens.CaramelSecondary,
-                            letterSpacing = 1.sp
-                        )
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(SplitzShapes.Pill),
-                        color = KissatenTokens.PaperSurface.copy(alpha = 0.9f),
-                        border = BorderStroke(1.dp, KissatenTokens.BorderWashi),
+                        color = SplitzColors.surface(),
+                        border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
                         modifier = Modifier.clickable { viewModel.refreshDebugData() }
                     ) {
                         Box(modifier = Modifier.padding(8.dp), contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = "Refresh DS state",
-                                tint = KissatenTokens.EspressoPrimary,
+                                tint = SplitzColors.textPrimary(),
                                 modifier = Modifier.size(18.dp)
                             )
                         }
                     }
                 }
-            }
-        ) { padding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .navigationBarsPadding(),
                 contentPadding = PaddingValues(SplitzSpacing.lg),
                 verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
             ) {

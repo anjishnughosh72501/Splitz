@@ -87,9 +87,7 @@ fun StartupScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .statusBarsPadding()
-                .navigationBarsPadding(),
+                .padding(padding),
             contentAlignment = Alignment.TopCenter
         ) {
             LazyColumn(

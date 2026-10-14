@@ -47,9 +47,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.KissatenHankoStamp
 import com.paisede.app.ui.components.KissatenPerforationDivider
+import androidx.compose.foundation.layout.navigationBarsPadding
 import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.KissatenTokens
 import com.paisede.app.ui.theme.SplitzColors
@@ -78,87 +80,44 @@ fun AnalyticsScreen(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            // Kissaten Top Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                    color = SplitzColors.surfaceElevated().copy(alpha = 0.9f),
-                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                    modifier = Modifier.clickable { onNavigateBack() }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+            SplitzTopAppBar(
+                title = "Spending Analytics",
+                subtitle = "LEDGER & BUDGET",
+                onNavigateBack = onNavigateBack,
+                actions = {
+                    Surface(
+                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                        color = SplitzColors.surfaceElevated(),
+                        border = BorderStroke(1.dp, SplitzColors.borderSubtle())
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = SplitzColors.textPrimary(),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Back",
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CalendarMonth,
+                                contentDescription = null,
+                                tint = SplitzColors.brandAccent(),
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = currentMonth,
+                                style = SplitzTypography.LabelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.textPrimary()
+                            )
+                        }
                     }
                 }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Spending Analytics",
-                        style = SplitzTypography.TitleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
-                    )
-                    Text(
-                        text = "LEDGER & BUDGET",
-                        style = SplitzTypography.LabelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = SplitzColors.brandAccent(),
-                        letterSpacing = 1.sp
-                    )
-                }
-
-                Surface(
-                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                    color = SplitzColors.surfaceElevated(),
-                    border = BorderStroke(1.dp, SplitzColors.borderSubtle())
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CalendarMonth,
-                            contentDescription = null,
-                            tint = SplitzColors.brandAccent(),
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = currentMonth,
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
-                    }
-                }
-            }
+            )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .navigationBarsPadding()
         ) {
             if (an.expenseCount == 0) {
                 KissatenReceiptCard(

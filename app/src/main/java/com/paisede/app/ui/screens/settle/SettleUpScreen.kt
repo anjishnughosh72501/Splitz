@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -126,77 +127,35 @@ fun SettleUpScreen(
         containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(SplitzShapes.Pill),
-                    color = SplitzColors.surfaceElevated().copy(alpha = 0.9f),
-                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                    modifier = Modifier.clickable { onNavigateBack() }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+            com.paisede.app.ui.components.SplitzTopAppBar(
+                title = "Settle Up",
+                subtitle = "SETTLE BALANCES",
+                onNavigateBack = onNavigateBack,
+                actions = {
+                    Surface(
+                        shape = CircleShape,
+                        color = SplitzColors.surfaceElevated(),
+                        border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
+                        modifier = Modifier.clickable { onViewHistoryClick() }
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = SplitzColors.textPrimary(),
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Back",
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
+                        Box(modifier = Modifier.size(36.dp), contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = "Settlement History",
+                                tint = SplitzColors.textPrimary(),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "Settle Up",
-                        style = SplitzTypography.TitleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
-                    )
-                    Text(
-                        text = "SETTLE BALANCES",
-                        style = SplitzTypography.LabelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = SplitzColors.brandAccent(),
-                        letterSpacing = 1.sp
-                    )
-                }
-
-                Surface(
-                    shape = CircleShape,
-                    color = SplitzColors.surfaceElevated(),
-                    border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
-                    modifier = Modifier.clickable { onViewHistoryClick() }
-                ) {
-                    Box(modifier = Modifier.size(36.dp), contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = "Settlement History",
-                            tint = SplitzColors.textPrimary(),
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-            }
+            )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .navigationBarsPadding()
         ) {
             if (state.recommendedPayments.isEmpty()) {
                 KissatenReceiptCard(

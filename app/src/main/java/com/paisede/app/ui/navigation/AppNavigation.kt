@@ -50,16 +50,9 @@ fun AppNavigation(
     val isStartupCompleted by app.userPreferences.isStartupCompleted.collectAsState()
     val startDestination = if (isStartupCompleted) Screen.Home.route else Screen.Startup.route
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        com.paisede.app.ui.components.SplitzAmbientBackground(
-            modifier = Modifier.fillMaxSize()
-        )
-
-        NavHost(
-            navController = navController,
-            startDestination = startDestination,
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
             enterTransition = { SplitzEnterTransition.SlideFade },
             exitTransition = { SplitzExitTransition.SlideFade },
             popEnterTransition = { SplitzEnterTransition.SlideFadeReverse },
@@ -320,7 +313,6 @@ fun AppNavigation(
             )
         }
     }
-}
 }
 
 // ============================================================

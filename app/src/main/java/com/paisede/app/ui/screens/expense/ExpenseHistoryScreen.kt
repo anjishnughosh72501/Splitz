@@ -58,6 +58,7 @@ import com.paisede.app.domain.model.Category
 import com.paisede.app.domain.model.Expense
 import com.paisede.app.domain.model.ExpenseSplit
 import com.paisede.app.domain.model.Member
+import androidx.compose.foundation.layout.navigationBarsPadding
 import com.paisede.app.ui.components.EmptyStateView
 import com.paisede.app.ui.components.KissatenHankoStamp
 import com.paisede.app.ui.components.KissatenPerforationDivider
@@ -65,6 +66,7 @@ import com.paisede.app.ui.components.KissatenReceiptCard
 import com.paisede.app.ui.components.KissatenSawtoothTeeth
 import com.paisede.app.ui.components.MoneyColorMode
 import com.paisede.app.ui.components.MoneyText
+import com.paisede.app.ui.components.SplitzTopAppBar
 import com.paisede.app.ui.components.UserAvatar
 import com.paisede.app.ui.theme.KissatenTokens
 import com.paisede.app.ui.theme.LocalAppCurrency
@@ -102,118 +104,69 @@ fun ExpenseHistoryScreen(
 
     Scaffold(
         containerColor = Color.Transparent,
-            topBar = {
-                // Kissaten Top Bar
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+        topBar = {
+            SplitzTopAppBar(
+                title = "Expense Ledger",
+                subtitle = "ITEMIZED RECEIPTS",
+                onNavigateBack = onNavigateBack,
+                actions = {
                     Surface(
-                        shape = RoundedCornerShape(SplitzShapes.Pill),
+                        shape = CircleShape,
                         color = SplitzColors.surface(),
                         border = BorderStroke(1.dp, SplitzColors.border()),
-                        modifier = Modifier.clickable { onNavigateBack() }
+                        modifier = Modifier.clickable(enabled = state.canUndo) { viewModel.undo() }
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Box(modifier = Modifier.size(34.dp), contentAlignment = Alignment.Center) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
+                                imageVector = Icons.AutoMirrored.Filled.Undo,
+                                contentDescription = "Undo",
+                                tint = if (state.canUndo) SplitzColors.textPrimary() else SplitzColors.textTertiary().copy(alpha = 0.4f),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = CircleShape,
+                        color = SplitzColors.surface(),
+                        border = BorderStroke(1.dp, SplitzColors.border()),
+                        modifier = Modifier.clickable(enabled = state.canRedo) { viewModel.redo() }
+                    ) {
+                        Box(modifier = Modifier.size(34.dp), contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Redo,
+                                contentDescription = "Redo",
+                                tint = if (state.canRedo) SplitzColors.textPrimary() else SplitzColors.textTertiary().copy(alpha = 0.4f),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = CircleShape,
+                        color = SplitzColors.surface(),
+                        border = BorderStroke(1.dp, SplitzColors.border()),
+                        modifier = Modifier.clickable { viewModel.toggleSort() }
+                    ) {
+                        Box(modifier = Modifier.size(34.dp), contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Sort,
+                                contentDescription = "Sort",
                                 tint = SplitzColors.textPrimary(),
                                 modifier = Modifier.size(18.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Back",
-                                style = SplitzTypography.LabelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = SplitzColors.textPrimary()
-                            )
-                        }
-                    }
-
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Expense Ledger",
-                            style = SplitzTypography.TitleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
-                        Text(
-                            text = "ITEMIZED RECEIPTS",
-                            style = SplitzTypography.LabelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = SplitzColors.brandAccent(),
-                            letterSpacing = 1.sp
-                        )
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Surface(
-                            shape = CircleShape,
-                            color = SplitzColors.surface(),
-                            border = BorderStroke(1.dp, SplitzColors.border()),
-                            modifier = Modifier
-                                .clickable(enabled = state.canUndo) { viewModel.undo() }
-                                .padding(end = 6.dp)
-                        ) {
-                            Box(modifier = Modifier.size(34.dp), contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Undo,
-                                    contentDescription = "Undo",
-                                    tint = if (state.canUndo) SplitzColors.textPrimary() else SplitzColors.textTertiary().copy(alpha = 0.4f),
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-
-                        Surface(
-                            shape = CircleShape,
-                            color = SplitzColors.surface(),
-                            border = BorderStroke(1.dp, SplitzColors.border()),
-                            modifier = Modifier
-                                .clickable(enabled = state.canRedo) { viewModel.redo() }
-                                .padding(end = 6.dp)
-                        ) {
-                            Box(modifier = Modifier.size(34.dp), contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Redo,
-                                    contentDescription = "Redo",
-                                    tint = if (state.canRedo) SplitzColors.textPrimary() else SplitzColors.textTertiary().copy(alpha = 0.4f),
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-
-                        Surface(
-                            shape = CircleShape,
-                            color = SplitzColors.surface(),
-                            border = BorderStroke(1.dp, SplitzColors.border()),
-                            modifier = Modifier.clickable { viewModel.toggleSort() }
-                        ) {
-                            Box(modifier = Modifier.size(34.dp), contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Sort,
-                                    contentDescription = "Sort",
-                                    tint = SplitzColors.textPrimary(),
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
                         }
                     }
                 }
-            }
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .navigationBarsPadding()
+        ) {
                 // Search Bar in Paper Surface
                 OutlinedTextField(
                     value = state.searchQuery,
