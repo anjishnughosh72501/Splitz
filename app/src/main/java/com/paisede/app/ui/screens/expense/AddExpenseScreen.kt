@@ -165,7 +165,7 @@ fun AddExpenseScreen(
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = "Save",
-                                    tint = Color.White,
+                                    tint = SplitzColors.onBrandAccent(),
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
@@ -377,7 +377,7 @@ fun AddExpenseScreen(
                                             text = cat.name,
                                             style = SplitzTypography.LabelSmall,
                                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                            color = if (isSelected) Color.White else SplitzColors.textPrimary(),
+                                            color = if (isSelected) SplitzColors.onBrandAccent() else SplitzColors.textPrimary(),
                                             modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
                                         )
                                     }
@@ -498,7 +498,7 @@ fun AddExpenseScreen(
                                             text = splitLabels[index],
                                             style = SplitzTypography.LabelSmall,
                                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                            color = if (isSelected) Color.White else SplitzColors.textPrimary(),
+                                            color = if (isSelected) SplitzColors.onBrandAccent() else SplitzColors.textPrimary(),
                                             textAlign = TextAlign.Center,
                                             lineHeight = 14.sp
                                         )

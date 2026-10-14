@@ -7,9 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -418,60 +420,95 @@ fun GroupDashboardScreen(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            // Spending & Net Balance Grid (2 Columns)
+                            // Spending & Net Balance Grid (2 Columns, perfectly balanced & equal height)
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(IntrinsicSize.Max),
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 // Total Group Spend Well
                                 Column(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clip(RoundedCornerShape(12.dp))
+                                        .fillMaxHeight()
+                                        .clip(RoundedCornerShape(14.dp))
                                         .background(SplitzColors.backgroundElevated())
-                                        .padding(12.dp)
+                                        .border(1.dp, SplitzColors.borderSubtle(), RoundedCornerShape(14.dp))
+                                        .padding(12.dp),
+                                    verticalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(
-                                        text = "Total Group Spend",
-                                        style = SplitzTypography.Caption,
-                                        color = SplitzColors.textSecondary(),
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = CurrencyUtils.formatPaise(state.totalSpendingPaise, currency = currentCurrency),
-                                        style = SplitzTypography.TitleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        color = SplitzColors.textPrimary()
-                                    )
+                                    Column {
+                                        Text(
+                                            text = "Total Group Spend",
+                                            style = SplitzTypography.Caption,
+                                            color = SplitzColors.textSecondary(),
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = CurrencyUtils.formatPaise(state.totalSpendingPaise, currency = currentCurrency),
+                                            style = SplitzTypography.TitleLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            color = SplitzColors.textPrimary()
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Receipt,
+                                            contentDescription = null,
+                                            tint = SplitzColors.textMuted(),
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                        Text(
+                                            text = "${state.expenses.size} expenses",
+                                            style = SplitzTypography.Caption,
+                                            fontSize = 11.sp,
+                                            color = SplitzColors.textMuted(),
+                                            fontWeight = FontWeight.Medium,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
                                 }
 
                                 // Your Net Balance Well
                                 val balanceBg = if (isReceiving) SplitzColors.positiveContainer() else if (isOwing) SplitzColors.negativeContainer() else SplitzColors.backgroundElevated()
+                                val balanceBorder = if (isReceiving) SplitzColors.positive().copy(alpha = 0.35f) else if (isOwing) SplitzColors.negative().copy(alpha = 0.35f) else SplitzColors.borderSubtle()
                                 val balanceTextColor = if (isReceiving) SplitzColors.positive() else if (isOwing) SplitzColors.negative() else SplitzColors.textPrimary()
                                 Column(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clip(RoundedCornerShape(12.dp))
+                                        .fillMaxHeight()
+                                        .clip(RoundedCornerShape(14.dp))
                                         .background(balanceBg)
-                                        .padding(12.dp)
-                                 ) {
-                                    Text(
-                                        text = "Your Net Balance",
-                                        style = SplitzTypography.Caption,
-                                        color = if (isReceiving) SplitzColors.positive() else if (isOwing) SplitzColors.negative() else SplitzColors.textSecondary(),
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = CurrencyUtils.formatPaise(userNetBal, showSign = true, currency = currentCurrency),
-                                        style = SplitzTypography.TitleLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        color = balanceTextColor
-                                    )
+                                        .border(1.dp, balanceBorder, RoundedCornerShape(14.dp))
+                                        .padding(12.dp),
+                                    verticalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text(
+                                            text = "Your Net Balance",
+                                            style = SplitzTypography.Caption,
+                                            color = if (isReceiving) SplitzColors.positive() else if (isOwing) SplitzColors.negative() else SplitzColors.textSecondary(),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = CurrencyUtils.formatPaise(userNetBal, showSign = true, currency = currentCurrency),
+                                            style = SplitzTypography.TitleLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            color = balanceTextColor
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(6.dp))
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                        horizontalArrangement = Arrangement.spacedBy(3.dp)
                                     ) {
                                         if (isReceiving) {
                                             Icon(
@@ -485,7 +522,7 @@ fun GroupDashboardScreen(
                                                 style = SplitzTypography.Caption,
                                                 fontSize = 11.sp,
                                                 color = SplitzColors.positive(),
-                                                fontWeight = FontWeight.Medium
+                                                fontWeight = FontWeight.Bold
                                             )
                                         } else if (isOwing) {
                                             Icon(
@@ -499,7 +536,7 @@ fun GroupDashboardScreen(
                                                 style = SplitzTypography.Caption,
                                                 fontSize = 11.sp,
                                                 color = SplitzColors.negative(),
-                                                fontWeight = FontWeight.Medium
+                                                fontWeight = FontWeight.Bold
                                             )
                                         } else {
                                             Text(

@@ -112,7 +112,7 @@ fun SettleUpScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = SplitzColors.brandPrimary()),
                     shape = RoundedCornerShape(SplitzShapes.Pill)
                 ) {
-                    Text("Record Payment", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("Record Payment", color = SplitzColors.onPrimary(), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {

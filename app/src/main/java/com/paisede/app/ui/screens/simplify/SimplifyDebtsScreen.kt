@@ -141,8 +141,8 @@ fun SimplifyDebtsScreen(
                                 ) {
                                     Surface(
                                         shape = RoundedCornerShape(SplitzShapes.Pill),
-                                        color = KissatenTokens.MatchaTertiary.copy(alpha = 0.3f),
-                                        border = BorderStroke(1.dp, KissatenTokens.MatchaContainer.copy(alpha = 0.4f))
+                                        color = SplitzColors.positiveContainer(),
+                                        border = BorderStroke(1.dp, SplitzColors.positive().copy(alpha = 0.4f))
                                     ) {
                                         Row(
                                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -152,14 +152,14 @@ fun SimplifyDebtsScreen(
                                                 modifier = Modifier
                                                     .size(6.dp)
                                                     .clip(CircleShape)
-                                                    .background(KissatenTokens.MatchaContainer)
+                                                    .background(SplitzColors.positive())
                                             )
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
                                                 text = "DIRECT SETTLE ENGINE",
                                                 style = SplitzTypography.LabelSmall,
                                                 fontWeight = FontWeight.Bold,
-                                                color = KissatenTokens.MatchaContainer,
+                                                color = SplitzColors.positive(),
                                                 letterSpacing = 0.6.sp
                                             )
                                         }
@@ -172,14 +172,14 @@ fun SimplifyDebtsScreen(
 
                                     Surface(
                                         shape = RoundedCornerShape(SplitzShapes.Pill),
-                                        color = KissatenTokens.CaramelSecondary.copy(alpha = 0.25f),
-                                        border = BorderStroke(1.dp, KissatenTokens.CaramelSecondary.copy(alpha = 0.5f))
+                                        color = SplitzColors.brandSoft(),
+                                        border = BorderStroke(1.dp, SplitzColors.brandAccent().copy(alpha = 0.4f))
                                     ) {
                                         Text(
                                             text = "$reductionPercent STEPS",
                                             style = SplitzTypography.LabelSmall,
                                             fontWeight = FontWeight.Bold,
-                                            color = KissatenTokens.CaramelSecondary,
+                                            color = SplitzColors.brandAccent(),
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                         )
                                     }
@@ -191,12 +191,12 @@ fun SimplifyDebtsScreen(
                                     text = "Debt Simplification",
                                     style = SplitzTypography.HeadlineSmall,
                                     fontWeight = FontWeight.Black,
-                                    color = Color.White
+                                    color = SplitzColors.textPrimary()
                                 )
                                 Text(
                                     text = "Resolve circular balances and settle all group debts with minimal transfers.",
                                     style = SplitzTypography.BodySmall,
-                                    color = Color.White.copy(alpha = 0.75f)
+                                    color = SplitzColors.textSecondary()
                                 )
 
                                 Spacer(modifier = Modifier.height(18.dp))
@@ -206,7 +206,8 @@ fun SimplifyDebtsScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(16.dp))
-                                        .background(Color.White.copy(alpha = 0.08f))
+                                        .background(SplitzColors.backgroundElevated())
+                                        .border(1.dp, SplitzColors.borderSubtle(), RoundedCornerShape(16.dp))
                                         .padding(14.dp),
                                     horizontalArrangement = Arrangement.SpaceAround,
                                     verticalAlignment = Alignment.CenterVertically
@@ -215,7 +216,7 @@ fun SimplifyDebtsScreen(
                                         Text(
                                             text = "BEFORE OPTIMIZATION",
                                             style = SplitzTypography.LabelSmall,
-                                            color = KissatenTokens.CaramelSecondary,
+                                            color = SplitzColors.textSecondary(),
                                             fontWeight = FontWeight.Bold
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
@@ -223,19 +224,19 @@ fun SimplifyDebtsScreen(
                                             text = "${state.beforeCount}",
                                             style = SplitzTypography.HeadlineMedium,
                                             fontWeight = FontWeight.Black,
-                                            color = Color.White
+                                            color = SplitzColors.textPrimary()
                                         )
                                         Text(
                                             text = "raw debts",
                                             style = SplitzTypography.LabelSmall,
-                                            color = Color.White.copy(alpha = 0.6f)
+                                            color = SplitzColors.textMuted()
                                         )
                                     }
 
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                         contentDescription = "to",
-                                        tint = KissatenTokens.CaramelSecondary,
+                                        tint = SplitzColors.brandAccent(),
                                         modifier = Modifier.size(24.dp)
                                     )
 
@@ -243,7 +244,7 @@ fun SimplifyDebtsScreen(
                                         Text(
                                             text = "AFTER OPTIMIZATION",
                                             style = SplitzTypography.LabelSmall,
-                                            color = KissatenTokens.MatchaContainer,
+                                            color = SplitzColors.positive(),
                                             fontWeight = FontWeight.Bold
                                         )
                                         Spacer(modifier = Modifier.height(4.dp))
@@ -251,12 +252,12 @@ fun SimplifyDebtsScreen(
                                             text = "${state.afterCount}",
                                             style = SplitzTypography.HeadlineMedium,
                                             fontWeight = FontWeight.Black,
-                                            color = KissatenTokens.MatchaContainer
+                                            color = SplitzColors.positive()
                                         )
                                         Text(
                                             text = "transfers",
                                             style = SplitzTypography.LabelSmall,
-                                            color = Color.White.copy(alpha = 0.6f)
+                                            color = SplitzColors.textMuted()
                                         )
                                     }
                                 }
@@ -269,8 +270,8 @@ fun SimplifyDebtsScreen(
                         item {
                             Surface(
                                 shape = RoundedCornerShape(16.dp),
-                                color = KissatenTokens.PaperSurface,
-                                border = BorderStroke(1.dp, KissatenTokens.BorderWashi),
+                                color = SplitzColors.surfaceElevated(),
+                                border = BorderStroke(1.dp, SplitzColors.borderSubtle()),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Row(
@@ -301,7 +302,7 @@ fun SimplifyDebtsScreen(
                                                 text = "Greedy (${state.greedyCount})",
                                                 style = SplitzTypography.LabelSmall,
                                                 fontWeight = FontWeight.Bold,
-                                                color = if (isGreedy) Color.White else SplitzColors.textPrimary(),
+                                                color = if (isGreedy) SplitzColors.onBrandAccent() else SplitzColors.textPrimary(),
                                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                             )
                                         }
@@ -316,7 +317,7 @@ fun SimplifyDebtsScreen(
                                                 text = "Exact Min (${state.exactCount})",
                                                 style = SplitzTypography.LabelSmall,
                                                 fontWeight = FontWeight.Bold,
-                                                color = if (isExact) Color.White else SplitzColors.textPrimary(),
+                                                color = if (isExact) SplitzColors.onBrandAccent() else SplitzColors.textPrimary(),
                                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                             )
                                         }
@@ -360,7 +361,7 @@ fun SimplifyDebtsScreen(
                                         text = "List",
                                         style = SplitzTypography.LabelSmall,
                                         fontWeight = FontWeight.Bold,
-                                        color = if (isList) Color.White else SplitzColors.textPrimary()
+                                        color = if (isList) SplitzColors.onBrandAccent() else SplitzColors.textPrimary()
                                     )
                                 }
                                 Box(
@@ -374,7 +375,7 @@ fun SimplifyDebtsScreen(
                                         text = "Graph",
                                         style = SplitzTypography.LabelSmall,
                                         fontWeight = FontWeight.Bold,
-                                        color = if (!isList) Color.White else SplitzColors.textPrimary()
+                                        color = if (!isList) SplitzColors.onBrandAccent() else SplitzColors.textPrimary()
                                     )
                                 }
                             }
@@ -397,13 +398,13 @@ fun SimplifyDebtsScreen(
                                         text = "All debts are settled!",
                                         style = SplitzTypography.TitleMedium,
                                         fontWeight = FontWeight.Bold,
-                                        color = KissatenTokens.EspressoPrimary
+                                        color = SplitzColors.textPrimary()
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = "Everyone in this group is squared up. No transfers needed.",
                                         style = SplitzTypography.BodySmall,
-                                        color = KissatenTokens.TextMuted,
+                                        color = SplitzColors.textMuted(),
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -584,7 +585,7 @@ fun KissatenSimplifiedTransferCard(
                             Icon(
                                 imageVector = Icons.Default.Payments,
                                 contentDescription = "Settle",
-                                tint = Color.White,
+                                tint = SplitzColors.onPrimary(),
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -592,7 +593,7 @@ fun KissatenSimplifiedTransferCard(
                                 text = "Settle Debt",
                                 style = SplitzTypography.LabelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = SplitzColors.onPrimary()
                             )
                         }
                     }

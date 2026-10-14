@@ -39,6 +39,7 @@ data class SplitzPalette(
     val brandAccent: Color,
     val brandSoft: Color,
     val onBrandPrimary: Color,
+    val onBrandAccent: Color = onBrandPrimary,
     val onBrandGradient: Color = Color.White,
 
     // Gradient start and end stops
@@ -54,22 +55,24 @@ data class SplitzPalette(
 
     // Financial semantics (stable across themes)
     val positive: Color = Color(0xFF34D399),
-    val positiveContainer: Color = Color(0xFF064E23).copy(alpha = 0.35f),
+    val positiveContainer: Color = Color(0xFF0E2E1E),
     val positiveStrong: Color = Color(0xFF6EE7B7),
-    val onPositive: Color = Color(0xFF052E16),
+    val onPositive: Color = Color(0xFF041F11),
+    val onPositiveContainer: Color = Color(0xFF6EE7B7),
 
     val negative: Color = Color(0xFFF87171),
-    val negativeContainer: Color = Color(0xFF7F1D1D).copy(alpha = 0.35f),
+    val negativeContainer: Color = Color(0xFF361418),
     val negativeStrong: Color = Color(0xFFFECACA),
-    val onNegative: Color = Color(0xFF450A0A),
+    val onNegative: Color = Color(0xFF28070B),
+    val onNegativeContainer: Color = Color(0xFFFECACA),
 
     val warning: Color = Color(0xFFFBBF24),
-    val warningContainer: Color = Color(0xFF78350F).copy(alpha = 0.35f),
+    val warningContainer: Color = Color(0xFF362309),
     val warningStrong: Color = Color(0xFFFDE047),
-    val onWarning: Color = Color(0xFF451A03),
+    val onWarning: Color = Color(0xFF261502),
 
     val info: Color = Color(0xFF60A5FA),
-    val infoContainer: Color = Color(0xFF1E3A8A).copy(alpha = 0.35f),
+    val infoContainer: Color = Color(0xFF142244),
 
     // Texture asset reference
     val textureResId: Int
@@ -118,23 +121,25 @@ object ThemePalettes {
         textInverse = Color(0xFFFDF9F3),
         textDisabled = Color(0xFFA89F97),
 
-        positive = Color(0xFF353D11),
-        positiveContainer = Color(0xFFDDE8AB),
-        positiveStrong = Color(0xFF1F2700),
+        positive = Color(0xFF166534),
+        positiveContainer = Color(0xFFE8F5E9),
+        positiveStrong = Color(0xFF14532D),
         onPositive = Color(0xFFFFFFFF),
+        onPositiveContainer = Color(0xFF14532D),
 
-        negative = Color(0xFFBA1A1A),
-        negativeContainer = Color(0xFFFFDAD6),
-        negativeStrong = Color(0xFF93000A),
+        negative = Color(0xFFB91C1C),
+        negativeContainer = Color(0xFFFEE2E2),
+        negativeStrong = Color(0xFF7F1D1D),
         onNegative = Color(0xFFFFFFFF),
+        onNegativeContainer = Color(0xFF7F1D1D),
 
-        warning = Color(0xFFC87D43),
-        warningContainer = Color(0xFFFFDCC5),
-        warningStrong = Color(0xFF703700),
-        onWarning = Color(0xFF301400),
+        warning = Color(0xFFB45309),
+        warningContainer = Color(0xFFFEF3C7),
+        warningStrong = Color(0xFF78350F),
+        onWarning = Color(0xFFFFFFFF),
 
-        info = Color(0xFF4A3525),
-        infoContainer = Color(0xFFFEDCC5),
+        info = Color(0xFF1E40AF),
+        infoContainer = Color(0xFFDBEAFE),
 
         textureResId = R.drawable.bg_graphite_texture
     )

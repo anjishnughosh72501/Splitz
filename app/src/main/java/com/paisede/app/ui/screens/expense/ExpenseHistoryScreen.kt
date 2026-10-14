@@ -216,7 +216,7 @@ fun ExpenseHistoryScreen(
                                 text = "All",
                                 style = SplitzTypography.LabelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = if (isAllSelected) Color.White else SplitzColors.textPrimary(),
+                                color = if (isAllSelected) SplitzColors.onBrandAccent() else SplitzColors.textPrimary(),
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                             )
                         }
@@ -237,7 +237,7 @@ fun ExpenseHistoryScreen(
                                 text = cat.name,
                                 style = SplitzTypography.LabelSmall,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isSelected) Color.White else SplitzColors.textPrimary(),
+                                color = if (isSelected) SplitzColors.onBrandAccent() else SplitzColors.textPrimary(),
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                             )
                         }

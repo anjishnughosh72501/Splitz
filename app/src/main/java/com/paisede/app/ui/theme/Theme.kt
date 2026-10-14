@@ -177,7 +177,11 @@ fun PaiseDeTheme(
 }
 
 val ColorScheme.isDark: Boolean
-    get() = this.background == DarkColors.Background || this.background == ThemePalettes.Graphite.background || this.background == ThemePalettes.ElectricBlue.background || this.background == ThemePalettes.Ultraviolet.background
+    get() = this.background == DarkColors.Background || 
+            this.background == ThemePalettes.Graphite.background || 
+            this.background == ThemePalettes.ElectricBlue.background || 
+            this.background == ThemePalettes.Ultraviolet.background || 
+            this.background == ThemePalettes.Emerald.background
 
 // Semantic color accessors for use across UI components
 object SplitzColors {
@@ -299,10 +303,19 @@ object SplitzColors {
     fun onPrimary(): Color = LocalSplitzPalette.current.onBrandPrimary
 
     @Composable
+    fun onBrandAccent(): Color = LocalSplitzPalette.current.onBrandAccent
+
+    @Composable
     fun onPositive(): Color = LocalSplitzPalette.current.onPositive
 
     @Composable
+    fun onPositiveContainer(): Color = LocalSplitzPalette.current.onPositiveContainer
+
+    @Composable
     fun onNegative(): Color = LocalSplitzPalette.current.onNegative
+
+    @Composable
+    fun onNegativeContainer(): Color = LocalSplitzPalette.current.onNegativeContainer
 
     @Composable
     fun onWarning(): Color = LocalSplitzPalette.current.onWarning

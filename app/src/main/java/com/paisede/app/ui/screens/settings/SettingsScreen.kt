@@ -86,6 +86,7 @@ import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzShapes
 import com.paisede.app.ui.theme.SplitzSpacing
 import com.paisede.app.ui.theme.SplitzTypography
+import com.paisede.app.ui.theme.ThemePalettes
 
 @Composable
 fun SettingsScreen(
@@ -421,7 +422,7 @@ fun SettingsScreen(
                                             Icon(
                                                 imageVector = Icons.Default.AutoAwesome,
                                                 contentDescription = "Selected",
-                                                tint = Color.White,
+                                                tint = ThemePalettes.forTheme(theme).onBrandAccent,
                                                 modifier = Modifier.size(14.dp)
                                             )
                                         }

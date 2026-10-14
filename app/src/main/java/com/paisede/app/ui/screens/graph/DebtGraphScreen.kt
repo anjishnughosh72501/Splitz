@@ -106,7 +106,7 @@ fun DebtGraphScreen(
                             text = "All Debts (${state.rawEdges.size})",
                             style = SplitzTypography.LabelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = if (isAll) Color.White else SplitzColors.textPrimary()
+                            color = if (isAll) SplitzColors.onBrandAccent() else SplitzColors.textPrimary()
                         )
                     }
 
@@ -123,7 +123,7 @@ fun DebtGraphScreen(
                             text = "Simplified (${state.simplifiedEdges.size})",
                             style = SplitzTypography.LabelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = if (!isAll) Color.White else SplitzColors.textPrimary()
+                            color = if (!isAll) SplitzColors.onBrandAccent() else SplitzColors.textPrimary()
                         )
                     }
                 }
@@ -199,14 +199,14 @@ fun DebtGraphScreen(
                                                 Icon(
                                                     imageVector = Icons.Default.Sync,
                                                     contentDescription = "Resolve",
-                                                    tint = Color.White,
+                                                    tint = SplitzColors.onBrandAccent(),
                                                     modifier = Modifier.size(16.dp)
                                                 )
                                                 Spacer(modifier = Modifier.width(6.dp))
                                                 Text(
                                                     text = "Resolve Circular Debts",
                                                     style = SplitzTypography.LabelMedium,
-                                                    color = Color.White,
+                                                    color = SplitzColors.onBrandAccent(),
                                                     fontWeight = FontWeight.Bold
                                                 )
                                             }

@@ -299,7 +299,7 @@ fun HomeScreen(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "New Group",
-                        tint = Color.White,
+                        tint = SplitzColors.onBrandAccent(),
                         modifier = Modifier.size(20.dp)
                     )
                     AnimatedVisibility(visible = isFabExpanded) {
@@ -308,7 +308,7 @@ fun HomeScreen(
                             Text(
                                 text = "New Group",
                                 style = SplitzTypography.LabelLarge,
-                                color = Color.White,
+                                color = SplitzColors.onBrandAccent(),
                                 fontWeight = FontWeight.Bold
                             )
                         }
