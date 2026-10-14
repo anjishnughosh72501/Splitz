@@ -53,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.domain.algorithm.DebtEdge
@@ -480,12 +481,14 @@ fun KissatenSimplifiedTransferCard(
                         textColor = SplitzColors.negative()
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f, fill = false)) {
                         Text(
                             text = debtorName,
                             style = SplitzTypography.BodyLarge,
                             fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
+                            color = SplitzColors.textPrimary(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Text(
                             text = "Owes",
@@ -499,7 +502,7 @@ fun KissatenSimplifiedTransferCard(
                 // Middle: Coffee cup arrow
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(horizontal = 6.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocalCafe,
@@ -521,12 +524,17 @@ fun KissatenSimplifiedTransferCard(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Column(horizontalAlignment = Alignment.End) {
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        modifier = Modifier.weight(1f, fill = false)
+                    ) {
                         Text(
                             text = creditorName,
                             style = SplitzTypography.BodyLarge,
                             fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
+                            color = SplitzColors.textPrimary(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Text(
                             text = "Receives",

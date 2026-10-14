@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.domain.model.Category
@@ -350,7 +351,9 @@ fun KissatenExpenseSlipItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     UserAvatar(
@@ -360,43 +363,56 @@ fun KissatenExpenseSlipItem(
                         textColor = KissatenTokens.MatchaText
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = expense.description,
                             style = SplitzTypography.TitleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
+                            color = SplitzColors.textPrimary(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(2.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = "Paid by $payerName",
                                 style = SplitzTypography.BodySmall,
                                 color = SplitzColors.brandAccent(),
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false)
                             )
                             Text(
                                 text = " • Split with ${splits.size}",
                                 style = SplitzTypography.BodySmall,
-                                color = SplitzColors.textTertiary()
+                                color = SplitzColors.textTertiary(),
+                                maxLines = 1,
+                                softWrap = false
                             )
                         }
                     }
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
                     MoneyText(
                         amountPaise = expense.amountPaise,
                         style = SplitzTypography.TitleLarge,
                         fontWeight = FontWeight.Bold,
                         colorMode = MoneyColorMode.NEUTRAL
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Icon(
                         imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                         contentDescription = null,
                         tint = SplitzColors.textTertiary(),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }

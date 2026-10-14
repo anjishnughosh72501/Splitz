@@ -25,6 +25,7 @@ import com.paisede.app.data.preferences.SplitzVisualTheme
 val LocalAppCurrency = staticCompositionLocalOf { AppCurrency.DEFAULT }
 val LocalSplitzVisualTheme = staticCompositionLocalOf { SplitzVisualTheme.KISSATEN }
 val LocalSplitzPalette = staticCompositionLocalOf { ThemePalettes.Light }
+val LocalSplitzIsDark = staticCompositionLocalOf { false }
 
 fun createColorSchemeForTheme(
     palette: SplitzPalette,
@@ -154,7 +155,8 @@ fun SplitzTheme(
     CompositionLocalProvider(
         LocalDensity provides scaledDensity,
         LocalAppCurrency provides currency,
-        LocalSplitzPalette provides palette
+        LocalSplitzPalette provides palette,
+        LocalSplitzIsDark provides darkTheme
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -191,12 +193,14 @@ fun PaiseDeTheme(
 }
 
 val ColorScheme.isDark: Boolean
-    get() = this.background == ThemePalettes.Dark.background
+    get() = this.background == ThemePalettes.Dark.background || 
+            this.surface == ThemePalettes.Dark.surfaceElevated ||
+            this.surfaceVariant == ThemePalettes.Dark.surface
 
 // Semantic color accessors for use across UI components
 object SplitzColors {
     @Composable
-    fun isDark(): Boolean = MaterialTheme.colorScheme.isDark
+    fun isDark(): Boolean = LocalSplitzIsDark.current
 
     @Composable
     fun background(): Color = LocalSplitzPalette.current.background

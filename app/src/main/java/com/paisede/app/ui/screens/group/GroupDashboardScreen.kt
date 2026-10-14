@@ -837,7 +837,9 @@ private fun KissatenJournalEntryItem(
                 verticalAlignment = Alignment.Top
             ) {
                 Row(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -868,7 +870,9 @@ private fun KissatenJournalEntryItem(
                         Text(
                             text = if (isPayerMe) "Paid by Me (You)" else "Paid by $payerName",
                             style = SplitzTypography.Caption,
-                            color = SplitzColors.textSecondary()
+                            color = SplitzColors.textSecondary(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -878,7 +882,9 @@ private fun KissatenJournalEntryItem(
                         text = CurrencyUtils.formatPaise(expense.amountPaise, currency = currency),
                         style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
+                        color = SplitzColors.textPrimary(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     if (isPayerMe) {
                         val lentPaise = expense.amountPaise - (mySplit?.amountPaise ?: 0L)
@@ -886,14 +892,18 @@ private fun KissatenJournalEntryItem(
                             text = "You lent ${CurrencyUtils.formatPaise(lentPaise, currency = currency)}",
                             style = SplitzTypography.Caption,
                             fontWeight = FontWeight.SemiBold,
-                            color = SplitzColors.positive()
+                            color = SplitzColors.positive(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     } else if (mySplit != null && mySplit.amountPaise > 0L) {
                         Text(
                             text = "You owe ${CurrencyUtils.formatPaise(mySplit.amountPaise, currency = currency)}",
                             style = SplitzTypography.Caption,
                             fontWeight = FontWeight.SemiBold,
-                            color = SplitzColors.negative()
+                            color = SplitzColors.negative(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }

@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.domain.model.Member
@@ -239,7 +240,9 @@ fun KissatenSettleUpCard(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 12.dp)
                 ) {
                     UserAvatar(
                         name = debtor,
@@ -247,33 +250,39 @@ fun KissatenSettleUpCard(
                         backgroundColor = SplitzColors.negativeContainer(),
                         textColor = SplitzColors.negative()
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = debtor,
                         style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
+                        color = SplitzColors.textPrimary(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "to",
                         tint = SplitzColors.brandAccent(),
                         modifier = Modifier.size(16.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     UserAvatar(
                         name = creditor,
                         size = 36,
                         backgroundColor = SplitzColors.positiveContainer(),
                         textColor = SplitzColors.positive()
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = creditor,
                         style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
+                        color = SplitzColors.textPrimary(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                 }
 

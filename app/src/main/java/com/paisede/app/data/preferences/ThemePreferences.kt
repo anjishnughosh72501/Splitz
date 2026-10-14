@@ -56,10 +56,27 @@ enum class SplitzVisualTheme(
     }
 }
 
-enum class AppFontSize(val displayName: String, val scale: Float) {
-    SMALL("Small", 0.85f),
-    MEDIUM("Medium", 1.0f),
-    LARGE("Large", 1.15f)
+enum class AppFontSize(val displayName: String, val description: String, val scale: Float) {
+    COMPACT("Compact", "0.85x — Higher density", 0.85f),
+    DEFAULT("Standard", "1.00x — Default layout", 1.0f),
+    LARGE("Large", "1.15x — High legibility", 1.15f),
+    EXTRA_LARGE("Extra Large", "1.28x — Maximum visibility", 1.28f);
+
+    companion object {
+        // Backwards-compatible aliases
+        val SMALL = COMPACT
+        val MEDIUM = DEFAULT
+
+        fun fromString(saved: String?): AppFontSize {
+            return when (saved?.uppercase()) {
+                "COMPACT", "SMALL" -> COMPACT
+                "DEFAULT", "MEDIUM" -> DEFAULT
+                "LARGE" -> LARGE
+                "EXTRA_LARGE" -> EXTRA_LARGE
+                else -> DEFAULT
+            }
+        }
+    }
 }
 
 class ThemePreferences(context: Context) {
@@ -100,12 +117,8 @@ class ThemePreferences(context: Context) {
     }
 
     private fun loadFontSize(): AppFontSize {
-        val saved = prefs.getString("font_size", AppFontSize.MEDIUM.name)
-        return try {
-            AppFontSize.valueOf(saved ?: AppFontSize.MEDIUM.name)
-        } catch (e: Exception) {
-            AppFontSize.MEDIUM
-        }
+        val saved = prefs.getString("font_size", AppFontSize.DEFAULT.name)
+        return AppFontSize.fromString(saved)
     }
 
     fun setFontSize(size: AppFontSize) {

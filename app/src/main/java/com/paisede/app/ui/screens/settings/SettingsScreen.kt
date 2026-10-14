@@ -29,7 +29,10 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.CallSplit
 import androidx.compose.material.icons.filled.CurrencyRupee
 import androidx.compose.material.icons.filled.Edit
@@ -121,42 +124,47 @@ fun SettingsScreen(
                 )
             },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     AppThemeMode.entries.forEach { mode ->
                         val isSelected = currentThemeMode == mode
-                        Row(
+                        Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(SplitzShapes.SM))
                                 .clickable {
                                     themePreferences?.setThemeMode(mode)
                                     showThemeDialog = false
-                                }
-                                .padding(vertical = 10.dp, horizontal = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = isSelected,
-                                onClick = {
-                                    themePreferences?.setThemeMode(mode)
-                                    showThemeDialog = false
                                 },
-                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.brandAccent())
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = mode.displayName,
-                                style = SplitzTypography.BodyLarge,
-                                color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                            )
+                            color = if (isSelected) SplitzColors.brandAccent().copy(alpha = 0.12f) else Color.Transparent,
+                            shape = RoundedCornerShape(SplitzShapes.SM),
+                            border = if (isSelected) BorderStroke(1.5.dp, SplitzColors.brandAccent()) else null
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 12.dp, horizontal = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = isSelected,
+                                    onClick = null,
+                                    colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.brandAccent())
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = mode.displayName,
+                                    style = SplitzTypography.BodyLarge,
+                                    color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text("Close", color = SplitzColors.brandAccent(), fontWeight = FontWeight.SemiBold)
+                    Text("Done", color = SplitzColors.brandAccent(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -176,42 +184,54 @@ fun SettingsScreen(
                 )
             },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     AppFontSize.entries.forEach { size ->
                         val isSelected = currentFontSize == size
-                        Row(
+                        Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(SplitzShapes.SM))
                                 .clickable {
                                     themePreferences?.setFontSize(size)
                                     showFontSizeDialog = false
-                                }
-                                .padding(vertical = 10.dp, horizontal = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = isSelected,
-                                onClick = {
-                                    themePreferences?.setFontSize(size)
-                                    showFontSizeDialog = false
                                 },
-                                colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.brandAccent())
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = size.displayName,
-                                style = SplitzTypography.BodyLarge,
-                                color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                            )
+                            color = if (isSelected) SplitzColors.brandAccent().copy(alpha = 0.12f) else Color.Transparent,
+                            shape = RoundedCornerShape(SplitzShapes.SM),
+                            border = if (isSelected) BorderStroke(1.5.dp, SplitzColors.brandAccent()) else null
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 10.dp, horizontal = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = isSelected,
+                                    onClick = null,
+                                    colors = RadioButtonDefaults.colors(selectedColor = SplitzColors.brandAccent())
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        text = size.displayName,
+                                        style = SplitzTypography.BodyLarge,
+                                        color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                    Text(
+                                        text = size.description,
+                                        style = SplitzTypography.Caption,
+                                        color = if (isSelected) SplitzColors.brandAccent() else SplitzColors.textMuted()
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showFontSizeDialog = false }) {
-                    Text("Close", color = SplitzColors.brandAccent(), fontWeight = FontWeight.SemiBold)
+                    Text("Done", color = SplitzColors.brandAccent(), fontWeight = FontWeight.SemiBold)
                 }
             }
         )
@@ -352,6 +372,95 @@ fun SettingsScreen(
             contentPadding = PaddingValues(SplitzSpacing.lg),
             verticalArrangement = Arrangement.spacedBy(SplitzSpacing.md)
         ) {
+            // Appearance Theme Selector Section
+            item {
+                Text(
+                    text = "APPEARANCE & THEME",
+                    style = SplitzTypography.LabelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = SplitzColors.textPrimary(),
+                    modifier = Modifier.padding(start = 4.dp, top = 4.dp),
+                    letterSpacing = 0.8.sp
+                )
+            }
+
+            item {
+                KissatenReceiptCard(modifier = Modifier.fillMaxWidth()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            val options = listOf(
+                                Triple(AppThemeMode.SYSTEM, "System", Icons.Default.BrightnessAuto),
+                                Triple(AppThemeMode.LIGHT, "Light", Icons.Default.LightMode),
+                                Triple(AppThemeMode.DARK, "Dark", Icons.Default.DarkMode)
+                            )
+                            options.forEach { (mode, label, icon) ->
+                                val isSelected = currentThemeMode == mode
+                                Surface(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .clickable { themePreferences?.setThemeMode(mode) },
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = if (isSelected) SplitzColors.brandAccent().copy(alpha = 0.16f) else SplitzColors.surface(),
+                                    border = BorderStroke(
+                                        width = if (isSelected) 2.dp else 1.dp,
+                                        color = if (isSelected) SplitzColors.brandAccent() else SplitzColors.borderSubtle()
+                                    )
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(vertical = 12.dp, horizontal = 4.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = label,
+                                            tint = if (isSelected) SplitzColors.brandAccent() else SplitzColors.textSecondary(),
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(
+                                            text = label,
+                                            style = SplitzTypography.LabelSmall,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                            color = if (isSelected) SplitzColors.textPrimary() else SplitzColors.textSecondary(),
+                                            maxLines = 1,
+                                            softWrap = false
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Current Mode",
+                                style = SplitzTypography.BodySmall,
+                                color = SplitzColors.textSecondary()
+                            )
+                            Text(
+                                text = currentThemeMode.displayName,
+                                style = SplitzTypography.BodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.brandAccent()
+                            )
+                        }
+                    }
+                }
+            }
+
             // General Preferences
             item {
                 Text(
@@ -387,18 +496,10 @@ fun SettingsScreen(
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
                         SettingRow(
-                            icon = Icons.Default.Palette,
-                            iconColor = SplitzColors.brandAccent(),
-                            title = "Appearance Mode",
-                            value = currentThemeMode.displayName,
-                            onClick = { showThemeDialog = true }
-                        )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = SplitzColors.borderSubtle())
-                        SettingRow(
                             icon = Icons.Default.FormatSize,
                             iconColor = SplitzColors.brandAccent(),
                             title = "Font Size",
-                            value = currentFontSize.displayName,
+                            value = "${currentFontSize.displayName} (${currentFontSize.description.substringBefore(" —")})",
                             onClick = { showFontSizeDialog = true }
                         )
                     }

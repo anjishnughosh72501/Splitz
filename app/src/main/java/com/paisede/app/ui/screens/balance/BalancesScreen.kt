@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.EmptyStateView
@@ -226,7 +227,12 @@ fun KissatenBalanceCard(item: MemberBalanceItem, currentUserName: String = "") {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 UserAvatar(
                     name = displayName,
                     size = 42,
@@ -234,12 +240,14 @@ fun KissatenBalanceCard(item: MemberBalanceItem, currentUserName: String = "") {
                     textColor = if (bal > 0) SplitzColors.positive() else if (bal < 0) SplitzColors.negative() else null
                 )
                 Spacer(modifier = Modifier.width(14.dp))
-                Column {
+                Column(modifier = Modifier.weight(1f, fill = false)) {
                     Text(
                         text = displayName,
                         style = SplitzTypography.TitleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = SplitzColors.textPrimary()
+                        color = SplitzColors.textPrimary(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Surface(

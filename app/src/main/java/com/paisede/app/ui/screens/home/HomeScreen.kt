@@ -68,6 +68,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paisede.app.ui.components.AvatarStack
@@ -571,12 +572,14 @@ fun KissatenGroupCard(
                 ) {
                     UserAvatar(name = data.group.name, size = 44)
                     Spacer(modifier = Modifier.width(12.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = data.group.name,
                             style = SplitzTypography.TitleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
+                            color = SplitzColors.textPrimary(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Row(

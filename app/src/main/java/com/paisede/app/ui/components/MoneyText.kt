@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import com.paisede.app.ui.theme.SplitzColors
 import com.paisede.app.ui.theme.SplitzMotion
 import com.paisede.app.ui.theme.SplitzTypography
@@ -65,7 +66,10 @@ fun MoneyText(
             modifier = modifier,
             style = style,
             fontWeight = fontWeight ?: style.fontWeight,
-            color = animatedColor
+            color = animatedColor,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis
         )
     } else {
         Text(
@@ -78,7 +82,10 @@ fun MoneyText(
             modifier = modifier,
             style = style,
             fontWeight = fontWeight ?: style.fontWeight,
-            color = animatedColor
+            color = animatedColor,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
