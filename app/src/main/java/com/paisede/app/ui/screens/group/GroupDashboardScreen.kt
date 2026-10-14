@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -692,18 +693,28 @@ fun GroupDashboardScreen(
                 item {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Text(
-                            text = "Quick Actions",
-                            style = SplitzTypography.LabelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = SplitzColors.textPrimary()
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Quick Actions",
+                                style = SplitzTypography.TitleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = SplitzColors.textPrimary()
+                            )
+                        }
 
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Max),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             KissatenActionTile(
                                 title = "Settle Up",
@@ -711,7 +722,9 @@ fun GroupDashboardScreen(
                                 icon = Icons.Default.Handshake,
                                 color = SplitzColors.brandAccent(),
                                 onClick = onSettleUpClick,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
                             )
                             KissatenActionTile(
                                 title = "Debt Graph",
@@ -719,13 +732,17 @@ fun GroupDashboardScreen(
                                 icon = Icons.Default.Hub,
                                 color = SplitzColors.brandPrimary(),
                                 onClick = onGraphClick,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
                             )
                         }
 
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Max),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             KissatenActionTile(
                                 title = "Analytics",
@@ -733,7 +750,9 @@ fun GroupDashboardScreen(
                                 icon = Icons.Default.PieChart,
                                 color = SplitzColors.positive(),
                                 onClick = onAnalyticsClick,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
                             )
                             KissatenActionTile(
                                 title = "Simplify Debts",
@@ -741,7 +760,9 @@ fun GroupDashboardScreen(
                                 icon = Icons.Default.AutoFixHigh,
                                 color = SplitzColors.brandAccent(),
                                 onClick = onSimplifyClick,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
                             )
                         }
                     }
@@ -932,6 +953,7 @@ private fun KissatenActionTile(
 ) {
     Surface(
         modifier = modifier
+            .defaultMinSize(minHeight = 58.dp)
             .clip(RoundedCornerShape(14.dp))
             .border(1.dp, SplitzColors.borderSubtle(), RoundedCornerShape(14.dp))
             .clickable { onClick() },
@@ -941,13 +963,13 @@ private fun KissatenActionTile(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(38.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(color.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
@@ -959,17 +981,26 @@ private fun KissatenActionTile(
                     modifier = Modifier.size(20.dp)
                 )
             }
-            Column {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = title,
                     style = SplitzTypography.TitleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = SplitzColors.textPrimary()
+                    color = SplitzColors.textPrimary(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = subtitle,
                     style = SplitzTypography.Caption,
-                    color = SplitzColors.textMuted()
+                    color = SplitzColors.textMuted(),
+                    fontSize = 11.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
